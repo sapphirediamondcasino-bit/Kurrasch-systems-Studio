@@ -1,352 +1,244 @@
-# Game Killers Studio Backend - Complete Structure
+# 🛡️ Game Killer's Security™ v2.0.0
 
-## Directory Structure
-```
-backend/
-├── server.js
-├── package.json
-├── .env
-├── .gitignore
-├── README.md
-├── datastore/
-│   ├── users.json
-│   ├── posts.json
-│   ├── friends.json
-│   ├── followers.json
-│   ├── subscriptions.json
-│   ├── badges.json
-│   ├── games.json
-│   ├── conversions.json
-│   ├── aiLogs.json
-│   ├── movieNights.json
-│   ├── teamBuilder.json
-│   ├── buildBattles.json
-│   ├── ideaVault.json
-│   ├── projectHub.json
-│   ├── goalTracker.json
-│   ├── miniArcade.json
-│   ├── marketplace.json
-│   ├── notifications.json
-│   └── xpLeaderboard.json
-├── routes/
-│   ├── auth.js
-│   ├── posts.js
-│   ├── users.js
-│   ├── ai.js
-│   ├── subscriptions.js
-│   ├── badges.js
-│   ├── games.js
-│   ├── movieNight.js
-│   ├── admin.js
-│   ├── teamBuilder.js
-│   ├── buildBattles.js
-│   ├── ideaVault.js
-│   ├── projectHub.js
-│   ├── goalTracker.js
-│   ├── miniArcade.js
-│   ├── marketplace.js
-│   ├── notifications.js
-│   ├── xp.js
-│   ├── friends.js
-│   └── followers.js
-├── middleware/
-│   ├── auth.js
-│   ├── validation.js
-│   └── upload.js
-├── utils/
-│   ├── datastore.js
-│   ├── jwt.js
-│   ├── xp.js
-│   ├── notifications.js
-│   ├── paypal.js
-│   ├── roblox.js
-│   ├── discord.js
-│   ├── aiWorker.js
-│   ├── subscriptionWorker.js
-│   ├── badgeWorker.js
-│   └── movieNightWorker.js
-├── ai/
-│   ├── bettyWhite.js
-│   ├── robinWilliams.js
-│   ├── johnnyHardwick.js
-│   ├── jonathanJoss.js
-│   └── dianeKeaton.js
-├── scripts/
-│   └── init.js
-└── uploads/
-    ├── avatars/
-    ├── posts/
-    └── games/
-```
+Advanced Discord security and moderation bot with Roblox integration, AI threat detection, and comprehensive server management tools.
 
-## Installation Steps
+## ✨ Features
 
-1. **Initialize Backend:**
+### 🔨 Moderation
+- **Ban/Kick/Warn** - Standard moderation actions
+- **Timeout** - Temporary user restrictions
+- **Purge** - Bulk message deletion
+- **Auto-moderation** - Automatic spam and content filtering
+
+### 🔒 Security
+- **User Reports** - Allow members to report violations
+- **Security Checks** - View user risk levels and infractions
+- **Incident Tracking** - Comprehensive logging system
+- **Anti-Raid Protection** - Detect and prevent raid attempts
+
+### 📊 Dashboards
+- **Basic Dashboard** - Server statistics and overview
+- **Pro Dashboard** - Advanced analytics (Pro tier)
+- **Real-time Updates** - Live security monitoring
+
+### 🎮 Roblox Integration
+- **Account Linking** - Verify Discord users with Roblox
+- **Ban Syncing** - Sync bans between Discord and Roblox
+- **Cross-platform Moderation** - Unified user management
+
+### 💎 Subscription Tiers
+- **Free** - Basic moderation and security
+- **Basic ($4.99/mo)** - Advanced moderation tools
+- **Pro ($9.99/mo)** - AI detection, Roblox sync, Pro dashboard
+- **Enterprise** - Custom solutions for large communities
+
+### 🤖 AI Detection (Pro)
+- Smart spam detection
+- Phishing attempt identification
+- Toxicity analysis
+- Behavioral pattern recognition
+
+## 📦 Installation
+
+### Prerequisites
+- Node.js v16.9.0 or higher
+- npm v7.0.0 or higher
+- Discord Bot Token
+- Discord Application Client ID
+
+### Setup
+
+1. **Clone the repository**
 ```bash
-cd backend
+git clone https://github.com/yourusername/game-killers-security.git
+cd game-killers-security
+```
+
+2. **Install dependencies**
+```bash
 npm install
 ```
 
-2. **Configure .env file** with all credentials
-
-3. **Initialize Datastore:**
+3. **Configure environment variables**
 ```bash
-npm run init
+cp .env.example .env
 ```
 
-4. **Start Server:**
-```bash
-# Development
-npm run dev
+Edit `.env` and add your credentials:
+```env
+DISCORD_TOKEN=your_discord_bot_token_here
+CLIENT_ID=your_bot_client_id_here
+GUILD_ID=your_test_guild_id_here  # Optional: for testing
+```
 
-# Production
+4. **Deploy commands to Discord**
+```bash
+npm run deploy
+```
+
+5. **Start the bot**
+```bash
 npm start
 ```
 
-## Admin Accounts Auto-Created
-- gamekillerszone@gmail.com (Group Admin - Founder Badge, Org Badge, Tier 5)
-- tannerkurrach@gmail.com (Creator Admin - Founder Badge, Org Badge, Tier 5)
-
-## API Endpoints Summary
-
-### Authentication
-- POST /api/auth/register
-- POST /api/auth/login
-- POST /api/auth/logout
-- GET /api/auth/discord (OAuth)
-- GET /api/auth/discord/callback
-- GET /api/auth/roblox (OAuth)
-- GET /api/auth/roblox/callback
-- POST /api/auth/refresh
-
-### Users
-- GET /api/users/:id
-- PUT /api/users/:id
-- GET /api/users/:id/profile
-- GET /api/users/search
-
-### Posts
-- GET /api/posts (feed)
-- GET /api/posts/:id
-- POST /api/posts
-- PUT /api/posts/:id
-- DELETE /api/posts/:id
-- POST /api/posts/:id/like
-- POST /api/posts/:id/comment
-
-### AI Mini Avatars
-- POST /api/ai/bettywhite/chat
-- POST /api/ai/robinwilliams/chat
-- POST /api/ai/johnnyhardwick/chat
-- POST /api/ai/jonathanjoss/chat
-- POST /api/ai/dianekeaton/chat
-- GET /api/ai/:avatarName/status
-- GET /api/ai/:avatarName/history
-
-### Subscriptions
-- GET /api/subscriptions/:userId
-- POST /api/subscriptions/create
-- POST /api/subscriptions/cancel
-- POST /api/subscriptions/webhook
-- POST /api/subscriptions/buy-credits
-
-### Badges
-- GET /api/badges/:userId
-- POST /api/badges/verify
-- POST /api/badges/create (admin)
-
-### Games
-- GET /api/games
-- GET /api/games/:id
-- POST /api/games (creator)
-- PUT /api/games/:id
-- DELETE /api/games/:id
-
-### Movie Night
-- GET /api/movienight
-- GET /api/movienight/:id
-- POST /api/movienight/create
-- PUT /api/movienight/:id
-- DELETE /api/movienight/:id
-- POST /api/movienight/:id/join
-- GET /api/movienight/:id/chat
-
-### Admin Panel
-- GET /api/admin/stats
-- GET /api/admin/users
-- PUT /api/admin/users/:id
-- DELETE /api/admin/users/:id
-- GET /api/admin/posts
-- DELETE /api/admin/posts/:id
-- PUT /api/admin/settings
-- POST /api/admin/badges/create
-- GET /api/admin/subscriptions
-- PUT /api/admin/api-keys
-
-### Team Builder, Build Battles, etc.
-- Full CRUD operations for all community features
-- Moderation endpoints
-- Safety filtering
-
-## Subscription Tiers
-
-| Tier | Price | Ad Credits | AI Credits | Features |
-|------|-------|------------|------------|----------|
-| 1 | $4.99 | 50/month | 100/month | Basic |
-| 2 | $9.99 | 150/month | 300/month | Enhanced |
-| 3 | $19.99 | 400/month | 750/month | Pro |
-| 4 | $49.99 | 1200/month | 2000/month | Premium |
-| 5 | $99.99 | Unlimited | Unlimited | Ultimate |
-
-## Badge Types
-- Founder (Auto: Admin emails)
-- Org Verified (Auto: Roblox verified, 2k+ Twitch, 3k+ TikTok)
-- Founding Group Member (Auto: Group members)
-- Custom Creator Badges
-
-## AI Avatars
-- Betty White (Comedian, Actress)
-- Robin Williams (Comedian, Actor)
-- Johnny Hardwick (Voice of Dale Gribble)
-- Jonathan Joss (Voice of John Redcorn)
-- Diane Keaton (Actress)
-- Shelley Duvall (Actress)
-- Michelle Trachtenberg (Actress)
-- James Earl Jones (Actress)
-- Matthew Perry (Comedian, Actor)
-- John Candy (Comedian, Actor)
-- Chris Farley (Comedian, Actor)
-- Harold Ramis (Actor)
-
-Each has:
-- Unique personality
-- Life stories
-- Joke database
-- Interactive chat
-- Avatar appearance
-
-## SSL Setup (Apollo Panel/SparkedHost)
-
-1. Generate/Upload SSL certificates
-2. Set environment variables:
+For development with auto-reload:
+```bash
+npm run dev
 ```
-SSL_KEY=/path/to/private.key
-SSL_CERT=/path/to/certificate.crt
+
+## 🔧 Configuration
+
+Edit `config/config.json` to customize bot settings:
+
+```json
+{
+  "moderation": {
+    "maxWarnings": 3,
+    "autoTimeout": false,
+    "timeoutDuration": 60
+  },
+  "security": {
+    "antiSpam": { "enabled": true },
+    "antiRaid": { "enabled": true }
+  }
+}
 ```
-3. Server auto-detects and uses HTTPS in production
 
-## Security Features
-- JWT authentication
-- bcrypt password hashing
-- Rate limiting
-- CORS protection
-- Helmet security headers
-- Input validation
-- XSS protection
-- SQL injection prevention (N/A - JSON datastore)
+## 📝 Commands
 
-## Background Workers (Cron Jobs)
-- AI Learning: Every 6 hours
-- Subscription Checks: Daily at midnight
-- Badge Verification: Every 12 hours
-- Movie Night Cleanup: Every 2 hours
+### Information
+- `/ping` - Check bot latency
+- `/help` - View all commands
 
+### Moderation
+- `/ban <user> [reason]` - Ban a user
+- `/kick <user> [reason]` - Kick a user
+- `/warn <user> <reason>` - Warn a user
+- `/timeout <user> <duration> [reason]` - Timeout a user
+- `/purge <amount> [user]` - Delete messages
 
+### Security
+- `/report <user> <reason>` - Report a user
+- `/check <user>` - Check user security info
+- `/logs [type] [user]` - View security logs
 
-Kurrasch systems Studio/
-    backend/
-    frontend/
-        .env
-        .gitignore
-        README.md
-        components.json
-        craco.config.js
-        jsconfig.json
-        package.json
-        postcss.config.js
-        public/
-            index.html
-        src/
-            App.css
-            App.js
-            index.css
-            index.js
-            components/
-                Avatar.jsx
-                ChatBody.jsx
-                ChatHeader.jsx
-                ChatMessage.jsx
-                ChatUserList.jsx
-                Comment.jsx
-                CreatePost.jsx
-                Editor.jsx
-                FeedItem.jsx
-                Footer.jsx
-                Header.jsx
-                LeftSidebar.jsx
-                RightSidebar.jsx
-                ChatBox.jsx
-                RightSidebar.jsx
-                components/
-                    ui/
-                        accordion.jsx
-                        alert.jsx
-                        aspect-ratio.jsx
-                        avatar.jsx
-                        badge.jsx
-                        button.jsx
-                        card.jsx
-                        carousel.jsx
-                        checkbox.jsx
-                        dialog.jsx
-                        divider.jsx
-                        dropdown-menu.jsx
-                        form.jsx
-                        input.jsx
-                        label.jsx
-                        menubar.jsx
-                        navigation-menu.jsx
-                        pagination.jsx
-                        popover.jsx
-                        progress.jsx
-                        scroll-area.jsx
-                        select.jsx
-                        separator.jsx
-                        sheet.jsx
-                        switch.jsx
-                        table.jsx
-                        textarea.jsx
-                        toggle.jsx
-                        tooltip.jsx
-                        toast.jsx
-                ChatBox.jsx
-                RightSidebar.jsx
-                ChatBox.jsx
-                index.js
-            pages/
-                About.jsx
-                AdminDashboard.jsx
-                AdminPanel.jsx
-                AdminSettings.jsx
-                Announcements.jsx
-                BuildBattle.jsx
-                Dashboard.jsx
-                DevHub.jsx
-                Discover.jsx
-                Games.jsx
-                Home.jsx
-                Login.jsx
-                MovieSession.jsx
-                Movies.jsx
-                PostDetail.jsx
-                Privacy.jsx
-                Profile.jsx
-                Signup.jsx
-                Terms.jsx
-        tailwind.config.js
-        yarn.lock
+### Dashboard
+- `/dashboard` - View server dashboard
+- `/prodash` - View Pro dashboard (Pro tier)
+- `/settings` - Configure server settings
 
+### Subscription
+- `/subscribe` - Manage subscription
+- `/features [tier]` - View tier features
 
+### Roblox
+- `/verify <username>` - Link Roblox account
+- `/unlink` - Unlink Roblox account
+- `/syncbans` - Manage ban syncing (Pro tier)
 
+## 🗂️ Project Structure
 
+```
+game-killers-security-v2/
+├── src/
+│   ├── commands/          # Slash commands
+│   │   ├── moderation/    # Ban, kick, warn, etc.
+│   │   ├── info/          # Ping, help
+│   │   ├── security/      # Report, check, logs
+│   │   ├── dashboard/     # Dashboards & settings
+│   │   ├── subscription/  # Subscription management
+│   │   └── roblox/        # Roblox integration
+│   ├── events/            # Discord event handlers
+│   ├── components/        # Buttons, modals, menus
+│   ├── database/          # Database & models
+│   ├── services/          # Core services
+│   └── utils/             # Helper functions
+├── config/                # Configuration files
+├── scripts/               # Utility scripts
+└── logs/                  # Log files
+```
 
+## 🔐 Permissions Required
+
+The bot requires the following permissions:
+- View Channels
+- Send Messages
+- Embed Links
+- Read Message History
+- Ban Members
+- Kick Members
+- Timeout Members
+- Manage Messages
+- Manage Roles (optional)
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+Need help? Join our support server:
+- Discord: [Support Server](https://discord.gg/your-support-server)
+- Documentation: [docs.example.com](https://docs.example.com)
+- Issues: [GitHub Issues](https://github.com/yourusername/game-killers-security/issues)
+
+## 📊 Development Status
+
+**Current Version:** v2.0.0
+
+### ✅ Phase 1: Core Functionality (Complete)
+- Bot startup and connection
+- Command system
+- Database system
+
+### ✅ Phase 2: Moderation (Complete)
+- Ban, kick, warn, timeout, purge
+- User tracking
+- Infraction system
+
+### ✅ Phase 3: Dashboards (Complete)
+- Basic dashboard
+- Pro dashboard
+- Settings panel
+
+### ✅ Phase 4: Security & Reports (Complete)
+- User reporting system
+- Security checks
+- Log viewing
+
+### ✅ Phase 5: Subscription System (Complete)
+- Tier management
+- Feature comparison
+- Subscription handling
+
+### ✅ Phase 6: Roblox Integration (Complete)
+- Account verification
+- Ban syncing
+- Cross-platform linking
+
+### 🔄 Phase 7: AI Detection (In Progress)
+- AI threat detection
+- Advanced analytics
+- Predictive insights
+
+## 🙏 Acknowledgments
+
+- Built with [Discord.js](https://discord.js.org/)
+- Powered by Node.js
+- Inspired by the need for better Discord security
+
+---
+
+**Made with ❤️ by Game Killer Studios**
+
+*Protecting Discord communities, one server at a time.* 🛡️
