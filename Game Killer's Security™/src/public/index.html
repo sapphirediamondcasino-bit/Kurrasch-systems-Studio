@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Killers Security™ - Advanced Discord & Roblox Protection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #a855f7;
+            --secondary: #06b6d4;
+            --accent: #ec4899;
+            --dark: #0a0a0f;
+            --darker: #050508;
+            --card: rgba(20, 20, 30, 0.6);
+            --border: rgba(168, 85, 247, 0.2);
+            --text: #e5e7eb;
+            --text-muted: #9ca3af;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        html, body {
+            height: 100%;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--darker);
+            color: var(--text);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .orbitron { font-family: 'Orbitron', monospace; }
+
+        header {
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s;
+        }
+
+        header.scrolled {
+            background: rgba(10, 10, 15, 0.95);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            transition: transform 0.3s;
+        }
+
+        .logo:hover { transform: scale(1.05); }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            font-size: 2rem;
+            position: relative;
+            filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.5));
+        }
+
+        .logo-pulse {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: var(--primary);
+            border-radius: 50%;
+            top: -5px;
+            right: -5px;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
+        }
+
+        .logo-text h1 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text p {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+            font-weight: 500;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s;
+        }
+
+        nav a:hover::after { width: 100%; }
+        nav a:hover { color: var(--secondary); }
+
+        .btn {
+            padding: 0.65rem 1.5rem;
+            border: none;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before { left: 100%; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(168, 85, 247, 0.6);
+        }
+
+        .btn-outline {
+            border: 2px solid var(--border);
+            color: var(--secondary);
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background: rgba(6, 182, 212, 0.1);
+            border-color: var(--secondary);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #16a34a);
+            color: white;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        main {
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 2rem 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-section {
+            display: none;
+            animation: fadeIn 0.4s ease-in;
+        }
+
+        .page-section.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            margin-bottom: 4rem;
+        }
+
+        .hero-text { text-align: left; }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+            letter-spacing: -2px;
+        }
+
+        .hero-text p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .badge:hover {
+            transform: translateY(-2px);
+            border-color: var(--secondary);
+        }
+
+        .api-key-container {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(20px);
+        }
+
+        .api-key-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .api-key-display {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            background: rgba(10, 10, 15, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.95rem;
+            color: var(--secondary);
+        }
+
+        .api-key-text {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .api-key-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+        }
+
+        .icon-btn:hover {
+            background: rgba(168, 85, 247, 0.1);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .connection-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .info-item {
+            background: rgba(10, 10, 15, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1rem;
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .info-value {
+            font-family: monospace;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-online {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--success);
+        }
+
+        .status-offline {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .dashboard-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s;
+        }
+
+        .dashboard-card:hover {
+            border-color: var(--secondary);
+            transform: translateY(-5px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            max-width: 500px;
+            width: 90%;
+            backdrop-filter: blur(20px);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-text {
+                text-align: center;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            nav {
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            nav {
+                display: none;
+            }
+
+            main {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header id="header">
+        <div class="header-content">
+            <div class="logo" onclick="navigateTo('home')">
+                <div class="logo-icon">
+                    🛡️
+                    <div class="logo-pulse"></div>
+                </div>
+                <div class="logo-text">
+                    <h1>Game Killers</h1>
+                    <p>Security Bot</p>
+                </div>
+            </div>
+            <nav>
+                <a onclick="navigateTo('home')">Home</a>
+                <a onclick="navigateTo('pricing')">Pricing</a>
+                <a onclick="navigateTo('documentation')">Docs</a>
+                <a onclick="navigateTo('plugin')">Plugin</a>
+                <a onclick="navigateTo('changelog')">Changelog</a>
+                <a href="https://www.gamekillerstudios.com" target="_blank">Studios</a>
+                <button class="btn btn-primary" onclick="navigateTo('login')" id="loginBtn">Login</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- HOME PAGE -->
+        <section id="home" class="page-section active">
+            <div class="hero">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1 class="orbitron">Game Killers Security™</h1>
+                        <p>Advanced AI-powered security bot protecting Discord servers and Roblox games with real-time threat detection, automated moderation, and comprehensive protection for your community.</p>
+                        <div class="hero-buttons">
+                            <button class="btn btn-primary" onclick="inviteBot()">🤖 Add Bot to Server</button>
+                            <button class="btn btn-outline" onclick="navigateTo('pricing')">💎 View Pricing</button>
+                        </div>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <div class="badge">💬 Discord Security</div>
+                            <div class="badge">🎮 Roblox Protection</div>
+                            <div class="badge">⚡ Real-Time</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: center;">
+                        <img src="https://static.wixstatic.com/media/b9bfc7_3607bf10ecf2414ebf3a9cc73b277737~mv2.webp" alt="Game Killers Security Bot" style="width: 100%; max-width: 400px; border-radius: 1.5rem; border: 2px solid var(--border); box-shadow: 0 20px 60px rgba(168, 85, 247, 0.3);" loading="lazy">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin: 4rem 0;">
+                <div style="background: var(--card); border: 1px solid var(--border); border-radius: 1.5rem; padding: 2rem; backdrop-filter: blur(20px); transition: all 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div style="font-size: 2.5rem; margin-bottom: 1.5rem; filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.5));">🛡️</div>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem; font-weight: 700;">Discord Security Scan</h3>
+                    <p style="color: var(--text-muted); line-height: 1.6;">AI-powered threat detection and automated moderation for Discord servers. Real-time protection against spam, raids, malicious bots, and toxic behavior.</p>
+                </div>
+                <div style="background: var(--card); border: 1px solid var(--border); border-radius: 1.5rem; padding: 2rem; backdrop-filter: blur(20px); transition: all 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div style="font-size: 2.5rem; margin-bottom: 1.5rem; filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.5));">🎮</div>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem; font-weight: 700;">Roblox Game Monitor</h3>
+                    <p style="color: var(--text-muted); line-height: 1.6;">Plugin-based security monitoring for Roblox games with exploit detection, player behavior analysis, and automated enforcement.</p>
+                </div>
+                <div style="background: var(--card); border: 1px solid var(--border); border-radius: 1.5rem; padding: 2rem; backdrop-filter: blur(20px); transition: all 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div style="font-size: 2.5rem; margin-bottom: 1.5rem; filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.5));">⚙️</div>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem; font-weight: 700;">Command Builder</h3>
+                    <p style="color: var(--text-muted); line-height: 1.6;">Create custom security commands and automation rules. Build complex workflows through an intuitive dashboard interface.</p>
+                </div>
+                <div style="background: var(--card); border: 1px solid var(--border); border-radius: 1.5rem; padding: 2rem; backdrop-filter: blur(20px); transition: all 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div style="font-size: 2.5rem; margin-bottom: 1.5rem; filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.5));">👁️</div>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem; font-weight: 700;">Live Monitoring</h3>
+                    <p style="color: var(--text-muted); line-height: 1.6;">Real-time dashboards showing security status, user activity, threat levels, and detailed analytics across both platforms.</p>
+                </div>
+                <div style="background: var(--card); border: 1px solid var(--border); border-radius: 1.5rem; padding: 2rem; backdrop-filter: blur(20px); transition: all 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div style="font-size: 2.5rem; margin-bottom: 1.5rem; filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.5));">🤖</div>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem; font-weight: 700;">AI Threat Detection</h3>
+                    <p style="color: var(--text-muted); line-height: 1.6;">Machine learning algorithms analyze patterns and behavior to identify threats before they become problems.</p>
+                </div>
+                <div style="background: var(--card); border: 1px solid var(--border); border-radius: 1.5rem; padding: 2rem; backdrop-filter: blur(20px); transition: all 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div style="font-size: 2.5rem; margin-bottom: 1.5rem; filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.5));">📊</div>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem; font-weight: 700;">Advanced Analytics</h3>
+                    <p style="color: var(--text-muted); line-height: 1.6;">Comprehensive security reports, threat statistics, and performance metrics. Export data for compliance audits.</p>
+                </div>
+            </div>
+
+            <!-- Stats Container -->
+            <div style="background: linear-gradient(135deg, var(--card), rgba(6, 182, 212, 0.05)); border: 1px solid var(--border); border-radius: 2rem; padding: 3rem; margin: 4rem 0; backdrop-filter: blur(20px); position: relative; overflow: hidden;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem; text-align: center; position: relative; z-index: 1;">
+                    <div>
+                        <div style="font-size: 2.5rem; font-weight: 900; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; font-family: 'Orbitron', monospace;" id="stat-servers">0+</div>
+                        <div style="color: var(--text-muted); font-size: 0.95rem; font-weight: 500;">Discord Servers Protected</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 2.5rem; font-weight: 900; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; font-family: 'Orbitron', monospace;" id="stat-games">0+</div>
+                        <div style="color: var(--text-muted); font-size: 0.95rem; font-weight: 500;">Roblox Games Secured</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 2.5rem; font-weight: 900; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; font-family: 'Orbitron', monospace;" id="stat-threats">0+</div>
+                        <div style="color: var(--text-muted); font-size: 0.95rem; font-weight: 500;">Threats Blocked</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 2.5rem; font-weight: 900; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; font-family: 'Orbitron', monospace;" id="stat-uptime">99.9%</div>
+                        <div style="color: var(--text-muted); font-size: 0.95rem; font-weight: 500;">Uptime</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PRICING PAGE -->
+        <section id="pricing" class="page-section">
+            <h1 style="text-align: center; margin-bottom: 1rem;" class="orbitron">Choose Your Plan</h1>
+            <p style="text-align: center; color: var(--text-muted); margin-bottom: 3rem;">All plans are named "Game Killers Studios" - Select your tier below</p>
+            
+            <div style="display: flex; gap: 0.5rem; justify-content: center; margin: 2rem 0; flex-wrap: wrap;" id="periodToggle">
+                <button class="period-btn active" onclick="selectPeriod('monthly')">💳 Monthly</button>
+                <button class="period-btn" onclick="selectPeriod('6months')">💎 6 Months <span style="color: var(--secondary);">(Save 10%)</span></button>
+                <button class="period-btn" onclick="selectPeriod('yearly')">⭐ Yearly <span style="color: var(--secondary);">(Save 20%)</span></button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin: 3rem 0;">
+                <div style="background: var(--card); border: 2px solid var(--border); border-radius: 1.5rem; padding: 2.5rem; text-align: center; backdrop-filter: blur(20px); transition: all 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <h3>Game Killers Studios</h3>
+                    <p style="color: var(--text-muted);">Starter</p>
+                    <div style="font-size: 3rem; font-weight: 900; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 1.5rem 0; font-family: 'Orbitron', monospace;" data-base="0" data-period="monthly">FREE</div>
+                    <button class="btn btn-outline" style="width: 100%;" onclick="alert('You are on the free starter plan!')">Get Started</button>
+                    <ul style="list-style: none; margin-top: 2rem; text-align: left;">
+                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--secondary);">✓</span>Basic Discord Protection</li>
+                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--secondary);">✓</span>Up to 100 Members</li>
+                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--secondary);">✓</span>Basic Commands</li>
+                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--secondary);">✓</span>Community Support</li>
+                    </ul>
+                </div>
+
+                <div style="background: var(--card); border: 2px solid var(--border); border-radius: 1.5rem; padding: 2.5rem; text-align: center; backdrop-filter: blur(20px); transition: all 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <h3>Game Killers Studios</h3>
+                    <p style="color: var(--text-muted);">Creator</p>
+                    <div class="price" style="font-size: 3rem; font-weight: 900; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 1.5rem 0; font-family: 'Orbitron', monospace;" data-base="4.99" data-period="monthly">$4.99<span style="font-size: 1rem;">/mo</span></div>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="alert('Upgrade feature coming soon!')">Upgrade Now</button>
+                    <ul style="list-style: none; margin-top: 2rem; text-align: left;">
+                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--secondary);">✓</span>Everything in Starter</li>
+                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--secondary);">✓</span>Up to 1,000 Members</li>
+                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--secondary);">✓</span>Advanced Moderation</li>
+                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--secondary);">✓</span>Custom Commands</li>
+                    </ul>
+                </div>
+
+                <div style="background: var(--card); border: 2px solid var(--primary); border-radius: 1.5rem; padding: 2.5rem; text-align: center; backdrop-filter: blur(20px); position: relative; transform: scale(1.05); box-shadow: 0 20px 60px rgba(168, 85, 247, 0.3);">
+                    <div style="position: absolute; top: -15px; right: 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Most Popular</div>
+                    <h3>Game Killers Studios</h3>
+                    <p style="color: var(--text-muted);">Pro</p>
+                    <div class="price" style="font-size: 3rem; font-weight: 900; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 1.5rem 0; font-family: 'Orbitron', monospace;" data-base="9.99" data-period="monthly">$9.99<span style="font-size: 1rem;">/mo</span></div>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="alert('Upgrade feature coming soon!')">Upgrade to Pro</button>
+                    <ul style="list-style: none; margin-top: 2rem; text-align: left;">
+                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--secondary);">✓</span>Everything in Creator</li>
+                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--secondary);">✓</span>Unlimited Members</li>
+                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--secondary);">✓</span>AI Threat Detection</li>
+                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--secondary);">✓</span>Roblox Plugin Access</li>
+                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--secondary);">✓</span>Priority Support</li>
+                    </ul>
+                </div>
+
+                <div style="background: var(--card); border: 2px solid var(--border); border-radius: 1.5rem; padding: 2.5rem; text-align: center; backdrop-filter: blur(20px); transition: all 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <h3>Game Killers Studios</h3>
+                    <p style="color: var(--text-muted);">Enterprise</p>
+                    <div class="price" style="font-size: 3rem; font-weight: 900; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 1.5rem 0; font-family: 'Orbitron', monospace;" data-base="29.99" data-period="monthly">$29.99<span style="font-size: 1rem;">/mo</span></div>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="alert('Upgrade feature coming soon!')">Go Enterprise</button>
+                    <ul style="list-style: none; margin-top: 2rem; text-align: left;">
+                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--secondary);">✓</span>Everything in Pro</li>
+                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--secondary);">✓</span>Multiple Servers/Games</li>
+                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--secondary);">✓</span>Custom Integration</li>
+                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--secondary);">✓</span>White Label Option</li>
+                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--secondary);">✓</span>API Access</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- DOCUMENTATION PAGE -->
+        <section id="documentation" class="page-section">
+            <h1 style="margin-bottom: 2rem;" class="orbitron">Documentation Center</h1>
+            <div style="display: grid; grid-template-columns: 250px 1fr; gap: 2rem;">
+                <div style="background: var(--card); border: 1px solid var(--border); border-radius: 1.5rem; padding: 2rem; height: fit-content; backdrop-filter: blur(20px);">
+                    <h4 style="font-size: 0.875rem; font-weight: 600; text-transform: uppercase; color: var(--secondary); margin-bottom: 1.5rem;">Quick Links</h4>
+                    <ul style="list-style: none;">
+                        <li style="margin-bottom: 1rem;"><a onclick="showDocsSection('getting-started')" style="color: var(--text-muted); cursor: pointer; transition: color 0.3s;">Getting Started</a></li>
+                        <li style="margin-bottom: 1rem;"><a onclick="showDocsSection('commands')" style="color: var(--text-muted); cursor: pointer; transition: color 0.3s;">Commands</a></li>
+                        <li style="margin-bottom: 1rem;"><a onclick="showDocsSection('roblox')" style="color: var(--text-muted); cursor: pointer; transition: color 0.3s;">Roblox Setup</a></li>
+                        <li style="margin-bottom: 1rem;"><a onclick="showDocsSection('faq')" style="color: var(--text-muted); cursor: pointer; transition: color 0.3s;">FAQ</a></li>
+                    </ul>
+                </div>
+                <div style="background: var(--card); border: 1px solid var(--border); border-radius: 1.5rem; padding: 2.5rem; backdrop-filter: blur(20px);">
+                    <div id="getting-started" class="docs-section" style="display: block;">
+                        <h2 style="margin-bottom: 1.5rem;">Getting Started</h2>
+                        <p style="color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.7;">Welcome to Game Killers Security Bot! Follow these steps to get started:</p>
+                        <div style="background: rgba(10, 10, 15, 0.5); border: 1px solid var(--border); border-radius: 1rem; padding: 1.5rem; font-family: monospace; color: var(--secondary); line-height: 1.8; margin: 1.5rem 0;">Step 1: Invite the bot using the button on the homepage
+Step 2: Run /gk help to see all available commands
+Step 3: Configure your security settings in dashboard
+Step 4: Set up automated rules and moderation
+Step 5: Monitor threats in real-time from dashboard</div>
+                    </div>
+                    <div id="commands" class="docs-section" style="display: none;">
+                        <h2 style="margin-bottom: 1.5rem;">Command Reference</h2>
+                        <div style="background: rgba(10, 10, 15, 0.5); border: 1px solid var(--border); border-radius: 1rem; padding: 1.5rem; font-family: monospace; color: var(--secondary); line-height: 1.8;">/gk help          → Show all available commands
+/gk stats         → Display server security statistics
+/gk report        → Report an issue to moderators
+/gk info          → Show bot version and info
+/gk setup         → Configure security settings
+/gk scan          → Run manual security scan
+/gk ban user      → Ban a user from server
+/gk kick user     → Remove user from server
+/gk logs          → View security logs
+/gk settings      → Adjust bot settings</div>
+                    </div>
+                    <div id="roblox" class="docs-section" style="display: none;">
+                        <h2 style="margin-bottom: 1.5rem;">Roblox Plugin Setup</h2>
+                        <p style="color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.7;">The Roblox plugin provides advanced security monitoring for your games:</p>
+                        <div style="background: rgba(10, 10, 15, 0.5); border: 1px solid var(--border); border-radius: 1rem; padding: 1.5rem; font-family: monospace; color: var(--secondary); line-height: 1.8;">Step 1: Download plugin from Roblox Creator Store
+Step 2: Insert into ServerScriptService
+Step 3: Connect with your bot API key from dashboard
+Step 4: Configure detection sensitivity levels
+Step 5: Monitor exploits in real-time
+Step 6: Set automatic ban thresholds</div>
+                    </div>
+                    <div id="faq" class="docs-section" style="display: none;">
+                        <h2 style="margin-bottom: 1.5rem;">Frequently Asked Questions</h2>
+                        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem;">
+                            <h3 style="margin-bottom: 0.75rem;">How does the bot detect threats?</h3>
+                            <p style="color: var(--text-muted); line-height: 1.6;">The bot uses AI algorithms to analyze user behavior and chat patterns in real-time.</p>
+                        </div>
+                        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem;">
+                            <h3 style="margin-bottom: 0.75rem;">Can I customize the bot?</h3>
+                            <p style="color: var(--text-muted); line-height: 1.6;">Yes! You can create custom rules and configure responses through your dashboard.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PLUGIN PAGE -->
+        <section id="plugin" class="page-section">
+            <h1 style="margin-bottom: 1rem; text-align: center;" class="orbitron">Roblox Plugin</h1>
+            <p style="text-align: center; color: var(--text-muted); margin-bottom: 3rem; font-size: 1.1rem;">Protect your Roblox games from exploits and cheaters</p>
+            
+            <div style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(6, 182, 212, 0.2)); border: 2px solid var(--primary); border-radius: 2rem; padding: 3rem; text-align: center; margin-bottom: 3rem; backdrop-filter: blur(20px);">
+                <div style="font-size: 4rem; margin-bottom: 1.5rem;">📦</div>
+                <h2 style="font-size: 2rem; margin-bottom: 1rem;">Download Plugin</h2>
+                <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 1.05rem;">Latest Version: v2.5.3 • Released January 15, 2025</p>
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 2rem;" onclick="downloadPlugin()">⬇️ Download Plugin</button>
+                    <button class="btn btn-outline" style="font-size: 1.1rem; padding: 1rem 2rem;" onclick="window.open('https://create.roblox.com/store/asset/134784209048721/Game-Killer-Security-Plugin', '_blank')">🛒 Creator Store</button>
+                </div>
+            </div>
+
+            <h2 style="text-align: center; margin-bottom: 2rem; font-size: 1.8rem;" class="orbitron">Installation Guide</h2>
+            <div style="background: var(--card); border: 1px solid var(--border); border-radius: 1.5rem; padding: 2.5rem; margin-bottom: 3rem; backdrop-filter: blur(20px);">
+                <div style="display: grid; gap: 2rem;">
+                    <div style="display: flex; gap: 1.5rem;">
+                        <div style="flex-shrink: 0; width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold;">1</div>
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 0.75rem; font-size: 1.2rem;">Download the Plugin</h3>
+                            <p style="color: var(--text-muted); line-height: 1.6;">Click the download button above to get the latest version from the Roblox Creator Store.</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 1.5rem;">
+                        <div style="flex-shrink: 0; width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold;">2</div>
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 0.75rem; font-size: 1.2rem;">Open Roblox Studio</h3>
+                            <p style="color: var(--text-muted); line-height: 1.6;">Launch Roblox Studio and open the game you want to protect.</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 1.5rem;">
+                        <div style="flex-shrink: 0; width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold;">3</div>
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 0.75rem; font-size: 1.2rem;">Get Your API Key</h3>
+                            <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem;">Login to your dashboard and copy your unique API key.</p>
+                            <button class="btn btn-primary" onclick="if(userData.user) { navigateTo('dashboard'); } else { navigateTo('login'); }">🔑 Get API Key</button>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 1.5rem;">
+                        <div style="flex-shrink: 0; width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold;">4</div>
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 0.75rem; font-size: 1.2rem;">Configure & Deploy</h3>
+                            <p style="color: var(--text-muted); line-height: 1.6;">Paste your API key in the Configuration module and publish your game!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHANGELOG PAGE -->
+        <section id="changelog" class="page-section">
+            <h1 style="margin-bottom: 2rem; text-align: center;" class="orbitron">Changelog</h1>
+            <p style="text-align: center; color: var(--text-muted); margin-bottom: 4rem;">Track all updates, improvements, and new features</p>
+            
+            <div style="max-width: 900px; margin: 0 auto;">
+                <div style="border-left: 3px solid var(--primary); padding-left: 2rem; margin-bottom: 3rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                        <h3 style="font-size: 1.5rem;">v2.5.3</h3>
+                        <span style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">LATEST</span>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Released January 15, 2025</p>
+                    <ul style="list-style: none; color: var(--text-muted);">
+                        <li style="margin-bottom: 0.75rem; padding-left: 1.5rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--primary);">▸</span>
+                            Improved exploit detection accuracy by 15%
+                        </li>
+                        <li style="margin-bottom: 0.75rem; padding-left: 1.5rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--primary);">▸</span>
+                            Added new speed hack detection algorithms
+                        </li>
+                        <li style="margin-bottom: 0.75rem; padding-left: 1.5rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--primary);">▸</span>
+                            Fixed plugin compatibility with Studio 2025
+                        </li>
+                        <li style="margin-bottom: 0.75rem; padding-left: 1.5rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--primary);">▸</span>
+                            Enhanced performance monitoring for large games
+                        </li>
+                        <li style="margin-bottom: 0.75rem; padding-left: 1.5rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--primary);">▸</span>
+                            Updated Discord bot to support new API features
+                        </li>
+                    </ul>
+                </div>
+
+                <div style="border-left: 3px solid rgba(168, 85, 247, 0.5); padding-left: 2rem; margin-bottom: 3rem;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.75rem;">v2.5.2</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Released January 10, 2025</p>
+                    <ul style="list-style: none; color: var(--text-muted);">
+                        <li style="margin-bottom: 0.75rem; padding-left: 1.5rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--primary);">▸</span>
+                            New AI-powered spam detection system
+                        </li>
+                        <li style="margin-bottom: 0.75rem; padding-left: 1.5rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--primary);">▸</span>
+                            Advanced raid protection mechanisms
+                        </li>
+                        <li style="margin-bottom: 0.75rem; padding-left: 1.5rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--primary);">▸</span>
+                            Improved custom command builder interface
+                        </li>
+                        <li style="margin-bottom: 0.75rem; padding-left: 1.5rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--primary);">▸</span>
+                            Better integration with Discord API v10
+                        </li>
+                    </ul>
+                </div>
+
+                <div style="border-left: 3px solid rgba(168, 85, 247, 0.3); padding-left: 2rem; margin-bottom: 3rem;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.75rem;">v2.5.1</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Released January 5, 2025</p>
+                    <ul style="list-style: none; color: var(--text-muted);">
+                        <li style="margin-bottom: 0.75rem; padding-left: 1.5rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--primary);">▸</span>
+                            Complete UI/UX overhaul for dashboards
+                        </li>
+                        <li style="margin-bottom: 0.75rem; padding-left: 1.5rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--primary);">▸</span>
+                            New real-time monitoring widgets
+                        </li>
+                        <li style="margin-bottom: 0.75rem; padding-left: 1.5rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--primary);">▸</span>
+                            Enhanced mobile responsiveness
+                        </li>
+                        <li style="margin-bottom: 0.75rem; padding-left: 1.5rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--primary);">▸</span>
+                            Dark/Light theme toggle
+                        </li>
+                    </ul>
+                </div>
+
+                <div style="border-left: 3px solid rgba(168, 85, 247, 0.2); padding-left: 2rem;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.75rem;">v2.5.0</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Released December 20, 2024</p>
+                    <ul style="list-style: none; color: var(--text-muted);">
+                        <li style="margin-bottom: 0.75rem; padding-left: 1.5rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--primary);">▸</span>
+                            Major security improvements
+                        </li>
+                        <li style="margin-bottom: 0.75rem; padding-left: 1.5rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--primary);">▸</span>
+                            Added API key management system
+                        </li>
+                        <li style="margin-bottom: 0.75rem; padding-left: 1.5rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--primary);">▸</span>
+                            Introduced multi-server support
+                        </li>
+                        <li style="margin-bottom: 0.75rem; padding-left: 1.5rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--primary);">▸</span>
+                            Performance optimizations
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- DASHBOARD PAGE -->
+        <section id="dashboard" class="page-section">
+            <div id="dashboardContent"></div>
+        </section>
+
+        <!-- LOGIN PAGE -->
+        <section id="login" class="page-section">
+            <div style="max-width: 500px; margin: 4rem auto; background: var(--card); border: 1px solid var(--border); border-radius: 2rem; padding: 3rem; text-align: center; backdrop-filter: blur(20px);">
+                <div style="font-size: 4rem; margin-bottom: 2rem; filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.5));">🛡️</div>
+                <h2 style="font-size: 2rem; margin-bottom: 1rem;">Access Security HQ</h2>
+                <p style="color: var(--text-muted); margin-bottom: 2rem;">Login with Discord to manage your server and game security</p>
+                <button class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1rem; font-size: 1.05rem;" onclick="discordLogin()">💬 Continue with Discord</button>
+            </div>
+        </section>
+    </main>
+
+    <footer style="background: rgba(10, 10, 15, 0.95); border-top: 1px solid var(--border); margin-top: 6rem; padding: 3rem 2rem; position: relative; z-index: 1;">
+        <div style="max-width: 1400px; margin: 0 auto;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem; margin-bottom: 3rem;">
+                <div>
+                    <h4 style="font-weight: 700; margin-bottom: 1.5rem; color: var(--primary);">🛡️ Game Killers</h4>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6;">Advanced security bot for Discord and Roblox communities.</p>
+                </div>
+                <div>
+                    <h4 style="font-weight: 700; margin-bottom: 1.5rem; color: var(--primary);">Features</h4>
+                    <ul style="list-style: none;">
+                        <li style="margin-bottom: 0.75rem;"><a onclick="navigateTo('home')" style="color: var(--text-muted); text-decoration: none; cursor: pointer; transition: color 0.3s;">Discord Security</a></li>
+                        <li style="margin-bottom: 0.75rem;"><a onclick="navigateTo('home')" style="color: var(--text-muted); text-decoration: none; cursor: pointer; transition: color 0.3s;">Roblox Protection</a></li>
+                        <li style="margin-bottom: 0.75rem;"><a onclick="navigateTo('home')" style="color: var(--text-muted); text-decoration: none; cursor: pointer; transition: color 0.3s;">Live Monitoring</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="font-weight: 700; margin-bottom: 1.5rem; color: var(--primary);">Support</h4>
+                    <ul style="list-style: none;">
+                        <li style="margin-bottom: 0.75rem;"><a onclick="navigateTo('documentation')" style="color: var(--text-muted); text-decoration: none; cursor: pointer; transition: color 0.3s;">Documentation</a></li>
+                        <li style="margin-bottom: 0.75rem;"><a href="https://discord.gg/gamekilllers" target="_blank" style="color: var(--text-muted); text-decoration: none; transition: color 0.3s;">Discord Server</a></li>
+                        <li style="margin-bottom: 0.75rem;"><a href="mailto:support@gamekillerstudios.com" style="color: var(--text-muted); text-decoration: none; transition: color 0.3s;">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="font-weight: 700; margin-bottom: 1.5rem; color: var(--primary);">Legal</h4>
+                    <ul style="list-style: none;">
+                        <li style="margin-bottom: 0.75rem;"><a href="https://www.gamekillerstudios.com/privacy" target="_blank" style="color: var(--text-muted); text-decoration: none; transition: color 0.3s;">Privacy Policy</a></li>
+                        <li style="margin-bottom: 0.75rem;"><a href="https://www.gamekillerstudios.com/terms" target="_blank" style="color: var(--text-muted); text-decoration: none; transition: color 0.3s;">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div style="border-top: 1px solid var(--border); padding-top: 2rem; text-align: center; color: var(--text-muted);">
+                <p>© 2025 Game Killers Studios — All Rights Reserved.</p>
+                <p style="margin-top: 0.5rem;"><a href="https://www.gamekillerstudios.com" target="_blank" style="color: var(--secondary); text-decoration: none;">Visit Game Killers Studios →</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Reset API Key Modal -->
+    <div id="resetModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⚠️ Reset API Key</h3>
+                <p style="color: var(--text-muted);">Are you sure you want to reset your API key? This action cannot be undone.</p>
+            </div>
+            <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 0.75rem; padding: 1rem; margin: 1.5rem 0;">
+                <p style="color: var(--danger); font-size: 0.9rem; line-height: 1.6;">
+                    <strong>Warning:</strong> Your old API key will stop working immediately. You'll need to update all your integrations with the new key.
+                </p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" style="flex: 1;" onclick="closeResetModal()">Cancel</button>
+                <button class="btn btn-danger" style="flex: 1;" onclick="confirmResetKey()">Reset Key</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const DISCORD_CLIENT_ID = '1039233755040186400';
+        const BOT_API_URL = 'http://23.27.211.92:25230';
+        const STUDIOS_PORT = '25671';
+        const BOT_PORT = '25852';
+        const REDIRECT_URI = window.location.origin + '/';
+
+        // Session storage
+        let userData = {
+            user: null,
+            guilds: [],
+            subscription: null,
+            selectedServer: null,
+            apiKey: null
+        };
+
+        let apiKeyVisible = false;
+        let currentServerId = null;
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Navigation
+        function navigateTo(page) {
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            const section = document.getElementById(page);
+            if (section) {
+                section.classList.add('active');
+            }
+            window.scrollTo(0, 0);
+
+            if (page === 'dashboard' && userData.user) {
+                loadDashboard();
+            }
+        }
+
+        // Invite bot
+        function inviteBot() {
+            const scopes = ['bot'];
+            const permissions = 8;
+            const inviteUrl = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&permissions=${permissions}&scope=${scopes.join('%20')}`;
+            window.open(inviteUrl, '_blank');
+        }
+
+        // Discord login
+        function discordLogin() {
+            const scopes = ['identify', 'guilds'];
+            const loginUrl = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${scopes.join('%20')}`;
+            window.location.href = loginUrl;
+        }
+
+        // Handle OAuth callback
+        async function handleOAuthCallback() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            
+            if (code) {
+                try {
+                    const response = await fetch(`${BOT_API_URL}/api/auth/discord`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ code, redirect_uri: REDIRECT_URI })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        userData.user = data.user;
+                        userData.guilds = data.guilds || [];
+                        userData.subscription = data.subscription;
+                        
+                        document.getElementById('loginBtn').textContent = userData.user.username;
+                        
+                        navigateTo('dashboard');
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }
+                } catch (error) {
+                    console.error('Authentication error:', error);
+                    alert('Failed to authenticate. Please try again.');
+                }
+            }
+        }
+
+        // Load dashboard
+        async function loadDashboard() {
+            const dashboardContent = document.getElementById('dashboardContent');
+            
+            if (!userData.user) {
+                dashboardContent.innerHTML = `
+                    <div style="text-align: center; padding: 3rem;">
+                        <h3 style="margin-bottom: 1rem;">Please Login</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 2rem;">You need to login to access the dashboard.</p>
+                        <button class="btn btn-primary" onclick="navigateTo('login')">Login with Discord</button>
+                    </div>
+                `;
+                return;
+            }
+
+            // Get server from guilds or use mock
+            const server = userData.guilds[0] || { id: 'demo', name: 'Demo Server' };
+            currentServerId = server.id;
+
+            dashboardContent.innerHTML = `
+                <h1 style="margin-bottom: 2rem;" class="orbitron">Security Dashboard</h1>
+                <p style="color: var(--text-muted); margin-bottom: 3rem;">Managing: <strong>${server.name}</strong></p>
+                
+                <!-- API Key Section -->
+                <div class="api-key-container">
+                    <div class="api-key-header">
+                        <h3 style="font-size: 1.25rem;">🔑 API Key</h3>
+                        <span class="status-badge status-online">
+                            <span class="status-dot"></span>
+                            Active
+                        </span>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Use this key to connect your Roblox plugin</p>
+                    
+                    <div class="api-key-display">
+                        <span class="api-key-text" id="apiKeyText">Loading...</span>
+                        <div class="api-key-actions">
+                            <button class="icon-btn" onclick="toggleApiKey()" title="Toggle visibility">
+                                <span id="eyeIcon">👁️</span>
+                            </button>
+                            <button class="icon-btn" onclick="copyApiKey()" title="Copy to clipboard">
+                                📋
+                            </button>
+                            <button class="icon-btn" onclick="openResetModal()" title="Reset API key">
+                                🔄
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Connection Info -->
+                    <div class="connection-info">
+                        <div class="info-item">
+                            <div class="info-label">Server IP</div>
+                            <div class="info-value">23.27.211.92</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Bot Port</div>
+                            <div class="info-value">${BOT_PORT}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Studios Port</div>
+                            <div class="info-value">${STUDIOS_PORT}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Protocol</div>
+                            <div class="info-value">HTTP/HTTPS</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3 style="margin-bottom: 1rem;">Threats Blocked</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-size: 2.5rem; font-weight: 900; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">0</div>
+                            <div style="font-size: 2rem;">🛡️</div>
+                        </div>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Last 30 days</p>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <h3 style="margin-bottom: 1rem;">Active Members</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-size: 2.5rem; font-weight: 900; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">0</div>
+                            <div style="font-size: 2rem;">👥</div>
+                        </div>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Currently online</p>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <h3 style="margin-bottom: 1rem;">Bot Uptime</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-size: 2.5rem; font-weight: 900; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">99.9%</div>
+                            <div style="font-size: 2rem;">⚡</div>
+                        </div>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Last 30 days</p>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div style="margin-top: 3rem;">
+                    <h2 style="margin-bottom: 1.5rem;" class="orbitron">Quick Actions</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                        <button class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1rem;" onclick="navigateTo('plugin')">
+                            📦 Download Plugin
+                        </button>
+                        <button class="btn btn-outline" style="width: 100%; justify-content: center; padding: 1rem;" onclick="window.open('https://discord.gg/gamekilllers', '_blank')">
+                            💬 Join Discord
+                        </button>
+                        <button class="btn btn-outline" style="width: 100%; justify-content: center; padding: 1rem;" onclick="navigateTo('documentation')">
+                            📚 View Docs
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // Load API key
+            loadApiKey();
+        }
+
+        // Load API key
+        async function loadApiKey() {
+            try {
+                const response = await fetch(`${BOT_API_URL}/api/server/${currentServerId}/apikey`);
+                if (response.ok) {
+                    const data = await response.json();
+                    userData.apiKey = data.apiKey;
+                    updateApiKeyDisplay();
+                } else {
+                    // Generate new key if not found
+                    await generateNewApiKey();
+                }
+            } catch (error) {
+                console.error('Error loading API key:', error);
+                document.getElementById('apiKeyText').textContent = 'Error loading key';
+            }
+        }
+
+        // Update API key display
+        function updateApiKeyDisplay() {
+            const apiKeyText = document.getElementById('apiKeyText');
+            if (!userData.apiKey) {
+                apiKeyText.textContent = 'No key generated';
+                return;
+            }
+
+            if (apiKeyVisible) {
+                apiKeyText.textContent = userData.apiKey;
+            } else {
+                // Show first 8 and last 8 characters
+                const first = userData.apiKey.substring(0, 8);
+                const last = userData.apiKey.substring(userData.apiKey.length - 8);
+                apiKeyText.textContent = `${first}${'•'.repeat(16)}${last}`;
+            }
+        }
+
+        // Toggle API key visibility
+        function toggleApiKey() {
+            apiKeyVisible = !apiKeyVisible;
+            const eyeIcon = document.getElementById('eyeIcon');
+            eyeIcon.textContent = apiKeyVisible ? '🙈' : '👁️';
+            updateApiKeyDisplay();
+        }
+
+        // Copy API key
+        async function copyApiKey() {
+            if (!userData.apiKey) {
+                alert('No API key to copy');
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(userData.apiKey);
+                
+                // Show success feedback
+                const btn = event.target.closest('.icon-btn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✓';
+                btn.style.background = 'rgba(34, 197, 94, 0.2)';
+                btn.style.borderColor = 'var(--success)';
+                btn.style.color = 'var(--success)';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = '';
+                    btn.style.borderColor = '';
+                    btn.style.color = '';
+                }, 2000);
+            } catch (error) {
+                console.error('Failed to copy:', error);
+                alert('Failed to copy API key');
+            }
+        }
+
+        // Open reset modal
+        function openResetModal() {
+            document.getElementById('resetModal').classList.add('active');
+        }
+
+        // Close reset modal
+        function closeResetModal() {
+            document.getElementById('resetModal').classList.remove('active');
+        }
+
+        // Confirm reset key
+        async function confirmResetKey() {
+            closeResetModal();
+            
+            try {
+                const response = await fetch(`${BOT_API_URL}/api/server/${currentServerId}/apikey/reset`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    userData.apiKey = data.newApiKey;
+                    apiKeyVisible = true; // Show new key
+                    updateApiKeyDisplay();
+                    
+                    // Show success message
+                    showNotification('API Key Reset Successfully', 'Your new API key is now active. Update your integrations.', 'success');
+                } else {
+                    throw new Error('Failed to reset key');
+                }
+            } catch (error) {
+                console.error('Error resetting key:', error);
+                showNotification('Reset Failed', 'Failed to reset API key. Please try again.', 'error');
+            }
+        }
+
+        // Generate new API key
+        async function generateNewApiKey() {
+            try {
+                const response = await fetch(`${BOT_API_URL}/api/server/${currentServerId}/apikey/generate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    userData.apiKey = data.apiKey;
+                    updateApiKeyDisplay();
+                }
+            } catch (error) {
+                console.error('Error generating key:', error);
+            }
+        }
+
+        // Show notification
+        function showNotification(title, message, type = 'info') {
+            const colors = {
+                success: 'var(--success)',
+                error: 'var(--danger)',
+                info: 'var(--secondary)'
+            };
+
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 2rem;
+                right: 2rem;
+                background: var(--card);
+                border: 2px solid ${colors[type]};
+                border-radius: 1rem;
+                padding: 1.5rem;
+                max-width: 400px;
+                z-index: 10000;
+                backdrop-filter: blur(20px);
+                animation: slideIn 0.3s ease-out;
+            `;
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: start; gap: 1rem;">
+                    <div style="font-size: 1.5rem;">${type === 'success' ? '✓' : type === 'error' ? '✗' : 'ℹ'}</div>
+                    <div style="flex: 1;">
+                        <h4 style="margin-bottom: 0.5rem; color: ${colors[type]};">${title}</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">${message}</p>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+
+        // Documentation sections
+        function showDocsSection(sectionId) {
+            document.querySelectorAll('.docs-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.style.display = 'block';
+            }
+        }
+
+        // Pricing period selection
+        function selectPeriod(period) {
+            selectedPeriod = period;
+            
+            document.querySelectorAll('.period-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.price').forEach(priceEl => {
+                const basePrice = parseFloat(priceEl.getAttribute('data-base'));
+                if (basePrice === 0 || isNaN(basePrice)) return;
+                
+                let finalPrice = basePrice;
+                let periodText = '/mo';
+                
+                if (period === '6months') {
+                    finalPrice = (basePrice * 6 * 0.9).toFixed(2);
+                    periodText = '/6mo';
+                } else if (period === 'yearly') {
+                    finalPrice = (basePrice * 12 * 0.8).toFixed(2);
+                    periodText = '/yr';
+                }
+                
+                priceEl.innerHTML = `${finalPrice}<span style="font-size: 1rem;">${periodText}</span>`;
+            });
+        }
+
+        // Fetch stats
+        async function fetchStats() {
+            try {
+                const response = await fetch(`${BOT_API_URL}/api/stats`);
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    document.getElementById('stat-servers').textContent = 
+                        (data.discord?.serversProtected || 0) + '+';
+                    document.getElementById('stat-games').textContent = 
+                        (data.roblox?.gamesProtected || 0) + '+';
+                    document.getElementById('stat-threats').textContent = 
+                        (data.discord?.threatsBlocked || 0) + '+';
+                    document.getElementById('stat-uptime').textContent = 
+                        (data.uptime || '99.9%');
+                }
+            } catch (error) {
+                console.log('Stats API not available');
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            handleOAuthCallback();
+            fetchStats();
+        });
+
+        // Close modal on outside click
+        document.getElementById('resetModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeResetModal();
+            }
+        });
+
+        // Pricing period state
+        let selectedPeriod = 'monthly';
+
+        // Download plugin from bot server
+        function downloadPlugin() {
+            const downloadUrl = `${BOT_API_URL}/downloads/GameKillers_Security_Plugin.rbxm`;
+            
+            // Create a temporary link and trigger download
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = 'GameKillers_Security_Plugin.rbxm';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Show success notification
+            showNotification(
+                'Download Started',
+                'Your plugin download has started. Check your downloads folder.',
+                'success'
+            );
+        }
+    </script>
+
+    <style>
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+        }
+
+        .period-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .period-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: transparent;
+            color: white;
+        }
+
+        .period-btn:hover {
+            border-color: var(--secondary);
+        }
+    </style>
+</body>
+</html>

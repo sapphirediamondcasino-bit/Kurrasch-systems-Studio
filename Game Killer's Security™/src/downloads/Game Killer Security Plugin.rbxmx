@@ -1,0 +1,1407 @@
+<roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
+	<External>null</External>
+	<External>nil</External>
+	<Item class="Folder" referent="RBXC3067605CACF4D81BCF181F59B906E42">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<string name="Name">Game Killer Security Plugin</string>
+			<int64 name="SourceAssetId">-1</int64>
+			<BinaryString name="Tags"></BinaryString>
+		</Properties>
+		<Item class="Script" referent="RBX80E2AB698AE948CAA8E1B1E2C18970D8">
+			<Properties>
+				<ProtectedString name="Source"><![CDATA[--[[
+    Game Killers Security™ - Main Security Module
+    Version: 2.5.3
+    Created by: Game Killers Studios
+    
+    This script provides comprehensive anti-exploit protection for your Roblox game.
+    Features: Speed hack detection, teleport prevention, exploit monitoring, auto-ban system
+    
+    Commands: Type /gk help in chat to see all available commands
+]]
+
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+-- Import Configuration
+local Config = require(script.Configuration)
+
+-- Initialize API
+local API_URL = Config.API_URL
+local API_KEY = Config.API_KEY
+
+-- Storage
+local PlayerData = {}
+local BannedPlayers = {}
+local ThreatLog = {}
+local Statistics = {
+	ThreatsDetected = 0,
+	PlayersKicked = 0,
+	PlayersBanned = 0,
+	GameStartTime = os.time()
+}
+
+-- ========================================
+-- UTILITY FUNCTIONS
+-- ========================================
+
+local function Log(message, level)
+	level = level or "INFO"
+	local timestamp = os.date("%H:%M:%S")
+	print(string.format("[Game Killers Security] [%s] %s: %s", timestamp, level, message))
+end
+
+local function SendToAPI(endpoint, data)
+	if not API_KEY or API_KEY == "YOUR_API_KEY_HERE" or API_KEY == "" then
+		return false
+	end
+
+	data.apiKey = API_KEY
+
+	local success, result = pcall(function()
+		local url = API_URL .. endpoint
+		local payload = HttpService:JSONEncode(data)
+
+		local response = HttpService:PostAsync(url, payload, Enum.HttpContentType.ApplicationJson, false)
+
+		return HttpService:JSONDecode(response)
+	end)
+
+	if not success then
+		warn("[Game Killers Security] API Error:", result)
+		return false
+	end
+
+	return result
+end
+
+local function ReportThreat(player, threatType, details, severity)
+	Statistics.ThreatsDetected = Statistics.ThreatsDetected + 1
+
+	local threatData = {
+		gameId = game.GameId,
+		gameName = game.Name,
+		placeId = game.PlaceId,
+		userId = player.UserId,
+		username = player.Name,
+		displayName = player.DisplayName,
+		threatType = threatType,
+		details = details,
+		severity = severity or "Medium",
+		timestamp = os.time()
+	}
+
+	table.insert(ThreatLog, threatData)
+
+	-- Keep log size manageable
+	if #ThreatLog > Config.MAX_THREAT_LOG_SIZE then
+		table.remove(ThreatLog, 1)
+	end
+
+	if Config.DISCORD_ALERTS and API_KEY and API_KEY ~= "YOUR_API_KEY_HERE" then
+		SendToAPI("/api/roblox/threat", threatData)
+	end
+
+	Log(string.format("Threat detected: %s - Player: %s (%s)", threatType, player.Name, details), "WARN")
+end
+
+local function CheckBanStatus(player)
+	if not API_KEY or API_KEY == "YOUR_API_KEY_HERE" or API_KEY == "" then
+		return false
+	end
+
+	local response = SendToAPI("/api/roblox/ban-status", {
+		userId = player.UserId,
+		username = player.Name,
+		gameId = game.GameId
+	})
+
+	if response and response.banned then
+		return true, response.reason or "Violation of security policies"
+	end
+
+	return false, nil
+end
+
+local function BanPlayer(player, reason, violations)
+	Statistics.PlayersBanned = Statistics.PlayersBanned + 1
+	BannedPlayers[player.UserId] = {
+		Username = player.Name,
+		Reason = reason,
+		Timestamp = os.time(),
+		Violations = violations
+	}
+
+	if API_KEY and API_KEY ~= "YOUR_API_KEY_HERE" then
+		SendToAPI("/api/roblox/ban-report", {
+			gameId = game.GameId,
+			gameName = game.Name,
+			placeId = game.PlaceId,
+			userId = player.UserId,
+			username = player.Name,
+			displayName = player.DisplayName,
+			reason = reason,
+			violations = violations,
+			timestamp = os.time()
+		})
+	end
+
+	player:Kick(string.format(Config.BAN_MESSAGE, reason))
+	Log(string.format("Player banned: %s - Reason: %s", player.Name, reason), "WARN")
+end
+
+local function KickPlayer(player, reason)
+	Statistics.PlayersKicked = Statistics.PlayersKicked + 1
+	player:Kick(string.format(Config.KICK_MESSAGE, reason))
+	Log(string.format("Player kicked: %s - Reason: %s", player.Name, reason), "WARN")
+end
+
+-- ========================================
+-- DETECTION HELPER FUNCTIONS
+-- ========================================
+
+local function IsPlayerInVehicle(player)
+	if not player.Character then return false end
+	local humanoid = player.Character:FindFirstChild("Humanoid")
+	if humanoid and humanoid.SeatPart then
+		return true
+	end
+	return false
+end
+
+local function IsWhitelisted(player)
+	return Config.IsWhitelisted(player.UserId)
+end
+
+-- ========================================
+-- EXPLOIT DETECTION FUNCTIONS
+-- ========================================
+
+local function DetectSpeedHack(player)
+	if not Config.DETECT_SPEED then return end
+	if not player.Character then return end
+	if IsPlayerInVehicle(player) then return end
+	if IsWhitelisted(player) then return end
+
+	local humanoid = player.Character:FindFirstChild("Humanoid")
+	if not humanoid then return end
+
+	local data = PlayerData[player.UserId]
+	if not data then return end
+
+	local currentSpeed = humanoid.WalkSpeed
+	local expectedSpeed = Config.DEFAULT_WALKSPEED
+
+	if currentSpeed > expectedSpeed + Config.SPEED_THRESHOLD then
+		data.speedViolations = data.speedViolations + 1
+
+		ReportThreat(player, "Speed Hack", 
+			string.format("WalkSpeed: %.1f (Expected: %.1f)", currentSpeed, expectedSpeed), 
+			"High")
+
+		humanoid.WalkSpeed = expectedSpeed
+
+		if data.speedViolations >= Config.MAX_VIOLATIONS then
+			if Config.AUTO_BAN then
+				BanPlayer(player, "Speed Hack Detection", data.speedViolations)
+			else
+				KickPlayer(player, "Speed Hack Detection")
+			end
+		end
+	end
+end
+
+local function DetectTeleportHack(player)
+	if not Config.DETECT_TELEPORT then return end
+	if not player.Character then return end
+	if IsPlayerInVehicle(player) then return end
+	if IsWhitelisted(player) then return end
+
+	local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
+	if not humanoidRootPart then return end
+
+	local data = PlayerData[player.UserId]
+	if not data or not data.lastPosition then
+		data.lastPosition = humanoidRootPart.Position
+		data.lastPositionTime = tick()
+		return
+	end
+
+	local currentPosition = humanoidRootPart.Position
+	local distance = (currentPosition - data.lastPosition).Magnitude
+	local timeDelta = tick() - (data.lastPositionTime or tick())
+
+	local maxDistance = Config.MAX_DISTANCE_PER_SECOND * timeDelta
+
+	if distance > maxDistance and timeDelta > 0.5 then
+		data.teleportViolations = data.teleportViolations + 1
+
+		ReportThreat(player, "Teleport Hack", 
+			string.format("Distance: %.1f studs in %.2fs (Max: %.1f)", distance, timeDelta, maxDistance), 
+			"High")
+
+		humanoidRootPart.CFrame = CFrame.new(data.lastPosition)
+
+		if data.teleportViolations >= Config.MAX_VIOLATIONS then
+			if Config.AUTO_BAN then
+				BanPlayer(player, "Teleport Hack Detection", data.teleportViolations)
+			else
+				KickPlayer(player, "Teleport Hack Detection")
+			end
+		end
+	end
+
+	data.lastPosition = currentPosition
+	data.lastPositionTime = tick()
+end
+
+local function DetectJumpExploit(player)
+	if not Config.DETECT_JUMP then return end
+	if not player.Character then return end
+	if IsWhitelisted(player) then return end
+
+	local humanoid = player.Character:FindFirstChild("Humanoid")
+	if not humanoid then return end
+
+	local data = PlayerData[player.UserId]
+	if not data then return end
+
+	local currentJumpPower = humanoid.JumpPower or humanoid.JumpHeight
+	local expectedJump = Config.DEFAULT_JUMPPOWER
+
+	if currentJumpPower > expectedJump + Config.JUMP_THRESHOLD then
+		data.jumpViolations = data.jumpViolations + 1
+
+		ReportThreat(player, "Jump Exploit", 
+			string.format("JumpPower: %.1f (Expected: %.1f)", currentJumpPower, expectedJump), 
+			"Medium")
+
+		if humanoid.JumpPower then
+			humanoid.JumpPower = expectedJump
+		else
+			humanoid.JumpHeight = expectedJump
+		end
+
+		if data.jumpViolations >= Config.MAX_VIOLATIONS * 2 then
+			if Config.AUTO_BAN then
+				BanPlayer(player, "Jump Exploit Detection", data.jumpViolations)
+			else
+				KickPlayer(player, "Jump Exploit Detection")
+			end
+		end
+	end
+end
+
+local function DetectHealthExploit(player)
+	if not Config.DETECT_HEALTH then return end
+	if not player.Character then return end
+	if IsWhitelisted(player) then return end
+
+	local humanoid = player.Character:FindFirstChild("Humanoid")
+	if not humanoid then return end
+
+	local data = PlayerData[player.UserId]
+	if not data then return end
+
+	if humanoid.MaxHealth > Config.MAX_HEALTH then
+		data.healthViolations = data.healthViolations + 1
+
+		ReportThreat(player, "Health Exploit", 
+			string.format("MaxHealth: %.1f (Expected: %.1f)", humanoid.MaxHealth, Config.MAX_HEALTH), 
+			"Medium")
+
+		humanoid.MaxHealth = Config.MAX_HEALTH
+		humanoid.Health = math.min(humanoid.Health, Config.MAX_HEALTH)
+
+		if data.healthViolations >= Config.MAX_VIOLATIONS then
+			if Config.AUTO_BAN then
+				BanPlayer(player, "Health Exploit Detection", data.healthViolations)
+			else
+				KickPlayer(player, "Health Exploit Detection")
+			end
+		end
+	end
+end
+
+-- ========================================
+-- PLAYER MANAGEMENT
+-- ========================================
+
+local function OnPlayerAdded(player)
+	local isBanned, reason = CheckBanStatus(player)
+	if isBanned then
+		player:Kick(string.format(Config.BAN_MESSAGE, reason))
+		return
+	end
+
+	if BannedPlayers[player.UserId] then
+		player:Kick(string.format(Config.BAN_MESSAGE, BannedPlayers[player.UserId].Reason))
+		return
+	end
+
+	PlayerData[player.UserId] = {
+		joinTime = tick(),
+		speedViolations = 0,
+		teleportViolations = 0,
+		jumpViolations = 0,
+		healthViolations = 0,
+		lastPosition = nil,
+		lastPositionTime = tick()
+	}
+
+	Log(string.format("Player joined: %s (ID: %d)", player.Name, player.UserId), "INFO")
+
+	player.CharacterAdded:Connect(function(character)
+		wait(1)
+
+		local humanoid = character:WaitForChild("Humanoid", 5)
+		if humanoid then
+			humanoid.WalkSpeed = Config.DEFAULT_WALKSPEED
+			humanoid.JumpPower = Config.DEFAULT_JUMPPOWER
+			humanoid.MaxHealth = Config.MAX_HEALTH
+			humanoid.Health = Config.MAX_HEALTH
+
+			humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+				DetectSpeedHack(player)
+			end)
+
+			humanoid:GetPropertyChangedSignal("JumpPower"):Connect(function()
+				DetectJumpExploit(player)
+			end)
+
+			humanoid:GetPropertyChangedSignal("MaxHealth"):Connect(function()
+				DetectHealthExploit(player)
+			end)
+		end
+
+		local hrp = character:WaitForChild("HumanoidRootPart", 5)
+		if hrp and PlayerData[player.UserId] then
+			PlayerData[player.UserId].lastPosition = hrp.Position
+			PlayerData[player.UserId].lastPositionTime = tick()
+		end
+	end)
+end
+
+local function OnPlayerRemoving(player)
+	PlayerData[player.UserId] = nil
+	Log(string.format("Player left: %s", player.Name), "INFO")
+end
+
+-- ========================================
+-- MAIN DETECTION LOOP
+-- ========================================
+
+local lastCheck = tick()
+RunService.Heartbeat:Connect(function()
+	local now = tick()
+
+	if now - lastCheck >= Config.CHECK_INTERVAL then
+		lastCheck = now
+
+		for _, player in ipairs(Players:GetPlayers()) do
+			if player.Character then
+				DetectTeleportHack(player)
+			end
+		end
+	end
+end)
+
+-- ========================================
+-- COMMAND SYSTEM
+-- ========================================
+
+local CommandPrefix = "/gk"
+
+local function SendCommandToAPI(commandName, args, player)
+	if not API_KEY or API_KEY == "YOUR_API_KEY_HERE" or API_KEY == "" then
+		return {
+			success = false,
+			message = "⚠️ API not configured. Commands unavailable.\n\nGet your API key from:\nhttps://www.gamekillersecuritybot.com/dashboard"
+		}
+	end
+
+	local response = SendToAPI("/api/roblox/command", {
+		command = commandName,
+		args = args,
+		userId = player.UserId,
+		username = player.Name,
+		gameId = game.GameId
+	})
+
+	return response or { success = false, message = "Failed to connect to bot API" }
+end
+
+local function ShowMessage(player, message)
+	local gui = player:FindFirstChild("PlayerGui")
+	if not gui then return end
+
+	local existing = gui:FindFirstChild("GKMessage")
+	if existing then existing:Destroy() end
+
+	local screenGui = Instance.new("ScreenGui")
+	screenGui.Name = "GKMessage"
+	screenGui.ResetOnSpawn = false
+	screenGui.Parent = gui
+
+	local frame = Instance.new("Frame")
+	frame.Size = UDim2.new(0, 500, 0, 200)
+	frame.Position = UDim2.new(0.5, -250, 0.1, 0)
+	frame.BackgroundColor3 = Color3.fromRGB(10, 10, 15)
+	frame.BorderSizePixel = 0
+	frame.Parent = screenGui
+
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 12)
+	corner.Parent = frame
+
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = Color3.fromRGB(168, 85, 247)
+	stroke.Thickness = 2
+	stroke.Parent = frame
+
+	local textLabel = Instance.new("TextLabel")
+	textLabel.Size = UDim2.new(1, -20, 1, -20)
+	textLabel.Position = UDim2.new(0, 10, 0, 10)
+	textLabel.BackgroundTransparency = 1
+	textLabel.Text = message
+	textLabel.TextColor3 = Color3.fromRGB(229, 231, 235)
+	textLabel.TextSize = 16
+	textLabel.TextWrapped = true
+	textLabel.TextXAlignment = Enum.TextXAlignment.Left
+	textLabel.TextYAlignment = Enum.TextYAlignment.Top
+	textLabel.Font = Enum.Font.Code
+	textLabel.Parent = frame
+
+	task.delay(10, function()
+		if screenGui and screenGui.Parent then
+			screenGui:Destroy()
+		end
+	end)
+end
+
+local Commands = {
+	help = function(player, args)
+		local helpText = "🛡️ Game Killers Security™ Commands\n" ..
+			"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" ..
+			"/gk help - Show this message\n" ..
+			"/gk stats - View bot & game statistics\n" ..
+			"/gk check <player> - Check player status\n" ..
+			"/gk ban <player> <reason> - Ban a player\n" ..
+			"/gk unban <player> - Unban a player\n" ..
+			"/gk kick <player> <reason> - Kick a player\n" ..
+			"/gk warn <player> <reason> - Warn a player\n" ..
+			"/gk whitelist add <player> - Add to whitelist\n" ..
+			"/gk whitelist remove <player> - Remove from whitelist\n" ..
+			"/gk reset <player> - Reset violations\n" ..
+			"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+		ShowMessage(player, helpText)
+	end,
+
+	stats = function(player, args)
+		local uptime = os.time() - Statistics.GameStartTime
+		local response = SendCommandToAPI("stats", args, player)
+
+		local statsText = response.message or string.format(
+			"📊 Statistics\n" ..
+				"━━━━━━━━━━━━━━━━━━━━\n" ..
+				"Threats Detected: %d\n" ..
+				"Players Kicked: %d\n" ..
+				"Players Banned: %d\n" ..
+				"Game Uptime: %d seconds\n" ..
+				"Active Players: %d\n" ..
+				"Status: Protected ✅",
+			Statistics.ThreatsDetected,
+			Statistics.PlayersKicked,
+			Statistics.PlayersBanned,
+			uptime,
+			#Players:GetPlayers()
+		)
+
+		ShowMessage(player, statsText)
+	end,
+
+	check = function(player, args)
+		if not args[1] then
+			ShowMessage(player, "❌ Usage: /gk check <player>")
+			return
+		end
+
+		local response = SendCommandToAPI("check", args, player)
+		ShowMessage(player, response.message or "Failed to check player status")
+	end,
+
+	ban = function(player, args)
+		if not args[1] then
+			ShowMessage(player, "❌ Usage: /gk ban <player> <reason>")
+			return
+		end
+
+		local targetName = args[1]
+		local target = Players:FindFirstChild(targetName)
+
+		if not target then
+			ShowMessage(player, "❌ Player not found: " .. targetName)
+			return
+		end
+
+		local reason = table.concat(args, " ", 2) or "No reason provided"
+
+		SendCommandToAPI("ban", args, player)
+		BanPlayer(target, reason, 0)
+		ShowMessage(player, "✅ Banned " .. targetName)
+	end,
+
+	unban = function(player, args)
+		if not args[1] then
+			ShowMessage(player, "❌ Usage: /gk unban <player>")
+			return
+		end
+
+		local response = SendCommandToAPI("unban", args, player)
+
+		local targetName = args[1]
+		for userId, _ in pairs(BannedPlayers) do
+			if BannedPlayers[userId].Username == targetName then
+				BannedPlayers[userId] = nil
+				break
+			end
+		end
+
+		ShowMessage(player, response.message or ("✅ Unbanned " .. args[1]))
+	end,
+
+	kick = function(player, args)
+		if not args[1] then
+			ShowMessage(player, "❌ Usage: /gk kick <player> <reason>")
+			return
+		end
+
+		local targetName = args[1]
+		local target = Players:FindFirstChild(targetName)
+
+		if not target then
+			ShowMessage(player, "❌ Player not found: " .. targetName)
+			return
+		end
+
+		local reason = table.concat(args, " ", 2) or "No reason provided"
+
+		SendCommandToAPI("kick", args, player)
+		KickPlayer(target, reason)
+		ShowMessage(player, "✅ Kicked " .. targetName)
+	end,
+
+	warn = function(player, args)
+		if not args[1] or not args[2] then
+			ShowMessage(player, "❌ Usage: /gk warn <player> <reason>")
+			return
+		end
+
+		local response = SendCommandToAPI("warn", args, player)
+		ShowMessage(player, response.message or ("⚠️ Warned " .. args[1]))
+	end,
+
+	whitelist = function(player, args)
+		if not args[1] or not args[2] then
+			ShowMessage(player, "❌ Usage: /gk whitelist <add/remove> <player>")
+			return
+		end
+
+		local response = SendCommandToAPI("whitelist", args, player)
+		ShowMessage(player, response.message or "Whitelist updated")
+	end,
+
+	reset = function(player, args)
+		if not args[1] then
+			ShowMessage(player, "❌ Usage: /gk reset <player>")
+			return
+		end
+
+		local targetName = args[1]
+		local target = Players:FindFirstChild(targetName)
+
+		if not target or not PlayerData[target.UserId] then
+			ShowMessage(player, "❌ Player not found: " .. targetName)
+			return
+		end
+
+		PlayerData[target.UserId].speedViolations = 0
+		PlayerData[target.UserId].teleportViolations = 0
+		PlayerData[target.UserId].jumpViolations = 0
+		PlayerData[target.UserId].healthViolations = 0
+
+		ShowMessage(player, "✅ Reset violations for " .. targetName)
+		Log(string.format("Violations reset for %s by %s", targetName, player.Name), "INFO")
+	end
+}
+
+local function HandleCommand(player, message)
+	if not string.sub(message, 1, #CommandPrefix) == CommandPrefix then
+		return
+	end
+
+	if not Config.IsAdmin(player.UserId) then
+		ShowMessage(player, "❌ You don't have permission to use this command")
+		return
+	end
+
+	local args = {}
+	for word in string.gmatch(message, "%S+") do
+		table.insert(args, word)
+	end
+
+	table.remove(args, 1)
+
+	if #args == 0 then
+		Commands.help(player, {})
+		return
+	end
+
+	local commandName = args[1]:lower()
+	table.remove(args, 1)
+
+	if Commands[commandName] then
+		Commands[commandName](player, args)
+	else
+		ShowMessage(player, "❌ Unknown command: " .. commandName .. "\nUse /gk help for available commands")
+	end
+end
+
+-- ========================================
+-- API KEY SETUP PROMPT
+-- ========================================
+
+local function PromptForAPIKey()
+	local setupGui = Instance.new("ScreenGui")
+	setupGui.Name = "GameKillersSetup"
+	setupGui.ResetOnSpawn = false
+	setupGui.IgnoreGuiInset = true
+	setupGui.DisplayOrder = 999
+
+	local bg = Instance.new("Frame")
+	bg.Size = UDim2.new(1, 0, 1, 0)
+	bg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	bg.BackgroundTransparency = 0.5
+	bg.BorderSizePixel = 0
+	bg.Parent = setupGui
+
+	local frame = Instance.new("Frame")
+	frame.Size = UDim2.new(0, 600, 0, 450)
+	frame.Position = UDim2.new(0.5, -300, 0.5, -225)
+	frame.BackgroundColor3 = Color3.fromRGB(10, 10, 15)
+	frame.BorderSizePixel = 0
+	frame.Parent = setupGui
+
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 16)
+	corner.Parent = frame
+
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = Color3.fromRGB(168, 85, 247)
+	stroke.Thickness = 3
+	stroke.Parent = frame
+
+	local icon = Instance.new("TextLabel")
+	icon.Size = UDim2.new(0, 100, 0, 100)
+	icon.Position = UDim2.new(0.5, -50, 0, 20)
+	icon.BackgroundTransparency = 1
+	icon.Text = "🛡️"
+	icon.TextSize = 64
+	icon.Font = Enum.Font.Code
+	icon.Parent = frame
+
+	local title = Instance.new("TextLabel")
+	title.Size = UDim2.new(1, -40, 0, 40)
+	title.Position = UDim2.new(0, 20, 0, 130)
+	title.BackgroundTransparency = 1
+	title.Text = "Game Killers Security™ Setup"
+	title.TextColor3 = Color3.fromRGB(168, 85, 247)
+	title.TextSize = 24
+	title.Font = Enum.Font.GothamBold
+	title.Parent = frame
+
+	local message = Instance.new("TextLabel")
+	message.Size = UDim2.new(1, -40, 0, 100)
+	message.Position = UDim2.new(0, 20, 0, 180)
+	message.BackgroundTransparency = 1
+	message.Text = "⚠️ API Key Not Configured!\n\nThis plugin needs an API key to connect your game to the Discord bot.\n\nGet your server's unique API key from the dashboard."
+	message.TextColor3 = Color3.fromRGB(229, 231, 235)
+	message.TextSize = 16
+	message.Font = Enum.Font.Gotham
+	message.TextWrapped = true
+	message.TextXAlignment = Enum.TextXAlignment.Center
+	message.TextYAlignment = Enum.TextYAlignment.Top
+	message.Parent = frame
+
+	local instructions = Instance.new("TextLabel")
+	instructions.Size = UDim2.new(1, -40, 0, 80)
+	instructions.Position = UDim2.new(0, 20, 0, 300)
+	instructions.BackgroundTransparency = 1
+	instructions.Text = "📝 Quick Steps:\n1. Go to www.gamekillersecuritybot.com/dashboard\n2. Login with Discord and select your server\n3. Copy your server's API key\n4. Paste it in Configuration.lua (line 27)"
+	instructions.TextColor3 = Color3.fromRGB(156, 163, 175)
+	instructions.TextSize = 14
+	instructions.Font = Enum.Font.Code
+	instructions.TextWrapped = true
+	instructions.TextXAlignment = Enum.TextXAlignment.Left
+	instructions.TextYAlignment = Enum.TextYAlignment.Top
+	instructions.Parent = frame
+
+	local dismissBtn = Instance.new("TextButton")
+	dismissBtn.Size = UDim2.new(0, 200, 0, 40)
+	dismissBtn.Position = UDim2.new(0.5, -100, 1, -60)
+	dismissBtn.BackgroundColor3 = Color3.fromRGB(168, 85, 247)
+	dismissBtn.BorderSizePixel = 0
+	dismissBtn.Text = "I'll Configure It Later"
+	dismissBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	dismissBtn.TextSize = 16
+	dismissBtn.Font = Enum.Font.GothamBold
+	dismissBtn.Parent = frame
+
+	local btnCorner = Instance.new("UICorner")
+	btnCorner.CornerRadius = UDim.new(0, 8)
+	btnCorner.Parent = dismissBtn
+
+	dismissBtn.MouseButton1Click:Connect(function()
+		setupGui:Destroy()
+	end)
+
+	for _, player in ipairs(Players:GetPlayers()) do
+		local playerGui = player:FindFirstChild("PlayerGui")
+		if playerGui then
+			setupGui:Clone().Parent = playerGui
+		end
+	end
+
+	Players.PlayerAdded:Connect(function(player)
+		player:WaitForChild("PlayerGui")
+		task.wait(1)
+		setupGui:Clone().Parent = player.PlayerGui
+	end)
+
+	warn("[Game Killers Security] ⚠️ SETUP REQUIRED: API key not configured!")
+	warn("[Game Killers Security] Get your key at: https://www.gamekillersecuritybot.com/dashboard")
+	warn("[Game Killers Security] Security features are LIMITED until configuration is complete.")
+end
+
+-- ========================================
+-- INITIALIZE
+-- ========================================
+
+Log("=== Game Killers Security™ v2.5.3 ===", "INFO")
+Log("Initializing security systems...", "INFO")
+
+if not API_KEY or API_KEY == "YOUR_API_KEY_HERE" or API_KEY == "" then
+	warn("[Game Killers Security] ⚠️ API Key not configured!")
+	warn("[Game Killers Security] Plugin will run in OFFLINE mode with limited features.")
+	warn("[Game Killers Security] Get your API key from: https://www.gamekillersecuritybot.com/dashboard")
+	PromptForAPIKey()
+
+	Log("Running in OFFLINE mode - Basic exploit detection only", "WARN")
+	Log("Discord integration, commands, and ban sync are DISABLED", "WARN")
+else
+	if Config.Validate() then
+		Log("Configuration validated successfully!", "INFO")
+
+		-- Send startup notification
+		local startupResponse = SendToAPI("/api/roblox/startup", {
+			gameId = game.GameId,
+			placeId = game.PlaceId,
+			gameName = game.Name,
+			maxPlayers = Players.MaxPlayers,
+			timestamp = os.time(),
+			version = "2.5.3"
+		})
+
+		if startupResponse and startupResponse.success then
+			Log("✅ Connected to Discord bot successfully!", "INFO")
+			Log("Guild ID: " .. tostring(startupResponse.guildId), "INFO")
+		else
+			warn("[Game Killers Security] Failed to connect to Discord bot")
+			warn("[Game Killers Security] Check your API key and internet connection")
+		end
+	else
+		warn("[Game Killers Security] ❌ Configuration validation failed! Check your settings.")
+	end
+end
+
+-- Connect events
+Players.PlayerAdded:Connect(OnPlayerAdded)
+Players.PlayerRemoving:Connect(OnPlayerRemoving)
+
+-- Handle existing players
+for _, player in ipairs(Players:GetPlayers()) do
+	OnPlayerAdded(player)
+end
+
+-- Admin command listener
+Players.PlayerAdded:Connect(function(player)
+	player.Chatted:Connect(function(message)
+		HandleCommand(player, message)
+	end)
+end)
+
+-- Handle existing players for commands
+for _, player in ipairs(Players:GetPlayers()) do
+	player.Chatted:Connect(function(message)
+		HandleCommand(player, message)
+	end)
+end
+
+if API_KEY and API_KEY ~= "YOUR_API_KEY_HERE" and API_KEY ~= "" then
+	Log("🛡️ Security systems online and protecting your game!", "INFO")
+	Log("💬 Commands ready! Type /gk help in chat for available commands", "INFO")
+	Log("📊 Monitor threats at: https://www.gamekillersecuritybot.com/dashboard", "INFO")
+else
+	Log("⚠️ Running in OFFLINE mode - Configure API key for full features", "WARN")
+end]]></ProtectedString>
+				<bool name="Disabled">false</bool>
+				<Content name="LinkedSource"><null></null></Content>
+				<token name="RunContext">0</token>
+				<string name="ScriptGuid">{5177E7E2-292A-4C80-9DCA-31A5FBED5306}</string>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<string name="Name">gamekillersecurityPlugin</string>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+			</Properties>
+		</Item>
+		<Item class="Script" referent="RBXA6A19FC0ABEE4AA98EFAFD61EBDC3032">
+			<Properties>
+				<ProtectedString name="Source"><![CDATA[--[[
+    Game Killers Security™ - Configuration Module
+    Version: 2.5.3
+    
+    ⚠️ IMPORTANT: Configure your server's API key below!
+    
+    HOW TO GET YOUR API KEY:
+    1. Go to https://www.gamekillersecuritybot.com/dashboard
+    2. Login with Discord
+    3. Select your Discord server
+    4. Copy the API key shown on the dashboard
+    5. Paste it below on line 29
+    
+    Your API key is unique to YOUR Discord server!
+]]
+
+local Configuration = {}
+
+-- ========================================
+-- ⚠️ REQUIRED: API KEY CONFIGURATION
+-- ========================================
+--[[
+    🔑 YOUR SERVER'S API KEY
+    
+    Each Discord server has its own unique API key.
+    This connects your Roblox game to YOUR Discord server's bot.
+    
+    Example: Configuration.API_KEY = "gks_1234567890_1234567890_abc123def456"
+]]
+
+Configuration.API_URL = "http://23.27.211.92:25230"
+Configuration.API_KEY = "YOUR_API_KEY_HERE"  -- ⚠️ PASTE YOUR SERVER'S API KEY HERE!
+
+-- Quick validation check
+if Configuration.API_KEY == "YOUR_API_KEY_HERE" or Configuration.API_KEY == "" then
+	warn("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	warn("⚠️  GAME KILLERS SECURITY - SETUP REQUIRED")
+	warn("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	warn("❌ API Key not configured!")
+	warn("")
+	warn("📋 To get YOUR SERVER'S API key:")
+	warn("   1. Visit: https://www.gamekillersecuritybot.com/dashboard")
+	warn("   2. Login with Discord")
+	warn("   3. Select YOUR Discord server from the list")
+	warn("   4. Copy the unique API key shown")
+	warn("   5. Paste it in Configuration.lua on line 29")
+	warn("")
+	warn("💡 Each Discord server has its own unique API key!")
+	warn("🛡️ Security features will be LIMITED until configured")
+	warn("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+end
+
+-- ========================================
+-- SENSITIVITY SETTINGS
+-- ========================================
+-- Options: "Low", "Medium", "High"
+-- Low = More lenient, fewer false positives
+-- Medium = Balanced (recommended for most games)
+-- High = Very strict, may have false positives
+Configuration.SENSITIVITY = "Medium"
+
+-- Detection thresholds based on sensitivity
+local THRESHOLDS = {
+	Low = {
+		SPEED_THRESHOLD = 10,
+		MAX_DISTANCE_PER_SECOND = 200,
+		JUMP_THRESHOLD = 30,
+		MAX_VIOLATIONS = 5,
+		CHECK_INTERVAL = 2
+	},
+	Medium = {
+		SPEED_THRESHOLD = 5,
+		MAX_DISTANCE_PER_SECOND = 150,
+		JUMP_THRESHOLD = 20,
+		MAX_VIOLATIONS = 3,
+		CHECK_INTERVAL = 1
+	},
+	High = {
+		SPEED_THRESHOLD = 2,
+		MAX_DISTANCE_PER_SECOND = 100,
+		JUMP_THRESHOLD = 10,
+		MAX_VIOLATIONS = 2,
+		CHECK_INTERVAL = 0.5
+	}
+}
+
+-- Apply selected sensitivity
+local selectedThreshold = THRESHOLDS[Configuration.SENSITIVITY] or THRESHOLDS.Medium
+
+Configuration.SPEED_THRESHOLD = selectedThreshold.SPEED_THRESHOLD
+Configuration.MAX_DISTANCE_PER_SECOND = selectedThreshold.MAX_DISTANCE_PER_SECOND
+Configuration.JUMP_THRESHOLD = selectedThreshold.JUMP_THRESHOLD
+Configuration.MAX_VIOLATIONS = selectedThreshold.MAX_VIOLATIONS
+Configuration.CHECK_INTERVAL = selectedThreshold.CHECK_INTERVAL
+
+-- ========================================
+-- DEFAULT CHARACTER VALUES
+-- ========================================
+Configuration.DEFAULT_WALKSPEED = 16
+Configuration.DEFAULT_JUMPPOWER = 50
+Configuration.MAX_HEALTH = 100
+
+-- ========================================
+-- BAN & KICK SETTINGS
+-- ========================================
+Configuration.AUTO_BAN = true  -- Automatically ban detected exploiters
+Configuration.BAN_MESSAGE = "🛡️ Game Killers Security™\n\nYou have been banned from this game.\nReason: %s\n\nAppeal at: discord.gg/gamekilllers"
+Configuration.KICK_MESSAGE = "🛡️ Game Killers Security™\n\nYou have been removed from this game.\nReason: %s"
+
+-- ========================================
+-- DISCORD INTEGRATION
+-- ========================================
+-- Note: These features require a valid API key
+Configuration.DISCORD_ALERTS = true  -- Send real-time alerts to Discord
+Configuration.ALERT_ON_JOIN = false  -- Alert when suspicious players join
+Configuration.ALERT_ON_THREAT = true  -- Alert on threat detection
+
+-- ========================================
+-- WHITELIST
+-- ========================================
+-- Add user IDs of players who should bypass all checks
+-- Perfect for developers, testers, and trusted staff
+-- Example: 123456789, 987654321
+Configuration.WHITELIST = {
+	-- Add your Roblox User IDs here
+}
+
+-- ========================================
+-- ADMIN COMMANDS
+-- ========================================
+-- User IDs who can use /gk commands in-game
+-- These users can ban, kick, and manage security
+Configuration.ADMIN_IDS = {
+	-- Add your Roblox User IDs here
+}
+
+-- ========================================
+-- ADVANCED SETTINGS
+-- ========================================
+Configuration.LOG_LEVEL = "INFO"  -- Options: "INFO", "WARN", "ERROR"
+Configuration.MAX_THREAT_LOG_SIZE = 100  -- Maximum threats to store in memory
+Configuration.STATS_UPDATE_INTERVAL = 300  -- Send stats to API every 5 minutes (seconds)
+
+-- ========================================
+-- DETECTION TOGGLES
+-- ========================================
+-- Enable or disable specific detection systems
+Configuration.DETECT_SPEED = true      -- Speed hack detection
+Configuration.DETECT_TELEPORT = true   -- Teleport hack detection
+Configuration.DETECT_JUMP = true       -- Jump exploit detection
+Configuration.DETECT_HEALTH = true     -- Health exploit detection
+Configuration.DETECT_FLY = false       -- Fly hack detection (coming soon)
+
+-- ========================================
+-- CUSTOM MESSAGES
+-- ========================================
+Configuration.THREAT_DETECTED_MESSAGE = "⚠️ Security violation detected. Adjusting parameters..."
+Configuration.WARNING_MESSAGE = "⚠️ Warning: Suspicious activity detected. Further violations will result in removal."
+
+-- ========================================
+-- PERFORMANCE SETTINGS
+-- ========================================
+Configuration.OPTIMIZATION_MODE = false  -- Enable for large servers (reduces check frequency)
+Configuration.MAX_PLAYERS_FOR_FULL_MONITORING = 50  -- Above this, optimization mode auto-enables
+
+-- ========================================
+-- VALIDATION FUNCTION
+-- ========================================
+function Configuration.Validate()
+	local valid = true
+	local warnings = {}
+
+	-- Check API key format
+	if Configuration.API_KEY == "YOUR_API_KEY_HERE" or Configuration.API_KEY == "" then
+		table.insert(warnings, "⚠️ API Key not set! Get your server's key from: https://www.gamekillersecuritybot.com/dashboard")
+		valid = false
+	elseif not string.match(Configuration.API_KEY, "^gks_") then
+		table.insert(warnings, "⚠️ API Key format invalid! Make sure you copied the complete key.")
+		valid = false
+	end
+
+	-- Check API URL
+	if not Configuration.API_URL or Configuration.API_URL == "" then
+		table.insert(warnings, "⚠️ API URL not configured!")
+		valid = false
+	end
+
+	-- Check sensitivity
+	if not THRESHOLDS[Configuration.SENSITIVITY] then
+		table.insert(warnings, "⚠️ Invalid sensitivity level! Using Medium.")
+		Configuration.SENSITIVITY = "Medium"
+	end
+
+	-- Validate thresholds
+	if Configuration.SPEED_THRESHOLD < 0 then
+		table.insert(warnings, "⚠️ Invalid speed threshold! Using default.")
+		Configuration.SPEED_THRESHOLD = 5
+	end
+
+	if Configuration.MAX_VIOLATIONS < 1 then
+		table.insert(warnings, "⚠️ Invalid max violations! Using default.")
+		Configuration.MAX_VIOLATIONS = 3
+	end
+
+	-- Print warnings
+	if #warnings > 0 then
+		warn("\n=== Game Killers Security Configuration Warnings ===")
+		for _, warning in ipairs(warnings) do
+			warn(warning)
+		end
+		warn("===================================================\n")
+	end
+
+	return valid
+end
+
+-- ========================================
+-- HELPER FUNCTIONS
+-- ========================================
+
+function Configuration.GetSensitivityInfo()
+	return {
+		Current = Configuration.SENSITIVITY,
+		SpeedThreshold = Configuration.SPEED_THRESHOLD,
+		TeleportThreshold = Configuration.MAX_DISTANCE_PER_SECOND,
+		JumpThreshold = Configuration.JUMP_THRESHOLD,
+		MaxViolations = Configuration.MAX_VIOLATIONS,
+		CheckInterval = Configuration.CHECK_INTERVAL
+	}
+end
+
+function Configuration.SetSensitivity(level)
+	if THRESHOLDS[level] then
+		Configuration.SENSITIVITY = level
+		local threshold = THRESHOLDS[level]
+		Configuration.SPEED_THRESHOLD = threshold.SPEED_THRESHOLD
+		Configuration.MAX_DISTANCE_PER_SECOND = threshold.MAX_DISTANCE_PER_SECOND
+		Configuration.JUMP_THRESHOLD = threshold.JUMP_THRESHOLD
+		Configuration.MAX_VIOLATIONS = threshold.MAX_VIOLATIONS
+		Configuration.CHECK_INTERVAL = threshold.CHECK_INTERVAL
+		return true
+	end
+	return false
+end
+
+function Configuration.IsWhitelisted(userId)
+	for _, id in ipairs(Configuration.WHITELIST) do
+		if id == userId then
+			return true
+		end
+	end
+	return false
+end
+
+function Configuration.IsAdmin(userId)
+	for _, id in ipairs(Configuration.ADMIN_IDS) do
+		if id == userId then
+			return true
+		end
+	end
+	return false
+end
+
+function Configuration.AddToWhitelist(userId)
+	if not Configuration.IsWhitelisted(userId) then
+		table.insert(Configuration.WHITELIST, userId)
+		return true
+	end
+	return false
+end
+
+function Configuration.RemoveFromWhitelist(userId)
+	for i, id in ipairs(Configuration.WHITELIST) do
+		if id == userId then
+			table.remove(Configuration.WHITELIST, i)
+			return true
+		end
+	end
+	return false
+end
+
+function Configuration.AddAdmin(userId)
+	if not Configuration.IsAdmin(userId) then
+		table.insert(Configuration.ADMIN_IDS, userId)
+		return true
+	end
+	return false
+end
+
+function Configuration.RemoveAdmin(userId)
+	for i, id in ipairs(Configuration.ADMIN_IDS) do
+		if id == userId then
+			table.remove(Configuration.ADMIN_IDS, i)
+			return true
+		end
+	end
+	return false
+end
+
+-- ========================================
+-- API KEY INFO
+-- ========================================
+
+function Configuration.GetAPIKeyInfo()
+	if Configuration.API_KEY == "YOUR_API_KEY_HERE" or Configuration.API_KEY == "" then
+		return {
+			configured = false,
+			message = "API key not configured. Get yours at: https://www.gamekillersecuritybot.com/dashboard"
+		}
+	end
+
+	-- Extract basic info from key
+	local parts = {}
+	for part in string.gmatch(Configuration.API_KEY, "[^_]+") do
+		table.insert(parts, part)
+	end
+
+	if #parts < 3 or parts[1] ~= "gks" then
+		return {
+			configured = true,
+			valid = false,
+			message = "API key format is invalid. Please check and reconfigure."
+		}
+	end
+
+	return {
+		configured = true,
+		valid = true,
+		guildId = parts[2],
+		message = "API key configured successfully!"
+	}
+end
+
+-- ========================================
+-- EXPORT
+-- ========================================
+return Configuration
+]]></ProtectedString>
+				<bool name="Disabled">false</bool>
+				<Content name="LinkedSource"><null></null></Content>
+				<token name="RunContext">0</token>
+				<string name="ScriptGuid">{F2880E22-C4B3-4387-B935-A608B01E90A0}</string>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<string name="Name">ConfigurationModule</string>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+			</Properties>
+		</Item>
+		<Item class="Script" referent="RBX0D9EAB8608A543738BEB4FEC001DD57E">
+			<Properties>
+				<ProtectedString name="Source"><![CDATA[--[[
+    Game Killers Security™ - API Key Tester
+    Version: 2.5.3
+    
+    This script tests your API connection and validates your API key.
+    Run this once to verify your setup, then you can delete it.
+]]
+
+local HttpService = game:GetService("HttpService")
+
+-- Import Configuration
+local Config = require(script.Parent.Configuration)
+
+print("\n" .. string.rep("=", 60))
+print("🛡️  GAME KILLERS SECURITY™ - API KEY TESTER")
+print(string.rep("=", 60))
+
+-- Check if API key is set
+if not Config.API_KEY or Config.API_KEY == "" or Config.API_KEY == "YOUR_API_KEY_HERE" then
+	warn("\n❌ API KEY NOT CONFIGURED!")
+	warn("\n📋 To get your API key:")
+	warn("   1. Visit: https://www.gamekillersecuritybot.com/dashboard")
+	warn("   2. Login with Discord")
+	warn("   3. Select your server")
+	warn("   4. Copy your API key")
+	warn("   5. Paste it into Configuration.lua (line 27)")
+	warn("\n" .. string.rep("=", 60) .. "\n")
+	return
+end
+
+print("\n✅ API Key found: " .. string.sub(Config.API_KEY, 1, 20) .. "...")
+
+-- Test API connection
+print("\n🔄 Testing API connection...")
+print("   Endpoint: " .. Config.API_URL)
+
+local success, result = pcall(function()
+	local url = Config.API_URL .. "/api/health"
+	local response = HttpService:GetAsync(url)
+	return HttpService:JSONDecode(response)
+end)
+
+if success then
+	print("✅ API Server is online!")
+	print("   Status: " .. (result.status or "unknown"))
+	print("   Uptime: " .. math.floor((result.uptime or 0) / 60) .. " minutes")
+else
+	warn("❌ Failed to connect to API server!")
+	warn("   Error: " .. tostring(result))
+	warn("\n🔍 Troubleshooting:")
+	warn("   1. Check if HttpService is enabled (Game Settings > Security)")
+	warn("   2. Verify the API URL in Configuration.lua")
+	warn("   3. Check your internet connection")
+	warn("   4. Contact support at discord.gg/gamekilllers")
+	print("\n" .. string.rep("=", 60) .. "\n")
+	return
+end
+
+-- Test API key validation
+print("\n🔄 Testing API key validation...")
+
+success, result = pcall(function()
+	local url = Config.API_URL .. "/api/roblox/startup"
+	local data = HttpService:JSONEncode({
+		gameId = game.GameId,
+		placeId = game.PlaceId,
+		gameName = game.Name,
+		version = "2.5.3",
+		timestamp = os.time(),
+		apiKey = Config.API_KEY
+	})
+
+	local response = HttpService:PostAsync(url, data, Enum.HttpContentType.ApplicationJson)
+	return HttpService:JSONDecode(response)
+end)
+
+if success and result.success then
+	print("✅ API Key is valid!")
+	print("   Guild ID: " .. (result.guildId or "unknown"))
+	print("   Server Time: " .. (result.serverTime or "unknown"))
+	print("\n🎉 SUCCESS! Your plugin is properly configured!")
+	print("   You can now delete this APIKey script.")
+else
+	warn("❌ API Key validation failed!")
+	if result and result.error then
+		warn("   Error: " .. result.error)
+	else
+		warn("   Error: " .. tostring(result))
+	end
+	warn("\n🔍 Troubleshooting:")
+	warn("   1. Make sure you copied the complete API key")
+	warn("   2. Verify your Discord server is linked to the bot")
+	warn("   3. Check if the API key has expired")
+	warn("   4. Generate a new API key from the dashboard")
+	warn("   5. Contact support at discord.gg/gamekilllers")
+end
+
+-- Test command endpoint
+print("\n🔄 Testing command endpoint...")
+
+success, result = pcall(function()
+	local url = Config.API_URL .. "/api/roblox/command"
+	local data = HttpService:JSONEncode({
+		command = "stats",
+		args = {},
+		userId = 0,
+		username = "APIKeyTester",
+		gameId = game.GameId,
+		apiKey = Config.API_KEY
+	})
+
+	local response = HttpService:PostAsync(url, data, Enum.HttpContentType.ApplicationJson)
+	return HttpService:JSONDecode(response)
+end)
+
+if success and result.success then
+	print("✅ Command system working!")
+	print("   Response: " .. string.sub(result.message or "", 1, 50) .. "...")
+else
+	warn("⚠️ Command endpoint test failed (non-critical)")
+	warn("   Commands may still work in-game")
+end
+
+-- Configuration summary
+print("\n" .. string.rep("=", 60))
+print("📊 CONFIGURATION SUMMARY")
+print(string.rep("=", 60))
+print("Sensitivity: " .. Config.SENSITIVITY)
+print("Auto-Ban: " .. tostring(Config.AUTO_BAN))
+print("Discord Alerts: " .. tostring(Config.DISCORD_ALERTS))
+print("Speed Detection: " .. tostring(Config.DETECT_SPEED))
+print("Teleport Detection: " .. tostring(Config.DETECT_TELEPORT))
+print("Jump Detection: " .. tostring(Config.DETECT_JUMP))
+print("Health Detection: " .. tostring(Config.DETECT_HEALTH))
+print("Max Violations: " .. Config.MAX_VIOLATIONS)
+print("Check Interval: " .. Config.CHECK_INTERVAL .. " seconds")
+
+if #Config.WHITELIST > 0 then
+	print("Whitelisted Users: " .. #Config.WHITELIST)
+end
+
+if #Config.ADMIN_IDS > 0 then
+	print("Admin Users: " .. #Config.ADMIN_IDS)
+end
+
+print(string.rep("=", 60))
+
+-- Final instructions
+print("\n📝 NEXT STEPS:")
+print("   1. ✅ Your plugin is configured and ready!")
+print("   2. 🗑️  You can delete this APIKey script now")
+print("   3. 🎮 Test the plugin by playing your game")
+print("   4. 📊 Monitor threats at: " .. Config.API_URL:gsub("http://", "https://www.") .. "/dashboard")
+print("   5. 💬 Use /gk help in-game for commands")
+print("\n" .. string.rep("=", 60) .. "\n")
+
+-- Auto-delete script after 10 seconds (optional - comment out if you want to keep it)
+task.delay(10, function()
+	warn("🗑️  Auto-deleting APIKey tester in 10 seconds...")
+	warn("    (This is normal - the test is complete)")
+	wait(10)
+	if script and script.Parent then
+		script:Destroy()
+		print("✅ APIKey tester removed. Your plugin is ready!")
+	end
+end)]]></ProtectedString>
+				<bool name="Disabled">false</bool>
+				<Content name="LinkedSource"><null></null></Content>
+				<token name="RunContext">0</token>
+				<string name="ScriptGuid">{72C915C7-6896-4B8C-A05E-954ED0B2477C}</string>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<string name="Name">APIKey</string>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+			</Properties>
+		</Item>
+	</Item>
+</roblox>

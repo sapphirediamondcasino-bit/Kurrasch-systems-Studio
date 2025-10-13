@@ -1,0 +1,134 @@
+{
+    "bot": {
+      "name": "Game Killer's Security™",
+      "version": "2.0.0",
+      "description": "Advanced Discord security and moderation bot",
+      "prefix": "/",
+      "status": "online",
+      "activity": {
+        "type": "WATCHING",
+        "message": "🛡️ Protecting your server"
+      }
+    },
+    "developers": {
+      "enabled": true,
+      "ids": []
+    },
+    "database": {
+      "type": "json",
+      "path": "./src/database/data/database.json",
+      "autoSave": true,
+      "saveInterval": 60000
+    },
+    "security": {
+      "antiSpam": {
+        "enabled": true,
+        "messageLimit": 5,
+        "timeWindow": 5000,
+        "muteTime": 600000
+      },
+      "antiRaid": {
+        "enabled": true,
+        "joinLimit": 10,
+        "timeWindow": 60000
+      },
+      "autoMod": {
+        "enabled": false,
+        "defaultLevel": "medium"
+      }
+    },
+    "moderation": {
+      "logActions": true,
+      "dmOnAction": true,
+      "defaultReason": "No reason provided",
+      "maxWarnings": 3,
+      "autoTimeout": false,
+      "timeoutDuration": 60
+    },
+    "features": {
+      "dashboard": true,
+      "reports": true,
+      "robloxIntegration": true,
+      "aiDetection": false
+    },
+    "subscription": {
+      "tiers": {
+        "free": {
+          "name": "Free",
+          "price": 0,
+          "features": [
+            "Basic moderation",
+            "User warnings",
+            "Basic dashboard",
+            "Limited logs"
+          ]
+        },
+        "basic": {
+          "name": "Basic",
+          "price": 4.99,
+          "features": [
+            "All Free features",
+            "Advanced moderation",
+            "Custom auto-mod",
+            "Extended logs"
+          ]
+        },
+        "pro": {
+          "name": "Pro",
+          "price": 9.99,
+          "features": [
+            "All Basic features",
+            "Pro Dashboard",
+            "AI threat detection",
+            "Roblox ban sync",
+            "Priority support"
+          ]
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "price": null,
+          "features": [
+            "All Pro features",
+            "Multi-server management",
+            "Custom integrations",
+            "24/7 support"
+          ]
+        }
+      }
+    },
+    "roblox": {
+      "enabled": true,
+      "verificationRequired": true,
+      "banSyncEnabled": false,
+      "syncInterval": 3600000
+    },
+    "logging": {
+      "enabled": true,
+      "directory": "./logs",
+      "maxAge": 30,
+      "level": "info"
+    },
+    "links": {
+      "support": "https://discord.gg/your-support-server",
+      "website": "https://example.com",
+      "documentation": "https://docs.example.com",
+      "invite": "https://discord.com/oauth2/authorize?client_id=YOUR_CLIENT_ID&permissions=8&scope=bot%20applications.commands"
+    },
+    "colors": {
+      "primary": "#00d9ff",
+      "success": "#00ff00",
+      "error": "#ff0000",
+      "warning": "#ffff00",
+      "info": "#00d9ff"
+    },
+    "limits": {
+      "maxServers": null,
+      "maxCommands": null,
+      "maxLogsPerServer": {
+        "free": 500,
+        "basic": 5000,
+        "pro": -1,
+        "enterprise": -1
+      }
+    }
+  }
