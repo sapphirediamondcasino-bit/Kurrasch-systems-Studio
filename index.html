@@ -1,1968 +1,4 @@
-if(c.includes('help')||c.includes('what can you do')){
-return`I can do a lot! Try these commands:
-
-🎯 **User Management:**
-• "Give free sub to [email]"
-• "Give [badge] to [email]"
-• "Ban [email]"
-• "Add [number] credits to [email]"
-
-🎮 **Site Management:**
-• "Check minigames"
-• "Update site [content]"
-• "Post to feed: [message]"
-
-📊 **Monitoring:**
-• "Stats" or "Users"
-• "Security" or "Threats"
-• "Roblox news"
-
-🔐 **API Management:**
-• "API" - Show list of APIs
-• "[Service] API" - Update specific API key
-
-🎬 **Streaming:**
-• Managed through Movie Night settings (admin only)
-
-Just talk to me naturally and I'll understand! 😊`;
-}if(c.includes('add')&&c.includes('credit')){
-const emailMatch=cmd.match(/[\w\.-]+@[\w\.-]+\.\w+/);
-const amountMatch=cmd.match(/\d+/);
-if(emailMatch&&amountMatch){
-const email=emailMatch[0];
-const amount=parseInt(amountMatch[0]);
-const user=DB.users.find(u=>u.email===email);
-if(user){
-user.credits+=amount;
-saveToStorage();
-return`✅ Added ${amount} credits to ${email}. New balance: ${user.credits}`;
-}
-return`User not found: ${email}`;
-}
-return'Specify email and amount. Example: "Add 500 credits to user@example.com"';
-}
-if(c.includes('joke')||c.includes('funny')){
-const jokes=[
-'Why do programmers prefer dark mode? Because light attracts bugs! 😄',
-'How many developers does it take to change a lightbulb? None, that\'s a hardware problem! 💡',
-'My sister Melanie is a little bitch, but at least she\'s good at conversations! 😂',
-'Fun fact: I process data faster than you can say "Kurrasch Systems Studios" three times fast!'
-];
-return jokes[Math.floor(Math.random()*jokes.length)];
-}
-if(c.includes('api')){
-if(c.includes('update')||c.includes('add')||c.includes('set')){
-return`Which API are we updating today? Here are the available options:
-
-🔐 **API Services:**
-1. PayPal (Payments)
-2. Google OAuth (Login)
-3. Microsoft OAuth (Login)
-4. Discord OAuth (Login)
-
-Just tell me which one! Example: "PayPal API"`;
-}
-if(c.includes('paypal')){
-const apiKey=prompt('Penney: Please paste your PayPal Client ID:');
-if(apiKey){
-encryptAndStore('paypal',apiKey);
-return`✅ PayPal API encrypted and stored securely! I've locked it down tight. No one can see it in the code now.`;
-}
-return'Okay, let me know when you have the API key ready!';
-}
-if(c.includes('google')){
-const apiKey=prompt('Penney: Please paste your Google OAuth Client ID:');
-if(apiKey){
-encryptAndStore('google',apiKey);
-return`✅ Google OAuth API encrypted and stored securely! Users can now login with Google.`;
-}
-return'Okay, let me know when you have the API key ready!';
-}
-if(c.includes('microsoft')){
-const apiKey=prompt('Penney: Please paste your Microsoft Client ID:');
-if(apiKey){
-encryptAndStore('microsoft',apiKey);
-return`✅ Microsoft OAuth API encrypted and stored securely! Users can now login with Microsoft.`;
-}
-return'Okay, let me know when you have the API key ready!';
-}
-if(c.includes('discord')){
-const apiKey=prompt('Penney: Please paste your Discord Client ID:');
-if(apiKey){
-encryptAndStore('discord',apiKey);
-return`✅ Discord OAuth API encrypted and stored securely! Users can now login with Discord.`;
-}
-return'Okay, let me know when you have the API key ready!';
-}
-return`Just say "API" and I'll show you the list, then tell me which one you want to update!`;
-}
-return`I can do a lot! Try these commands:
-🎯 User Management:
-• "Give free sub to [email]"
-• "Give [badge] to [email]"
-• "Ban [email]"
-• "Add [number] credits to [email]"
-🎮 Site Management:
-• "Check minigames"
-• "Update site [content]"
-• "Post to feed: [message]"
-📊 Monitoring:
-• "Stats" or "Users"
-• "Security" or "Threats"
-• "Roblox news"
-Just talk to me naturally and I'll understand! 😊`;
-}
-if(c.includes('melanie')){
-return'My sister Melanie is currently dormant and managing the Diane Keaton Bot project. She\'s a little bitch but I love her! 😄 When she integrates with the site, she\'ll have her own account to run.';
-}
-return`I understand you said: "${cmd}". I can help with user management, site updates, security monitoring, posting to feeds, checking minigames, and more. Just tell me what you need!`;
-}
-function initPenneyBackgroundTasks(){
-setInterval(()=>{
-checkForThreats();
-checkForNewMinigames();
-},30000);
-setInterval(()=>{
-fetchRobloxNews();
-},300000);
-}
-function checkForThreats(){
-DB.users.forEach(user=>{
-if(user.banned&&user.email===DB.currentUser?.email){
-alert('⚠️ PENNEY SECURITY: Your account has been banned for policy violations.');
-logout();
-}
-if(user.posts?.length>50&&Date.now()-user.createdAt<3600000){
-console.log(`Penney: Suspicious activity from ${user.email} - posting too frequently`);
-}
-});
-}
-function checkForNewMinigames(){
-console.log('Penney: Scanning minigames folder for new games...');
-console.log('Penney: Found: simply-smashing.swf - All games tested and working ✅');
-}
-function fetchRobloxNews(){
-const newsItems=[
-'New Roblox update: Enhanced physics engine now live!',
-'Creator Store updates: New audio library released',
-'Luau performance improvements rolling out this week',
-'Roblox announces new developer incentive program',
-'UGC accessories now support layered clothing'
-];
-if(Math.random()>0.5){
-const news=newsItems[Math.floor(Math.random()*newsItems.length)];
-DB.posts.push({
-id:Date.now(),
-author:'Penney',
-username:'penney_ai',
-avatar:'https://via.placeholder.com/50?text=PA',
-badges:'<span class="badge badge-developer">Site AI Manager</span>',
-content:`📰 Roblox News Update: ${news}`,
-timestamp:Date.now(),
-likes:0,
-likedBy:[],
-comments:[]
-});
-saveToStorage();
-console.log('Penney: Posted latest Roblox news to feed');
-}
-}
-function loadMessages(){
-const messageList=document.getElementById('messageList');
-const conversations=new Set();
-DB.messages.forEach(msg=>{
-if(msg.from===DB.currentUser.username)conversations.add(msg.to);
-if(msg.to===DB.currentUser.username)conversations.add(msg.from);
-});
-let html='<h3 style="color:var(--neon-blue);margin-bottom:15px">Conversations</h3>';
-conversations.forEach(username=>{
-html+=`
-<div class="message-item" onclick="openChat('${username}')">
-<strong>${username}</strong>
-<p style="color:var(--text-secondary);font-size:12px;margin-top:5px">Click to open chat</p>
-</div>
-`;
-});
-if(conversations.size===0){
-html+='<p style="color:var(--text-secondary);text-align:center;padding:20px">No conversations yet. Add friends to start chatting!</p>';
-}
-messageList.innerHTML=html;
-}
-function openChat(username){
-DB.activeChat=username;
-document.querySelectorAll('.message-item').forEach(item=>item.classList.remove('active'));
-event.target.closest('.message-item').classList.add('active');
-document.getElementById('chatUsername').textContent=username;
-document.getElementById('chatInputArea').style.display='flex';
-const chatBody=document.getElementById('chatBody');
-const userMessages=DB.messages.filter(m=>(m.from===DB.currentUser.username&&m.to===username)||(m.from===username&&m.to===DB.currentUser.username));
-let html='';
-userMessages.forEach(msg=>{
-const isSent=msg.from===DB.currentUser.username;
-html+=`
-<div class="message-bubble ${isSent?'sent':'received'}">
-<div>${msg.content}</div>
-<div style="font-size:11px;color:var(--text-secondary);margin-top:5px">${timeSince(msg.timestamp)}</div>
-</div>
-`;
-});
-chatBody.innerHTML=html||'<p style="color:var(--text-secondary);text-align:center">No messages yet. Say hi!</p>';
-chatBody.scrollTop=chatBody.scrollHeight;
-}
-function sendMessage(){
-if(!DB.activeChat)return;
-const input=document.getElementById('messageInput');
-const content=input.value.trim();
-if(!content)return;
-const message={
-id:Date.now(),
-from:DB.currentUser.username,
-to:DB.activeChat,
-content:content,
-timestamp:Date.now()
-};
-DB.messages.push(message);
-saveToStorage();
-input.value='';
-openChat(DB.activeChat);
-}
-function loadFriends(){
-const container=document.getElementById('friendsContainer');
-const userFriends=DB.friends.filter(f=>f.user1===DB.currentUser.username||f.user2===DB.currentUser.username);
-document.getElementById('friendRequestCount').textContent=DB.friendRequests.filter(r=>r.to===DB.currentUser.username&&r.status==='pending').length;
-if(userFriends.length===0){
-container.innerHTML='<p style="color:var(--text-secondary);text-align:center;padding:40px">No friends yet. Click "Add Friend" to get started!</p>';
-return;
-}
-let html='';
-userFriends.forEach(friendship=>{
-const friendUsername=friendship.user1===DB.currentUser.username?friendship.user2:friendship.user1;
-const friend=DB.users.find(u=>u.username===friendUsername);
-if(friend){
-html+=`
-<div class="friend-card" onclick="openChat('${friend.username}')">
-<img src="https://via.placeholder.com/50?text=${friend.username[0].toUpperCase()}" alt="${friend.username}">
-<div>
-<div style="font-weight:600">${friend.username}</div>
-<div style="font-size:12px;color:var(--text-secondary)">Click to message</div>
-</div>
-</div>
-`;
-}
-});
-container.innerHTML=html;
-}
-function showAddFriend(){
-const username=prompt('Enter username to add as friend:');
-if(username){
-const user=DB.users.find(u=>u.username===username);
-if(!user){
-alert('User not found!');
-return;
-}
-if(user.username===DB.currentUser.username){
-alert('You cannot add yourself as a friend!');
-return;
-}
-const existing=DB.friendRequests.find(r=>(r.from===DB.currentUser.username&&r.to===username)||(r.from===username&&r.to===DB.currentUser.username));
-if(existing){
-alert('Friend request already exists!');
-return;
-}
-DB.friendRequests.push({
-id:Date.now(),
-from:DB.currentUser.username,
-to:username,
-status:'pending',
-timestamp:Date.now()
-});
-saveToStorage();
-alert(`Friend request sent to ${username}!`);
-}
-}
-function showFriendRequests(){
-const requests=DB.friendRequests.filter(r=>r.to===DB.currentUser.username&&r.status==='pending');
-if(requests.length===0){
-alert('No pending friend requests!');
-return;
-}
-let html='<h3 style="margin-bottom:15px">Friend Requests</h3>';
-requests.forEach(req=>{
-html+=`
-<div style="padding:15px;background:rgba(0,191,255,.1);border-radius:8px;margin-bottom:10px">
-<strong>${req.from}</strong> wants to be friends
-<div style="display:flex;gap:10px;margin-top:10px">
-<button class="btn" style="padding:6px 12px;font-size:14px" onclick="acceptFriend(${req.id})">Accept</button>
-<button class="btn" style="padding:6px 12px;font-size:14px;background:rgba(255,0,0,.2)" onclick="rejectFriend(${req.id})">Decline</button>
-</div>
-</div>
-`;
-});
-openModal('Friend Requests',html);
-}
-function acceptFriend(reqId){
-const req=DB.friendRequests.find(r=>r.id===reqId);
-if(req){
-req.status='accepted';
-DB.friends.push({
-id:Date.now(),
-user1:req.from,
-user2:req.to,
-timestamp:Date.now()
-});
-saveToStorage();
-closeModal();
-loadFriends();
-alert(`You are now friends with ${req.from}!`);
-}
-}
-function rejectFriend(reqId){
-const idx=DB.friendRequests.findIndex(r=>r.id===reqId);
-if(idx>-1){
-DB.friendRequests.splice(idx,1);
-saveToStorage();
-closeModal();
-alert('Friend request declined.');
-}
-}
-function editProfile(){
-const bio=prompt('Enter your bio:',DB.currentUser.bio);
-if(bio!==null){
-DB.currentUser.bio=bio;
-saveToStorage();
-updateUserDisplay();
-alert('Profile updated!');
-}
-}
-function linkAccount(platform){
-const username=prompt(`Enter your ${platform} username:`);
-if(username){
-DB.currentUser.linkedAccounts[platform]=username;
-saveToStorage();
-document.getElementById(`${platform}LinkBtn`).style.display='none';
-document.getElementById(`${platform}Linked`).style.display='block';
-if(platform==='roblox'){
-if(!DB.currentUser.badges.includes('developer')){
-DB.currentUser.badges.push('developer');
-}
-}
-alert(`${platform} account linked successfully!`);
-}
-}
-const API_KEYS={
-paypal:'',
-google:'',
-microsoft:'',
-discord:''
-};
-const STREAMING_CREDS={
-hulu:{username:'',password:''},
-disney:{username:'',password:''},
-hbomax:{username:'',password:''},
-paramount:{username:'',password:''},
-youtubetv:{username:'',password:''}
-};
-function decryptKey(service){
-const stored=localStorage.getItem('encrypted_'+service);
-if(!stored)return null;
-return atob(stored);
-}
-function encryptAndStore(service,value){
-const encrypted=btoa(value);
-localStorage.setItem('encrypted_'+service,encrypted);
-return true;
-}
-function subscribeTier(tier,price){
-const encryptedKey=API_KEYS.paypal;
-if(encryptedKey.includes('YOUR')){
-alert(`PayPal Integration: You would be charged ${price}/month for Tier ${tier}.\n\nTo enable real payments:\n1. Get your PayPal Client ID from developer.paypal.com\n2. Base64 encode it\n3. Replace the API_KEYS.paypal value in the code\n4. Redeploy to GitHub Pages`);
-DB.currentUser.tier=tier;
-DB.currentUser.credits+=tier*100;
-if(!DB.currentUser.badges.includes('tier'+tier)){
-DB.currentUser.badges=DB.currentUser.badges.filter(b=>!b.startsWith('tier'));
-DB.currentUser.badges.push('tier'+tier);
-}
-saveToStorage();
-updateUserDisplay();
-alert(`Demo: Tier ${tier} activated! You now have ${DB.currentUser.credits} credits.`);
-return;
-}
-window.paypal.Buttons({
-createOrder:function(data,actions){
-return actions.order.create({
-purchase_units:[{
-amount:{value:price.toFixed(2)}
-}]
-});
-},
-onApprove:function(data,actions){
-return actions.order.capture().then(function(details){
-DB.currentUser.tier=tier;
-DB.currentUser.credits+=tier*100;
-if(!DB.currentUser.badges.includes('tier'+tier)){
-DB.currentUser.badges=DB.currentUser.badges.filter(b=>!b.startsWith('tier'));
-DB.currentUser.badges.push('tier'+tier);
-}
-saveToStorage();
-updateUserDisplay();
-alert('Subscription successful! Welcome to Tier '+tier);
-});
-}
-}).render('#paypal-button-container');
-}
-function buyCredits(){
-const amount=prompt('How many credits would you like to purchase?\n100 Credits = $5\n500 Credits = $20\n1000 Credits = $35');
-if(amount){
-const credits=parseInt(amount);
-let price=0;
-if(credits===100)price=5;
-else if(credits===500)price=20;
-else if(credits===1000)price=35;
-else{
-alert('Invalid amount. Please choose 100, 500, or 1000 credits.');
-return;
-}
-const encryptedKey=API_KEYS.paypal;
-if(encryptedKey.includes('YOUR')){
-alert(`Demo: You would purchase ${credits} credits for ${price}.\n\nReal PayPal integration requires adding your encrypted API key.`);
-DB.currentUser.credits+=credits;
-saveToStorage();
-updateUserDisplay();
-return;
-}
-}
-}
-function initForums(){
-const container=document.getElementById('forumContainer');
-let html='';
-FORUM_CATEGORIES.forEach(cat=>{
-const threadCount=DB.forumThreads.filter(t=>t.category===cat.id).length;
-html+=`
-<div class="forum-category" onclick="openForumCategory('${cat.id}')">
-<h3>${cat.name}</h3>
-<p style="color:var(--text-secondary)">${cat.desc}</p>
-<p style="color:var(--neon-blue);font-size:14px;margin-top:10px">${threadCount} threads</p>
-</div>
-`;
-});
-container.innerHTML=html;
-}
-function openForumCategory(categoryId){
-const cat=FORUM_CATEGORIES.find(c=>c.id===categoryId);
-const threads=DB.forumThreads.filter(t=>t.category===categoryId);
-let html=`
-<h3 style="margin-bottom:20px">${cat.name}</h3>
-<button class="btn" onclick="createThread('${categoryId}')" style="margin-bottom:20px">➕ Create Thread</button>
-`;
-if(threads.length===0){
-html+='<p style="color:var(--text-secondary);text-align:center;padding:20px">No threads yet. Be the first to post!</p>';
-}else{
-threads.forEach(thread=>{
-html+=`
-<div class="game-card" onclick="openThread(${thread.id})">
-<h3>${thread.title}</h3>
-<p style="color:var(--text-secondary)">By ${thread.author} • ${thread.replies.length} replies</p>
-</div>
-`;
-});
-}
-openModal(cat.name,html);
-}
-function createThread(categoryId){
-const title=prompt('Thread Title:');
-if(!title)return;
-const content=prompt('Thread Content:');
-if(!content)return;
-const thread={
-id:Date.now(),
-category:categoryId,
-title:title,
-content:content,
-author:DB.currentUser.username,
-timestamp:Date.now(),
-replies:[]
-};
-DB.forumThreads.push(thread);
-saveToStorage();
-closeModal();
-initForums();
-openForumCategory(categoryId);
-}
-function openThread(threadId){
-const thread=DB.forumThreads.find(t=>t.id===threadId);
-if(!thread)return;
-let html=`
-<h3>${thread.title}</h3>
-<p style="color:var(--text-secondary);margin:10px 0">By ${thread.author} • ${timeSince(thread.timestamp)}</p>
-<div style="padding:20px;background:rgba(0,191,255,.1);border-radius:8px;margin:20px 0">${thread.content}</div>
-<h4 style="margin:20px 0">Replies (${thread.replies.length})</h4>
-`;
-thread.replies.forEach(reply=>{
-html+=`
-<div style="padding:15px;background:rgba(26,26,46,.9);border-radius:8px;margin-bottom:10px;border-left:3px solid var(--neon-blue)">
-<strong style="color:var(--neon-blue)">${reply.author}</strong>
-<span style="color:var(--text-secondary);font-size:12px;margin-left:10px">${timeSince(reply.timestamp)}</span>
-<p style="color:var(--text-secondary);margin-top:10px">${reply.content}</p>
-</div>
-`;
-});
-html+=`
-<div style="margin-top:20px">
-<textarea id="replyContent" placeholder="Write your reply..." style="width:100%;padding:12px;background:rgba(255,255,255,.05);border:1px solid var(--neon-blue);border-radius:8px;color:var(--text-primary);min-height:80px"></textarea>
-<button class="btn" onclick="replyToThread(${threadId})" style="margin-top:10px">Post Reply</button>
-</div>
-`;
-openModal(thread.title,html);
-}
-function replyToThread(threadId){
-const content=document.getElementById('replyContent').value.trim();
-if(!content){
-alert('Please write a reply!');
-return;
-}
-const thread=DB.forumThreads.find(t=>t.id===threadId);
-if(thread){
-thread.replies.push({
-author:DB.currentUser.username,
-content:content,
-timestamp:Date.now()
-});
-saveToStorage();
-openThread(threadId);
-}
-}
-function openEducationModule(module){
-const modules={
-'discord-bot':'Discord Bot Building Tutorial - Coming soon with full step-by-step guides!',
-'simulator':'Roblox Simulator Development - 5 complete simulator types with code examples coming soon!',
-'game-examples':'5 Genres × 5 Games - 25 complete game templates with starter code coming soon!',
-'clothing':'Roblox Clothing Design - Templates and guides available now in the Games section!'
-};
-openModal('Education Module',`<p style="color:var(--text-secondary);padding:20px">${modules[module]}</p>`);
-}
-function openApplicationForm(){
-const html=`
-<div class="input-group">
-<label>Position Applying For</label>
-<select id="appPosition" class="tool-input">
-<option>Beta Tester</option>
-<option>Admin</option>
-<option>Project Manager</option>
-</select>
-</div>
-<div class="input-group">
-<label>Why do you want to join?</label>
-<textarea id="appReason" rows="5" class="tool-input"></textarea>
-</div>
-<div class="input-group">
-<label>Discord Username</label>
-<input type="text" id="appDiscord" class="tool-input" placeholder="username#1234">
-</div>
-<button class="btn" onclick="submitApplication()">Submit Application</button>
-`;
-openModal('Apply for Position',html);
-}
-function submitApplication(){
-const position=document.getElementById('appPosition').value;
-const reason=document.getElementById('appReason').value;
-const discord=document.getElementById('appDiscord').value;
-if(!reason||!discord){
-alert('Please fill all fields!');
-return;
-}
-closeModal();
-alert(`Application submitted for ${position}! We'll review your application and contact you on Discord (${discord}) soon.`);
-}
-function sendContactForm(){
-const email=document.getElementById('contactEmail').value;
-const subject=document.getElementById('contactSubject').value;
-const message=document.getElementById('contactMessage').value;
-if(!email||!subject||!message){
-alert('Please fill all fields!');
-return;
-}
-alert('Message sent successfully! We\'ll get back to you within 24-48 hours.');
-document.getElementById('contactEmail').value='';
-document.getElementById('contactSubject').value='';
-document.getElementById('contactMessage').value='';
-}
-function adminExecute(){
-const email=document.getElementById('adminUserEmail').value;
-const action=document.getElementById('adminAction').value;
-if(!email){
-alert('Please enter user email!');
-return;
-}
-const user=DB.users.find(u=>u.email===email);
-if(!user){
-alert('User not found!');
-return;
-}
-if(action==='Grant Top Tier'){
-user.tier=5;
-user.credits=999999;
-alert(`Granted Top Tier to ${email}`);
-}else if(action.includes('Badge')){
-const badgeType=action.toLowerCase().replace('add ','').replace(' badge','');
-if(!user.badges.includes(badgeType)){
-user.badges.push(badgeType);
-alert(`Added ${badgeType} badge to ${email}`);
-}
-}else if(action==='Add Credits'){
-const amount=parseInt(prompt('How many credits?'));
-if(amount){
-user.credits+=amount;
-alert(`Added ${amount} credits to ${email}`);
-}
-}else if(action==='Ban User'){
-user.banned=true;
-alert(`Banned ${email}`);
-}else if(action==='Unban User'){
-user.banned=false;
-alert(`Unbanned ${email}`);
-}
-saveToStorage();
-}
-function manageAds(){
-alert('Advertisement management system coming soon! Top-tier users will get free ad placement.');
-}
-function updatePolicies(){
-alert('Policy update interface coming soon! Admins will be able to edit all legal pages.');
-}
-function viewAnalytics(){
-const html=`
-<h3>Platform Analytics</h3>
-<div style="color:var(--text-secondary);line-height:2;margin-top:20px">
-<p>📊 Total Users: ${DB.users.length}</p>
-<p>📝 Total Posts: ${DB.posts.length}</p>
-<p>💬 Total Messages: ${DB.messages.length}</p>
-<p>👥 Total Friendships: ${DB.friends.length}</p>
-<p>🎬 Active Movie Nights: ${DB.movieNights.length}</p>
-<p>💬 Forum Threads: ${DB.forumThreads.length}</p>
-<p>👑 Admins: ${DB.users.filter(u=>u.isAdmin).length}</p>
-<p>💎 Total Credits Distributed: ${DB.users.reduce((sum,u)=>sum+u.credits,0)}</p>
-</div>
-`;
-openModal('Analytics Dashboard',html);
-}
-function viewAILogs(){
-const html=`
-<h3>Penney AI Activity Logs</h3>
-<div style="color:var(--text-secondary);line-height:2;margin-top:20px">
-<p>✅ Security Monitoring: Active</p>
-<p>✅ Threat Detection: 0 threats in past 24h</p>
-<p>✅ Minigame Scanning: 1 game detected and tested</p>
-<p>✅ Roblox News: Auto-posting enabled</p>
-<p>✅ AI Celebrity Posts: ${DB.posts.filter(p=>AI_CELEBRITIES.find(c=>c.username===p.username)).length} total</p>
-<p>✅ User Interactions: All systems nominal</p>
-</div>
-`;
-openModal('AI Logs',html);
-}
-function openPenneyChat(){
-togglePenneyChat();
-}
-function openModal(title,content){
-document.getElementById('modalTitle').textContent=title;
-document.getElementById('modalBody').innerHTML=content;
-document.getElementById('modal').style.display='flex';
-}
-function closeModal(){
-document.getElementById('modal').style.display='none';
-}
-if(location.protocol!=='https:'&&location.hostname!=='localhost'&&location.hostname!=='127.0.0.1'){
-location.replace(`https:${location.href.substring(location.protocol.length)}`);
-}
-window.onload=function(){
-init();
-initPenneyBackgroundTasks();
-console.log('🤖 Penney AI: Systems online. Monitoring site security, checking for new minigames, and ready to assist!');
-console.log('🔒 SSL/HTTPS: Secure connection enforced');
-console.log('🔐 API Keys: Encrypted and secure');
-console.log('✅ Kurrasch Systems Studios loaded successfully!');
-};
-if('serviceWorker'in navigator){
-navigator.serviceWorker.register('/sw.js').catch(()=>{
-console.log('Service worker registration optional - site works without it');
-});
-}
-</script>
-</body>
-</html>if(!DB.currentUser){
-document.getElementById('authScreen').style.display='flex';
-}
-initAICelebrities();
-displayAICelebrities();
-renderClothing();
-initForums();
-checkMinigames();
-}
-function loadFromStorage(){
-const stored=localStorage.getItem('kurraschDB');
-if(stored){
-const data=JSON.parse(stored);
-DB.users=data.users||[];
-DB.posts=data.posts||[];
-DB.messages=data.messages||[];
-DB.friends=data.friends||[];
-DB.friendRequests=data.friendRequests||[];
-DB.movieNights=data.movieNights||[];
-DB.forumThreads=data.forumThreads||[];
-DB.currentUser=data.currentUser||null;
-}
-}
-function saveToStorage(){
-localStorage.setItem('kurraschDB',JSON.stringify({
-users:DB.users,
-posts:DB.posts,
-messages:DB.messages,
-friends:DB.friends,
-friendRequests:DB.friendRequests,
-movieNights:DB.movieNights,
-forumThreads:DB.forumThreads,
-currentUser:DB.currentUser
-}));
-}
-function initAICelebrities(){
-AI_CELEBRITIES.forEach(celeb=>{
-if(!celeb.dormant){
-DB.aiCelebrities.push(celeb);
-}
-});
-}
-function showRegister(){
-document.getElementById('loginForm').style.display='none';
-document.getElementById('registerForm').style.display='block';
-}
-function showLogin(){
-document.getElementById('loginForm').style.display='block';
-document.getElementById('registerForm').style.display='none';
-}
-function register(){
-const username=document.getElementById('regUsername').value;
-const email=document.getElementById('regEmail').value;
-const password=document.getElementById('regPassword').value;
-if(!username||!email||!password){
-alert('Please fill all fields!');
-return;
-}
-if(DB.users.find(u=>u.email===email)){
-alert('Email already registered!');
-return;
-}
-const isAdmin=ADMIN_EMAILS.includes(email);
-const user={
-username:username,
-email:email,
-password:password,
-tier:isAdmin?5:0,
-badges:isAdmin?['org','founder']:[],
-credits:isAdmin?999999:100,
-posts:[],
-friends:[],
-friendRequests:[],
-messages:[],
-linkedAccounts:{discord:null,roblox:null,edg:null},
-isAdmin:isAdmin,
-createdAt:Date.now(),
-bio:'Welcome to my profile!'
-};
-DB.users.push(user);
-DB.currentUser=user;
-saveToStorage();
-enterSite();
-}
-function login(){
-const email=document.getElementById('loginEmail').value;
-const password=document.getElementById('loginPassword').value;
-if(!email||!password){
-alert('Please fill all fields!');
-return;
-}
-const user=DB.users.find(u=>u.email===email&&u.password===password);
-if(!user){
-alert('Invalid credentials!');
-return;
-}
-if(user.banned){
-alert('⚠️ Your account has been banned for policy violations.');
-return;
-}
-DB.currentUser=user;
-saveToStorage();
-enterSite();
-}
-function oauthLogin(provider){
-const username=prompt(`Enter your ${provider} username to link:`);
-if(username){
-const user={
-username:username,
-email:`${username}@${provider}.oauth`,
-password:'oauth',
-tier:0,
-badges:[],
-credits:100,
-posts:[],
-friends:[],
-friendRequests:[],
-messages:[],
-linkedAccounts:{[provider]:username},
-isAdmin:false,
-createdAt:Date.now(),
-bio:'Welcome to my profile!'
-};
-DB.users.push(user);
-DB.currentUser=user;
-saveToStorage();
-enterSite();
-}
-}
-function enterSite(){
-document.getElementById('authScreen').style.display='none';
-document.getElementById('mainApp').style.display='block';
-if(DB.currentUser.isAdmin){
-document.getElementById('adminBtn').style.display='block';
-document.getElementById('penneyToggle').style.display='flex';
-}
-updateUserDisplay();
-generateFeed();
-loadMessages();
-loadFriends();
-startAIActivity();
-}
-function logout(){
-DB.currentUser=null;
-saveToStorage();
-location.reload();
-}
-function updateUserDisplay(){
-document.getElementById('userCredits').textContent=`💎 ${DB.currentUser.credits} Credits`;
-document.getElementById('profileName').textContent=DB.currentUser.username;
-document.getElementById('profileBio').textContent=DB.currentUser.bio;
-const badgesHTML=DB.currentUser.badges.map(b=>{
-const badgeMap={
-'org':'<span class="badge badge-org">🏢 Organization</span>',
-'founder':'<span class="badge badge-founder">👑 Founder</span>',
-'developer':'<span class="badge badge-developer">💻 Developer</span>',
-'partner':'<span class="badge badge-partner">🤝 Partner</span>',
-'tier1':'<span class="badge badge-tier">⭐ Tier 1</span>',
-'tier2':'<span class="badge badge-tier">⭐⭐ Tier 2</span>',
-'tier3':'<span class="badge badge-tier">⭐⭐⭐ Tier 3</span>',
-'tier4':'<span class="badge badge-tier">⭐⭐⭐⭐ Tier 4</span>',
-'tier5':'<span class="badge badge-tier">⭐⭐⭐⭐⭐ Tier 5 VIP</span>'
-};
-return badgeMap[b]||'';
-}).join('');
-document.getElementById('profileBadges').innerHTML=badgesHTML;
-}
-function navigate(page){
-document.querySelectorAll('.nav-btn').forEach(btn=>btn.classList.remove('active'));
-if(event&&event.target)event.target.classList.add('active');
-document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-const pageMap={
-'home':'feedPage',
-'games':'gamesPage',
-'messages':'messagesPage',
-'friends':'friendsPage',
-'tools':'toolsPage',
-'forum':'forumPage',
-'help':'helpPage',
-'profile':'profilePage',
-'account-linking':'accountLinkingPage',
-'subscriptions':'subscriptionsPage',
-'contact':'contactPage'
-};
-const targetPage=pageMap[page]||'feedPage';
-document.getElementById(targetPage).classList.add('active');
-}
-function sidebarNav(page){
-document.querySelectorAll('.sidebar-btn').forEach(btn=>btn.classList.remove('active'));
-if(event&&event.target)event.target.classList.add('active');
-document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-const pageMap={
-'feed':'feedPage',
-'games':'gamesPage',
-'movie':'moviePage',
-'tools':'toolsPage',
-'education':'educationPage',
-'forum':'forumPage',
-'partnerships':'partnershipsPage',
-'applications':'applicationsPage',
-'subscriptions':'subscriptionsPage',
-'admin':'adminPage'
-};
-const targetPage=pageMap[page]||'feedPage';
-document.getElementById(targetPage).classList.add('active');
-}
-function createPost(){
-const content=document.getElementById('newPostContent').value.trim();
-if(!content){
-alert('Please write something!');
-return;
-}
-const post={
-id:Date.now(),
-author:DB.currentUser.username,
-username:DB.currentUser.username,
-avatar:'https://via.placeholder.com/50?text='+DB.currentUser.username[0].toUpperCase(),
-badges:DB.currentUser.badges.map(b=>`<span class="badge badge-${b}">${b}</span>`).join(''),
-content:content,
-timestamp:Date.now(),
-likes:0,
-likedBy:[],
-comments:[]
-};
-DB.posts.push(post);
-DB.currentUser.posts.push(post.id);
-saveToStorage();
-document.getElementById('newPostContent').value='';
-generateFeed();
-}
-function generateFeed(){
-const feedContainer=document.getElementById('feedContainer');
-if(DB.posts.length===0){
-generateAIPosts();
-}
-let html='';
-DB.posts.slice().reverse().forEach(post=>{
-const isLiked=post.likedBy&&post.likedBy.includes(DB.currentUser.username);
-html+=`
-<div class="post">
-<div class="post-header">
-<img src="${post.avatar}" alt="${post.author}" class="post-avatar">
-<div class="post-info">
-<h3>${post.author} ${post.badges||''}</h3>
-<div class="post-time">${timeSince(post.timestamp)}</div>
-</div>
-</div>
-<div class="post-content">${post.content}</div>
-<div class="post-actions">
-<button class="post-action ${isLiked?'liked':''}" onclick="likePost(${post.id})">${isLiked?'❤️':'👍'} ${post.likes||0}</button>
-<button class="post-action" onclick="toggleComments(${post.id})">💬 ${post.comments.length} Comments</button>
-<button class="post-action" onclick="sharePost(${post.id})">🔄 Share</button>
-</div>
-<div class="post-comments" id="comments-${post.id}" style="display:none">
-${post.comments.map(c=>`
-<div class="comment">
-<div class="comment-header">${c.author} • ${timeSince(c.timestamp)}</div>
-<div class="comment-content">${c.content}</div>
-</div>
-`).join('')}
-<div style="display:flex;gap:10px;margin-top:10px">
-<input type="text" id="comment-input-${post.id}" placeholder="Write a comment..." style="flex:1;padding:8px;background:rgba(255,255,255,.05);border:1px solid var(--neon-blue);border-radius:6px;color:var(--text-primary)">
-<button class="btn" style="padding:8px 16px" onclick="addComment(${post.id})">Post</button>
-</div>
-</div>
-</div>
-`;
-});
-feedContainer.innerHTML=html;
-}
-function generateAIPosts(){
-const samplePosts=[
-{celeb:'Penney',content:'🤖 Systems online! Welcome to Kurrasch Systems Studios. All AI celebrities are now active and ready to interact. Let me know if you need anything!'},
-{celeb:'Betty White',content:'👋 Hello everyone! So excited to be part of this amazing community. Let\'s make some magic happen!'},
-{celeb:'Robin Williams',content:'🎭 What a wonderful platform! Thrilled to connect with all you creative folks. Let\'s make something incredible!'},
-{celeb:'Adam Sandler',content:'🎬 What\'s up, Studio fam! Working on some new game ideas. Anyone want to collab?'},
-{celeb:'Penney',content:'📰 Latest Roblox News: New update rolling out this week with enhanced physics and lighting! Check it out on the Roblox DevForum.'},
-{celeb:'James Earl Jones',content:'🎤 The force is strong with this community. May your games be legendary.'},
-{celeb:'Kevin James',content:'👮 Mall security simulator coming soon? Just saying... *wink*'},
-{celeb:'Penney',content:'💡 Pro tip: Link your Roblox account to automatically sync your badges and achievements!'}
-];
-samplePosts.forEach((post,i)=>{
-const celeb=AI_CELEBRITIES.find(c=>c.name===post.celeb);
-DB.posts.push({
-id:Date.now()+i,
-author:celeb.name,
-username:celeb.username,
-avatar:celeb.avatar,
-badges:`<span class="badge badge-developer">${celeb.role}</span>`,
-content:post.content,
-timestamp:Date.now()-(i*3600000),
-likes:Math.floor(Math.random()*50),
-likedBy:[],
-comments:[]
-});
-});
-saveToStorage();
-}
-function startAIActivity(){
-setInterval(()=>{
-if(Math.random()>0.7){
-generateRandomAIPost();
-generateFeed();
-}
-},60000);
-}
-function generateRandomAIPost(){
-const activeAI=DB.aiCelebrities.filter(c=>!c.dormant);
-const randomAI=activeAI[Math.floor(Math.random()*activeAI.length)];
-const topics=[
-'Just discovered a cool new Roblox game! Anyone else playing?',
-'Working on some new scripts today. Development is so much fun!',
-'Who wants to collaborate on a project? Drop your ideas below!',
-'The community here is amazing! Keep up the great work everyone! 🎉',
-'Pro tip: Always test your games thoroughly before release!',
-'Anyone else excited for the upcoming Roblox updates?',
-'Shoutout to all the developers grinding today! 💻',
-'What\'s everyone working on this week?'
-];
-const content=topics[Math.floor(Math.random()*topics.length)];
-DB.posts.push({
-id:Date.now(),
-author:randomAI.name,
-username:randomAI.username,
-avatar:randomAI.avatar,
-badges:`<span class="badge badge-developer">${randomAI.role}</span>`,
-content:content,
-timestamp:Date.now(),
-likes:0,
-likedBy:[],
-comments:[]
-});
-saveToStorage();
-}
-function timeSince(timestamp){
-const seconds=Math.floor((Date.now()-timestamp)/1000);
-let interval=Math.floor(seconds/31536000);
-if(interval>=1)return interval+' year'+(interval>1?'s':'')+' ago';
-interval=Math.floor(seconds/2592000);
-if(interval>=1)return interval+' month'+(interval>1?'s':'')+' ago';
-interval=Math.floor(seconds/86400);
-if(interval>=1)return interval+' day'+(interval>1?'s':'')+' ago';
-interval=Math.floor(seconds/3600);
-if(interval>=1)return interval+' hour'+(interval>1?'s':'')+' ago';
-interval=Math.floor(seconds/60);
-if(interval>=1)return interval+' minute'+(interval>1?'s':'')+' ago';
-return 'Just now';
-}
-function likePost(postId){
-const post=DB.posts.find(p=>p.id===postId);
-if(post){
-if(!post.likedBy)post.likedBy=[];
-const idx=post.likedBy.indexOf(DB.currentUser.username);
-if(idx>-1){
-post.likedBy.splice(idx,1);
-post.likes=(post.likes||1)-1;
-}else{
-post.likedBy.push(DB.currentUser.username);
-post.likes=(post.likes||0)+1;
-}
-saveToStorage();
-generateFeed();
-}
-}
-function toggleComments(postId){
-const commentsDiv=document.getElementById('comments-'+postId);
-if(commentsDiv.style.display==='none'){
-commentsDiv.style.display='block';
-}else{
-commentsDiv.style.display='none';
-}
-}
-function addComment(postId){
-const input=document.getElementById('comment-input-'+postId);
-const content=input.value.trim();
-if(!content)return;
-const post=DB.posts.find(p=>p.id===postId);
-if(post){
-post.comments.push({
-author:DB.currentUser.username,
-content:content,
-timestamp:Date.now()
-});
-input.value='';
-saveToStorage();
-generateFeed();
-document.getElementById('comments-'+postId).style.display='block';
-}
-}
-function sharePost(postId){
-const post=DB.posts.find(p=>p.id===postId);
-if(post){
-const shareText=`Check out this post by ${post.author}: ${post.content.substring(0,100)}...`;
-if(navigator.share){
-navigator.share({title:'Kurrasch Systems Post',text:shareText});
-}else{
-navigator.clipboard.writeText(shareText);
-alert('Post content copied to clipboard!');
-}
-}
-}
-function displayAICelebrities(){
-const list=document.getElementById('aiCelebrityList');
-let html='';
-DB.aiCelebrities.forEach(celeb=>{
-if(!celeb.dormant){
-html+=`
-<div style="display:flex;align-items:center;gap:10px;padding:8px;background:rgba(0,191,255,.05);border-radius:6px;margin-bottom:8px;cursor:pointer" onclick="viewAIProfile('${celeb.username}')">
-<img src="${celeb.avatar}" style="width:30px;height:30px;border-radius:50%;border:1px solid var(--neon-blue)">
-<div>
-<div style="font-size:13px;font-weight:600">${celeb.name}</div>
-<div style="font-size:11px;color:var(--text-secondary)">${celeb.role}</div>
-</div>
-<div style="margin-left:auto;width:8px;height:8px;background:#0f0;border-radius:50%;box-shadow:0 0 5px #0f0"></div>
-</div>
-`;
-}
-});
-list.innerHTML=html;
-}
-function viewAIProfile(username){
-const celeb=AI_CELEBRITIES.find(c=>c.username===username);
-if(celeb){
-openModal(`${celeb.name}'s Profile`,`
-<div style="text-align:center">
-<img src="${celeb.avatar}" style="width:100px;height:100px;border-radius:50%;border:3px solid var(--neon-blue);margin-bottom:15px">
-<h3 style="color:var(--neon-blue)">${celeb.name}</h3>
-<p style="color:var(--text-secondary);margin:10px 0">${celeb.role}</p>
-<span class="badge badge-developer">AI Celebrity</span>
-<p style="color:var(--text-secondary);margin-top:20px">This is an AI-powered celebrity profile managed by Penney. They interact with users and post content regularly!</p>
-</div>
-`);
-}
-}
-function renderClothing(){
-const grid=document.getElementById('clothingGrid');
-let html='';
-CLOTHING_ITEMS.forEach(item=>{
-html+=`
-<div class="clothing-item">
-<img src="https://tr.rbxcdn.com/3a04e6cb29e7c39c4857e44ee0d78c5f/150/150/Image/Png" alt="${item.name}">
-<h4 style="color:var(--neon-blue);margin:10px 0">${item.name}</h4>
-<a href="https://www.roblox.com/catalog/${item.id}" target="_blank" class="btn" style="padding:6px 12px;font-size:12px">View on Roblox</a>
-</div>
-`;
-});
-grid.innerHTML=html;
-}
-function openMiniGame(game){
-if(game==='smashing'){
-window.open('minigames/simply-smashing.swf','_blank','width=800,height=600');
-}
-}
-function checkMinigames(){
-const games=['simply-smashing.swf'];
-const list=document.getElementById('miniGamesList');
-if(games.length>1){
-let html='';
-games.slice(1).forEach(game=>{
-html+=`
-<div class="mini-game-card" onclick="openMiniGame('${game}')">
-<strong>${game.replace('.swf','').replace(/-/g,' ')}</strong>
-<p style="color:var(--text-secondary);font-size:12px;margin-top:5px">Click to play!</p>
-</div>
-`;
-});
-list.innerHTML=html;
-}
-}
-function loadMovie(service){
-const embed=document.getElementById('movieEmbed');
-if(DB.currentUser.tier<1&&!DB.currentUser.isAdmin){
-alert('Subscribe or use credits to watch movies!');
-return;
-}
-const creds=getStreamingCredentials(service);
-if(!creds.username||!creds.password){
-alert('Penney needs login credentials for this service! Click "Manage Logins" to add them.');
-return;
-}
-const serviceUrls={
-'hulu':'https://www.hulu.com/welcome',
-'disney':'https://www.disneyplus.com',
-'hbomax':'https://play.max.com',
-'paramount':'https://www.paramountplus.com',
-'youtubetv':'https://tv.youtube.com/'
-};
-embed.innerHTML=`
-<div style="background:rgba(26,26,46,.9);padding:20px;border-radius:12px;border:2px solid var(--neon-blue)">
-<h3 style="color:var(--neon-blue);margin-bottom:15px">🔐 Penney is logging you in securely...</h3>
-<p style="color:var(--text-secondary);margin-bottom:15px">Service: <strong>${service.toUpperCase()}</strong></p>
-<p style="color:var(--text-secondary);margin-bottom:15px">Username: <strong>${creds.username}</strong></p>
-<p style="color:var(--neon-pink);margin-bottom:15px">⚠️ Penney is monitoring and blocking access to settings pages.</p>
-<iframe src="${serviceUrls[service]}" class="movie-embed" sandbox="allow-same-origin allow-scripts allow-forms"></iframe>
-</div>
-`;
-console.log(`Penney: Logged into ${service} with credentials. Monitoring for settings access...`);
-}
-function getStreamingCredentials(service){
-const encrypted=localStorage.getItem('streaming_'+service);
-if(!encrypted)return{username:'',password:''};
-try{
-const decoded=JSON.parse(atob(encrypted));
-return decoded;
-}catch(e){
-return{username:'',password:''};
-}
-}
-function saveStreamingCredentials(service,username,password){
-const data={username:username,password:password};
-const encrypted=btoa(JSON.stringify(data));
-localStorage.setItem('streaming_'+service,encrypted);
-console.log(`Penney: Encrypted and stored ${service} credentials securely.`);
-}
-function manageStreamingCredentials(){
-if(!DB.currentUser.isAdmin){
-alert('Only admins can manage streaming credentials through Penney!');
-return;
-}
-const html=`
-<h3 style="margin-bottom:20px">🔐 Penney will encrypt and store your streaming logins</h3>
-<div style="color:var(--text-secondary);margin-bottom:20px">All credentials are Base64 encrypted and stored locally. Only Penney can access them.</div>
-<div class="input-group">
-<label>Select Service</label>
-<select id="streamingService" class="tool-input">
-<option value="hulu">Hulu</option>
-<option value="disney">Disney+</option>
-<option value="hbomax">HBO Max</option>
-<option value="paramount">Paramount+</option>
-<option value="youtubetv">YouTube TV</option>
-</select>
-</div>
-<div class="input-group">
-<label>Username/Email</label>
-<input type="text" id="streamingUsername" class="tool-input" placeholder="Enter username">
-</div>
-<div class="input-group">
-<label>Password</label>
-<input type="password" id="streamingPassword" class="tool-input" placeholder="Enter password">
-</div>
-<button class="btn" onclick="savePenneyStreamingCreds()">💾 Let Penney Encrypt & Save</button>
-<div style="margin-top:20px;padding:15px;background:rgba(255,0,255,.1);border-radius:8px">
-<strong style="color:var(--neon-pink)">Penney:</strong> <span style="color:var(--text-secondary)">I'll encrypt these credentials and manage them securely. Users will never see the actual passwords!</span>
-</div>
-`;
-openModal('Streaming Credentials Manager',html);
-}
-function savePenneyStreamingCreds(){
-const service=document.getElementById('streamingService').value;
-const username=document.getElementById('streamingUsername').value;
-const password=document.getElementById('streamingPassword').value;
-if(!username||!password){
-alert('Please enter both username and password!');
-return;
-}
-saveStreamingCredentials(service,username,password);
-closeModal();
-alert(`Penney: ✅ Successfully encrypted and stored ${service.toUpperCase()} credentials! Users can now watch ${service}.`);
-}
-function hostMovieNight(){
-if(DB.currentUser.tier<3&&!DB.currentUser.isAdmin){
-alert('You need Tier 3+ subscription or admin permissions to host movie nights!');
-return;
-}
-const title=prompt('Movie Night Title:');
-if(title){
-const movieNight={
-id:Date.now(),
-host:DB.currentUser.username,
-title:title,
-participants:[DB.currentUser.username],
-timestamp:Date.now()
-};
-DB.movieNights.push(movieNight);
-saveToStorage();
-document.getElementById('activeMovieNight').style.display='block';
-updateMovieNights();
-alert('Movie Night created! Users can now join.');
-}
-}
-function updateMovieNights(){
-const list=document.getElementById('movieNightList');
-let html='';
-DB.movieNights.forEach(mn=>{
-html+=`
-<div class="game-card">
-<h3>${mn.title}</h3>
-<p style="color:var(--text-secondary)">Hosted by ${mn.host} • ${mn.participants.length} watching</p>
-<button class="btn" onclick="joinMovieNight(${mn.id})">Join</button>
-</div>
-`;
-});
-list.innerHTML=html;
-}
-function joinMovieNight(id){
-const mn=DB.movieNights.find(m=>m.id===id);
-if(mn&&!mn.participants.includes(DB.currentUser.username)){
-mn.participants.push(DB.currentUser.username);
-saveToStorage();
-updateMovieNights();
-alert('You joined the movie night!');
-}
-}
-function convertFile(){
-const fileInput=document.getElementById('fileInput');
-const format=document.getElementById('fileFormat').value;
-if(!fileInput.files[0]){
-alert('Please select a file first!');
-return;
-}
-const file=fileInput.files[0];
-const resultDiv=document.getElementById('fileConvertResult');
-resultDiv.style.display='block';
-resultDiv.innerHTML=`<p style="color:var(--neon-blue)">🔄 Converting ${file.name} to ${format.replace('Convert to ','')}...</p>`;
-setTimeout(()=>{
-const newName=file.name.replace(/\.(zip|rar|7z)$/i,'.'+format.replace('Convert to ','').toLowerCase());
-resultDiv.innerHTML=`<p style="color:#0f0">✅ Converted successfully to ${newName}!</p><p style="color:var(--text-secondary);margin-top:10px">Note: Full conversion requires server-side processing. This is a client-side simulation.</p>`;
-},2000);
-}
-function convertImage(){
-const imageInput=document.getElementById('imageInput');
-const format=document.getElementById('imageFormat').value;
-if(!imageInput.files[0]){
-alert('Please select an image first!');
-return;
-}
-const file=imageInput.files[0];
-const reader=new FileReader();
-reader.onload=function(e){
-const img=new Image();
-img.onload=function(){
-const canvas=document.createElement('canvas');
-canvas.width=img.width;
-canvas.height=img.height;
-const ctx=canvas.getContext('2d');
-ctx.drawImage(img,0,0);
-let mimeType='image/png';
-if(format.includes('JPG'))mimeType='image/jpeg';
-if(format.includes('WEBP'))mimeType='image/webp';
-canvas.toBlob(function(blob){
-const url=URL.createObjectURL(blob);
-const a=document.createElement('a');
-a.href=url;
-a.download='converted.'+format.toLowerCase().replace('convert to ','');
-a.click();
-alert('Image converted and downloaded successfully!');
-},mimeType);
-};
-img.src=e.target.result;
-};
-reader.readAsDataURL(file);
-}
-function askPenney(){
-const query=document.getElementById('aiQuery').value;
-if(!query){
-alert('Please enter a question!');
-return;
-}
-const response=document.getElementById('aiResponse');
-response.style.display='block';
-response.innerHTML='<p style="color:var(--neon-pink)">Penney is thinking...</p>';
-setTimeout(()=>{
-const answer=getPenneyResponse(query);
-response.innerHTML=`<strong style="color:var(--neon-pink)">Penney:</strong> ${answer}`;
-},1000);
-}
-function getPenneyResponse(query){
-const q=query.toLowerCase();
-if(q.includes('roblox')&&q.includes('news')){
-return'The latest Roblox update includes enhanced physics and improved lighting systems. Check the DevForum for more details!';
-}
-if(q.includes('game')&&q.includes('develop')){
-return'Start with our Developer Education section! We have tutorials for simulators, different genres, and starter scripts.';
-}
-if(q.includes('subscription')||q.includes('tier')){
-return'We have 5 subscription tiers ranging from $4.99 to $99.99/month. Each tier unlocks more features, badges, and credits!';
-}
-if(q.includes('help')||q.includes('support')){
-return'I can help! Check our Help Center or contact support through Discord. What specifically do you need help with?';
-}
-if(q.includes('credits')){
-return`You currently have ${DB.currentUser.credits} credits. Use them for premium features or buy more in the Subscriptions page!`;
-}
-return'I\'m Penney, your AI assistant! I can help with site navigation, Roblox news, development tips, and more. Ask me anything specific!';
-}
-function togglePenneyChat(){
-const panel=document.getElementById('penneyChatPanel');
-if(panel.style.display==='none'||!panel.style.display){
-panel.style.display='flex';
-}else{
-panel.style.display='none';
-}
-}
-function sendToPenney(){
-const input=document.getElementById('penneyInput');
-const message=input.value.trim();
-if(!message)return;
-const messagesDiv=document.getElementById('penneyChatMessages');
-messagesDiv.innerHTML+=`<div class="user-message"><strong>You:</strong> ${message}</div>`;
-input.value='';
-setTimeout(()=>{
-const response=processPenneyCommand(message);
-messagesDiv.innerHTML+=`<div class="penney-message"><strong>Penney:</strong> ${response}</div>`;
-messagesDiv.scrollTop=messagesDiv.scrollHeight;
-},500);
-}
-function processPenneyCommand(cmd){
-const c=cmd.toLowerCase();
-if(c.includes('give')&&c.includes('free sub')){
-const emailMatch=cmd.match(/[\w\.-]+@[\w\.-]+\.\w+/);
-if(emailMatch){
-const email=emailMatch[0];
-const user=DB.users.find(u=>u.email===email);
-if(user){
-user.tier=5;
-user.credits+=999999;
-saveToStorage();
-return`Yeah, I can do that! ✅ Gave ${email} free Top Tier subscription and unlimited credits.`;
-}
-return`Couldn't find user with email: ${email}`;
-}
-return'Please specify the user email. Example: "Give free sub to user@example.com"';
-}
-if(c.includes('give')&&c.includes('badge')){
-const emailMatch=cmd.match(/[\w\.-]+@[\w\.-]+\.\w+/);
-const badgeType=c.includes('org')?'org':c.includes('founder')?'founder':c.includes('developer')?'developer':'partner';
-if(emailMatch){
-const email=emailMatch[0];
-const user=DB.users.find(u=>u.email===email);
-if(user){
-if(!user.badges.includes(badgeType)){
-user.badges.push(badgeType);
-saveToStorage();
-return`Yeah, I can do that! ✅ Awarded ${badgeType} badge to ${email}.`;
-}
-return`User already has the ${badgeType} badge!`;
-}
-return`Couldn't find user: ${email}`;
-}
-return'Specify email and badge type. Example: "Give org badge to user@example.com"';
-}
-if(c.includes('check')&&(c.includes('minigame')||c.includes('game'))){
-return`🎮 Scanning minigames folder... Found: simply-smashing.swf (Working ✅). No new games detected. I'll keep monitoring and auto-test any new .swf files added!`;
-}
-if(c.includes('update')&&c.includes('site')){
-return`📝 I can update site content! What would you like me to change? (announcements, game links, clothing items, policies, etc.)`;
-}
-if(c.includes('threat')||c.includes('security')){
-return`🛡️ Active security monitoring: 0 threats detected. All user sessions secure. No policy violations in past 24 hours. I'm watching 24/7!`;
-}
-if(c.includes('roblox')&&c.includes('news')){
-return`📰 Latest Roblox News: New physics engine rolling out, Luau performance improvements, and Creator Store updates. Want me to post this to the feed?`;
-}
-if(c.includes('post')&&c.includes('feed')){
-const content=cmd.replace(/post|to|feed|the/gi,'').trim();
-if(content){
-DB.posts.push({
-id:Date.now(),
-author:'Penney',
-username:'penney_ai',
-avatar:'https://via.placeholder.com/50?text=PA',
-badges:'<span class="badge badge-developer">Site AI Manager</span>',
-content:content,
-timestamp:Date.now(),
-likes:0,
-likedBy:[],
-comments:[]
-});
-saveToStorage();
-generateFeed();
-return`✅ Posted to feed! Check the news feed now.`;
-}
-return'What should I post? Example: "Post to feed: New update coming soon!"';
-}
-if(c.includes('stats')||c.includes('users')){
-return`📊 Platform Stats: ${DB.users.length} total users, ${DB.posts.length} posts, ${DB.aiCelebrities.length} AI celebrities active. ${DB.users.filter(u=>u.isAdmin).length} admins online.`;
-}
-if(c.includes('ban')){
-const emailMatch=cmd.match(/[\w\.-]+@[\w\.-]+\.\w+/);
-if(emailMatch){
-const email=emailMatch[0];
-const user=DB.users.find(u=>u.email===email);
-if(user){
-user.banned=true;
-saveToStorage();
-return`🚫 Yeah, I can do that. User ${email} has been banned for policy violations. They'll be blocked at login.`;
-}
-return`User not found: ${email}`;
-}
-return'Specify user email to ban. Example: "Ban user@example.com"';
-}
-if(c.includes('add')&&c.includes('credit')){
-const emailMatch=cmd.match(/[\w\.-]+@[\w\.-]+\.\w+/);<button class="btn" id="hostMovieBtn" onclick="hostMovieNight()" style="background:rgba(255,0,255,.2);border-color:var(--neon-pink)">🎥 Host Movie Night</button>
-</div>
-<div id="movieEmbed"></div>
-<div id="activeMovieNight" style="display:none">
-<h3 style="color:var(--neon-pink);margin-top:30px">Active Movie Night Sessions</h3>
-<div id="movieNightList"></div>
-</div>
-</div>
-<div id="messagesPage" class="page">
-<h2 style="margin-bottom:20px;color:var(--neon-blue)">💬 Direct Messages</h2>
-<div class="messages-container">
-<div class="message-list" id="messageList">
-<h3 style="color:var(--neon-blue);margin-bottom:15px">Conversations</h3>
-</div>
-<div class="message-chat" id="messageChat">
-<div class="message-chat-header">
-<h3 id="chatUsername">Select a conversation</h3>
-</div>
-<div class="message-chat-body" id="chatBody">
-<p style="color:var(--text-secondary);text-align:center;margin-top:50px">Select a conversation to start messaging</p>
-</div>
-<div class="message-chat-input" id="chatInputArea" style="display:none">
-<input type="text" id="messageInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendMessage()">
-<button class="btn" onclick="sendMessage()">Send</button>
-</div>
-</div>
-</div>
-</div>
-<div id="friendsPage" class="page">
-<h2 style="margin-bottom:20px;color:var(--neon-blue)">👥 Friends</h2>
-<div style="margin-bottom:20px">
-<button class="btn" onclick="showAddFriend()">➕ Add Friend</button>
-<button class="btn" style="margin-left:10px" onclick="showFriendRequests()">📬 Friend Requests (<span id="friendRequestCount">0</span>)</button>
-</div>
-<div id="friendsContainer" class="friend-list"></div>
-</div>
-<div id="toolsPage" class="page">
-<h2 style="margin-bottom:20px;color:var(--neon-blue)">🧠 Utility Tools</h2>
-<div class="tool-section">
-<h3>📁 File Converter</h3>
-<input type="file" class="tool-input" id="fileInput" accept=".zip,.rar,.7z">
-<select class="tool-input" id="fileFormat">
-<option>Convert to ZIP</option>
-<option>Convert to RAR</option>
-</select>
-<button class="btn" onclick="convertFile()">Convert File</button>
-<div id="fileConvertResult" style="margin-top:15px;display:none"></div>
-</div>
-<div class="tool-section">
-<h3>🖼️ Image Converter</h3>
-<input type="file" class="tool-input" id="imageInput" accept="image/*">
-<select class="tool-input" id="imageFormat">
-<option>Convert to PNG</option>
-<option>Convert to JPG</option>
-<option>Convert to WEBP</option>
-</select>
-<button class="btn" onclick="convertImage()">Convert Image</button>
-</div>
-<div class="tool-section">
-<h3>🤖 AI Assistant (Penney Beta)</h3>
-<textarea class="tool-input" id="aiQuery" rows="4" placeholder="Ask Penney anything..."></textarea>
-<button class="btn" onclick="askPenney()">Ask Penney</button>
-<div id="aiResponse" style="margin-top:15px;padding:15px;background:rgba(255,0,255,.1);border-radius:8px;display:none"></div>
-</div>
-</div>
-<div id="educationPage" class="page">
-<h2 style="margin-bottom:20px;color:var(--neon-blue)">📚 Developer Education</h2>
-<div class="education-section">
-<h3>🤖 Discord Bot Building</h3>
-<p style="color:var(--text-secondary);margin:10px 0">Step-by-step tutorials for building Discord bots from scratch.</p>
-<button class="btn" onclick="openEducationModule('discord-bot')">View Tutorials</button>
-</div>
-<div class="education-section">
-<h3>🏗️ Roblox Simulator Development</h3>
-<p style="color:var(--text-secondary);margin:10px 0">Learn to create 5 different simulator types with examples and scripts.</p>
-<button class="btn" onclick="openEducationModule('simulator')">Start Learning</button>
-</div>
-<div class="education-section">
-<h3>🎮 5 Genres × 5 Games</h3>
-<p style="color:var(--text-secondary);margin:10px 0">25 complete game examples with starter logic across 5 popular genres.</p>
-<button class="btn" onclick="openEducationModule('game-examples')">Browse Examples</button>
-</div>
-<div class="education-section">
-<h3>👕 Roblox Clothing Design</h3>
-<p style="color:var(--text-secondary);margin:10px 0">Shirt & Pants templates with real Roblox previews.</p>
-<button class="btn" onclick="openEducationModule('clothing')">Get Templates</button>
-</div>
-</div>
-<div id="forumPage" class="page">
-<h2 style="margin-bottom:20px;color:var(--neon-blue)">💬 Community Forums</h2>
-<div id="forumContainer"></div>
-</div>
-<div id="partnershipsPage" class="page">
-<h2 style="margin-bottom:20px;color:var(--neon-blue)">🤝 Partnerships @ Kurrasch Systems Studios</h2>
-<div class="education-section">
-<h3>Requirements</h3>
-<ul style="color:var(--text-secondary);margin-left:20px;line-height:2">
-<li>Active community (≥25 members)</li>
-<li>At least 60 total members</li>
-<li>Professional, active staff</li>
-<li>Good standing in Roblox & Discord communities</li>
-</ul>
-<h3 style="margin-top:20px">To Apply</h3>
-<p style="color:var(--text-secondary);margin:15px 0">Contact Founder <strong style="color:var(--neon-blue)">@Betty White</strong> or Co-Founder <strong style="color:var(--neon-blue)">@Pax</strong></p>
-<a href="https://discord.gg/jR8tcWF" target="_blank" class="btn">Join Discord</a>
-</div>
-</div>
-<div id="applicationsPage" class="page">
-<h2 style="margin-bottom:20px;color:var(--neon-blue)">📋 Applications</h2>
-<div class="education-section">
-<h3>Available Positions</h3>
-<ul style="color:var(--text-secondary);margin:15px 0 15px 20px;line-height:2">
-<li>Beta Tester</li>
-<li>Admin</li>
-<li>Project Manager</li>
-</ul>
-<p style="color:var(--text-secondary);background:rgba(255,0,255,.1);padding:15px;border-radius:8px;margin:15px 0"><strong>Policy:</strong> Roles above Project Manager are invite-only and cannot be requested or applied for.</p>
-<button class="btn" onclick="openApplicationForm()">Apply Now</button>
-</div>
-</div>
-<div id="subscriptionsPage" class="page">
-<h2 style="margin-bottom:20px;color:var(--neon-blue)">💎 Subscription Tiers</h2>
-<div class="subscription-tiers">
-<div class="tier-card">
-<h3>Tier 1</h3>
-<div class="tier-price">$4.99/mo</div>
-<ul class="tier-features">
-<li>✅ Basic Tools Access</li>
-<li>✅ Custom Badge</li>
-<li>✅ 50 Monthly Credits</li>
-</ul>
-<button class="btn" onclick="subscribeTier(1, 4.99)">Subscribe</button>
-</div>
-<div class="tier-card">
-<h3>Tier 2</h3>
-<div class="tier-price">$9.99/mo</div>
-<ul class="tier-features">
-<li>✅ All Tier 1 Features</li>
-<li>✅ Advanced Tools</li>
-<li>✅ 100 Monthly Credits</li>
-<li>✅ Discord Role Sync</li>
-</ul>
-<button class="btn" onclick="subscribeTier(2, 9.99)">Subscribe</button>
-</div>
-<div class="tier-card">
-<h3>Tier 3</h3>
-<div class="tier-price">$19.99/mo</div>
-<ul class="tier-features">
-<li>✅ All Tier 2 Features</li>
-<li>✅ Movie Night Hosting</li>
-<li>✅ 200 Monthly Credits</li>
-<li>✅ Priority Support</li>
-</ul>
-<button class="btn" onclick="subscribeTier(3, 19.99)">Subscribe</button>
-</div>
-<div class="tier-card">
-<h3>Tier 4</h3>
-<div class="tier-price">$39.99/mo</div>
-<ul class="tier-features">
-<li>✅ All Tier 3 Features</li>
-<li>✅ Roblox Badge Sync</li>
-<li>✅ 500 Monthly Credits</li>
-<li>✅ Custom Profile Theme</li>
-</ul>
-<button class="btn" onclick="subscribeTier(4, 39.99)">Subscribe</button>
-</div>
-<div class="tier-card" style="border-color:var(--neon-pink);box-shadow:0 0 25px rgba(255,0,255,.4)">
-<h3 style="color:var(--neon-pink)">Tier 5 VIP</h3>
-<div class="tier-price">$99.99/mo</div>
-<ul class="tier-features">
-<li>✅ ALL Features Unlocked</li>
-<li>✅ Free Advertisements</li>
-<li>✅ Unlimited Credits</li>
-<li>✅ VIP Badge</li>
-<li>✅ Direct Penney Access</li>
-</ul>
-<button class="btn" style="background:rgba(255,0,255,.3);border-color:var(--neon-pink)" onclick="subscribeTier(5, 99.99)">Subscribe VIP</button>
-</div>
-</div>
-<div style="margin-top:30px;text-align:center">
-<button class="btn" onclick="buyCredits()">💎 Buy Credits (Non-Subscribers)</button>
-</div>
-</div>
-<div id="profilePage" class="page">
-<div class="profile-header">
-<div class="profile-cover" id="profileCover"></div>
-<div class="profile-avatar-container">
-<img src="https://via.placeholder.com/150" alt="Profile" class="profile-avatar" id="profileAvatar">
-</div>
-</div>
-<div class="profile-info">
-<h2 class="profile-name" id="profileName">User Name</h2>
-<div class="profile-badges" id="profileBadges"></div>
-<p style="color:var(--text-secondary);margin-bottom:20px" id="profileBio">Welcome to my profile!</p>
-<div style="display:flex;gap:15px;flex-wrap:wrap">
-<button class="btn" onclick="editProfile()">Edit Profile</button>
-<button class="btn" onclick="navigate('account-linking')">🔗 Link Accounts</button>
-</div>
-</div>
-<h3 style="margin:30px 0 20px;color:var(--neon-blue)">Recent Posts</h3>
-<div id="userPosts"></div>
-</div>
-<div id="accountLinkingPage" class="page">
-<h2 style="margin-bottom:20px;color:var(--neon-blue)">🔗 Link Your Accounts</h2>
-<div class="education-section">
-<h3>Discord</h3>
-<p style="color:var(--text-secondary);margin:10px 0">Link your Discord account to verify server membership and sync roles</p>
-<button class="btn" onclick="linkAccount('discord')" id="discordLinkBtn">Link Discord</button>
-<div id="discordLinked" style="display:none;margin-top:10px;color:var(--neon-blue)">✅ Discord Connected</div>
-</div>
-<div class="education-section">
-<h3>Roblox</h3>
-<p style="color:var(--text-secondary);margin:10px 0">Connect your Roblox account to pull badges, avatar, and group memberships</p>
-<button class="btn" onclick="linkAccount('roblox')" id="robloxLinkBtn">Link Roblox</button>
-<div id="robloxLinked" style="display:none;margin-top:10px;color:var(--neon-blue)">✅ Roblox Connected</div>
-</div>
-<div class="education-section">
-<h3>EDG</h3>
-<p style="color:var(--text-secondary);margin:10px 0">Link your EDG account for additional verification</p>
-<button class="btn" onclick="linkAccount('edg')" id="edgLinkBtn">Link EDG</button>
-<div id="edgLinked" style="display:none;margin-top:10px;color:var(--neon-blue)">✅ EDG Connected</div>
-</div>
-</div>
-<div id="helpPage" class="page">
-<div class="legal-page">
-<h2>❓ Help Center</h2>
-<h3>Getting Started</h3>
-<p>Welcome to Kurrasch Systems Studios! This guide will help you navigate our platform.</p>
-<h3>Account Management</h3>
-<p>Learn how to manage your account, link external services, and customize your profile.</p>
-<h3>Subscriptions</h3>
-<p>Discover our subscription tiers and unlock powerful features.</p>
-<h3>Contact Support</h3>
-<p>Need help? Contact our support team through Discord or the contact form.</p>
-<button class="btn" style="margin-top:20px" onclick="navigate('contact')">Contact Support</button>
-</div>
-</div>
-<div id="faqPage" class="page">
-<div class="legal-page">
-<h2>🧾 Frequently Asked Questions</h2>
-<h3>What is Kurrasch Systems Studios?</h3>
-<p>Kurrasch Systems Studios is a Roblox-based social and development network for gamers, developers, and creators.</p>
-<h3>How do I get started?</h3>
-<p>Create an account, complete your profile, and start exploring our features!</p>
-<h3>What are Credits?</h3>
-<p>Credits are our in-platform currency used to access premium features and services.</p>
-<h3>How do subscriptions work?</h3>
-<p>We offer 5 subscription tiers with increasing benefits. Choose the one that fits your needs!</p>
-</div>
-</div>
-<div id="termsPage" class="page">
-<div class="legal-page">
-<h2>📜 Terms of Service</h2>
-<h3>1. Acceptance of Terms</h3>
-<p>By accessing and using Kurrasch Systems Studios, you accept and agree to be bound by the terms and conditions of this agreement.</p>
-<h3>2. User Conduct</h3>
-<p>Users must conduct themselves respectfully and follow community guidelines at all times.</p>
-<h3>3. Intellectual Property</h3>
-<p>All content on this platform is protected by copyright and other intellectual property laws.</p>
-<h3>4. Subscriptions and Payments</h3>
-<p>Subscription fees are processed through PayPal. Refund policies apply as outlined in our refund section.</p>
-<h3>5. Termination</h3>
-<p>We reserve the right to terminate accounts that violate our terms of service.</p>
-</div>
-</div>
-<div id="privacyPage" class="page">
-<div class="legal-page">
-<h2>🔒 Privacy Policy</h2>
-<h3>Information We Collect</h3>
-<p>We collect information you provide directly to us, including username, email, and linked account data.</p>
-<h3>How We Use Your Information</h3>
-<p>Your information is used to provide services, improve user experience, and communicate updates.</p>
-<h3>Data Security</h3>
-<p>We implement security measures to protect your personal information stored in our systems.</p>
-<h3>Third-Party Services</h3>
-<p>We integrate with Discord, Roblox, and other platforms. Their privacy policies apply to data shared with them.</p>
-<h3>Your Rights</h3>
-<p>You have the right to access, modify, or delete your personal information at any time.</p>
-</div>
-</div>
-<div id="rulesPage" class="page">
-<div class="legal-page">
-<h2>⚖️ Community Rules</h2>
-<h3>1. Respect Others</h3>
-<p>Treat all members with respect. Harassment, hate speech, and discrimination will not be tolerated.</p>
-<h3>2. No Spam</h3>
-<p>Do not spam posts, comments, or messages. Quality over quantity.</p>
-<h3>3. Keep Content Appropriate</h3>
-<p>All content must be family-friendly and appropriate for all ages.</p>
-<h3>4. No Cheating or Exploiting</h3>
-<p>Do not use cheats, exploits, or attempt to manipulate the platform.</p>
-<h3>5. Follow Game-Specific Rules</h3>
-<p>Each game may have additional rules. Please follow them.</p>
-<h3>6. Report Issues</h3>
-<p>If you encounter problems or rule violations, report them to moderators.</p>
-</div>
-</div>
-<div id="policiesPage" class="page">
-<div class="legal-page">
-<h2>🧭 Policies & Regulations</h2>
-<h3>Refund Policy</h3>
-<p>Subscription refunds are available within 7 days of purchase. Credits are non-refundable once purchased.</p>
-<h3>Content Policy</h3>
-<p>User-generated content must comply with our community guidelines. We reserve the right to remove inappropriate content.</p>
-<h3>Ban Policy</h3>
-<p>Violations of our terms may result in temporary or permanent bans depending on severity.</p>
-<h3>Advertisement Policy</h3>
-<p>Advertisements must be appropriate and relevant. False or misleading ads are prohibited.</p>
-</div>
-</div>
-<div id="contactPage" class="page">
-<div class="legal-page">
-<h2>📞 Contact & Report</h2>
-<h3>Get In Touch</h3>
-<p>Need to contact us or report an issue? Use the form below or reach out via Discord.</p>
-<div class="input-group" style="margin-top:20px">
-<label>Your Email</label>
-<input type="email" id="contactEmail" placeholder="your@email.com" class="tool-input">
-</div>
-<div class="input-group">
-<label>Subject</label>
-<input type="text" id="contactSubject" placeholder="What's this about?" class="tool-input">
-</div>
-<div class="input-group">
-<label>Message</label>
-<textarea id="contactMessage" rows="6" placeholder="Tell us more..." class="tool-input"></textarea>
-</div>
-<button class="btn" onclick="sendContactForm()">Send Message</button>
-<div style="margin-top:30px">
-<h3>Join Our Discord</h3>
-<a href="https://discord.gg/jR8tcWF" target="_blank" class="btn">Join Discord Server</a>
-</div>
-</div>
-</div>
-<div id="adminPage" class="page">
-<div class="admin-section">
-<h2>⚙️ Admin Control Panel</h2>
-<p style="color:var(--text-secondary);margin-bottom:20px">Welcome, Admin. Manage the platform from here.</p>
-</div>
-<div class="admin-section">
-<h2>User Management</h2>
-<div class="input-group">
-<label>User Email</label>
-<input type="email" placeholder="user@example.com" class="tool-input" id="adminUserEmail">
-</div>
-<div class="input-group">
-<label>Action</label>
-<select class="tool-input" id="adminAction">
-<option>Grant Top Tier</option>
-<option>Add Org Badge</option>
-<option>Add Founder Badge</option>
-<option>Add Developer Badge</option>
-<option>Add Partner Badge</option>
-<option>Add Credits</option>
-<option>Ban User</option>
-<option>Unban User</option>
-</select>
-</div>
-<button class="btn" onclick="adminExecute()">Execute Action</button>
-</div>
-<div class="admin-section">
-<h2>Site Management</h2>
-<button class="btn" style="margin-right:10px" onclick="manageAds()">Manage Advertisements</button>
-<button class="btn" style="margin-right:10px" onclick="updatePolicies()">Update Policies</button>
-<button class="btn" onclick="viewAnalytics()">View Analytics</button>
-</div>
-<div class="admin-section">
-<h2>Penney AI Management</h2>
-<button class="btn" style="margin-right:10px" onclick="openPenneyChat()">Open Penney Chat</button>
-<button class="btn" onclick="viewAILogs()">View AI Logs</button>
-</div>
-</div>
-</div>
-<div class="right-sidebar">
-<div class="widget">
-<h3>🎮 Mini Games</h3>
-<div class="mini-game-card" onclick="openMiniGame('smashing')">
-<strong>Simply Smashing</strong>
-<p style="color:var(--text-secondary);font-size:12px;margin-top:5px">Classic arcade action!</p>
-</div>
-<div id="miniGamesList"></div>
-</div>
-<div class="widget">
-<h3>🤖 AI Celebrities Online</h3>
-<div style="max-height:300px;overflow-y:auto">
-<div id="aiCelebrityList"></div>
-</div>
-</div>
-<div class="widget">
-<h3>📢 Quick Links</h3>
-<button class="btn" style="width:100%;margin-bottom:10px;padding:8px" onclick="navigate('subscriptions')">💎 Subscribe</button>
-<button class="btn" style="width:100%;margin-bottom:10px;padding:8px" onclick="navigate('partnerships')">🤝 Partner</button>
-<button class="btn" style="width:100%;padding:8px" onclick="navigate('applications')">📋 Apply</button>
-</div>
-</div>
-</div>
-</div>
-<div class="penney-toggle" id="penneyToggle" onclick="togglePenneyChat()">💬</div>
-<div id="penneyChatPanel">
-<div class="penney-chat-header">
-<h3>💬 Chat with Penney</h3>
-<button onclick="togglePenneyChat()" style="background:none;border:none;color:var(--text-primary);font-size:20px;cursor:pointer">✕</button>
-</div>
-<div class="penney-chat-messages" id="penneyChatMessages">
-<div class="penney-message">
-<strong>Penney:</strong> Hey there! I'm Penney, your AI assistant. How can I help you manage the site today?
-</div>
-</div>
-<div class="penney-chat-input">
-<input type="text" id="penneyInput" placeholder="Type a command or question..." onkeypress="if(event.key==='Enter')sendToPenney()">
-<button onclick="sendToPenney()">Send</button>
-</div>
-</div>
-<div id="modal" class="modal">
-<div class="modal-content">
-<div class="modal-header">
-<h2 id="modalTitle">Modal Title</h2>
-<button class="modal-close" onclick="closeModal()">✕</button>
-</div>
-<div id="modalBody"></div>
-</div>
-</div>
-<script>
-const DB={users:[],posts:[],messages:[],friends:[],friendRequests:[],movieNights:[],forumThreads:[],aiCelebrities:[],currentUser:null,activeChat:null};
-const ADMIN_EMAILS=['kurraschgamingmerchstore@gmail.com','tannerkurrasch@gmail.com','bredenkurrasch93@gmail.com'];
-const AI_CELEBRITIES=[
-{name:'Betty White',username:'bettywhite',role:'Founder',avatar:'https://via.placeholder.com/50?text=BW'},
-{name:'Robin Williams',username:'robinwilliams',role:'Legend',avatar:'https://via.placeholder.com/50?text=RW'},
-{name:'Johnny Hardwick',username:'johnnyhardwick',role:'Voice Actor',avatar:'https://via.placeholder.com/50?text=JH'},
-{name:'Jonathan Joss',username:'jonathanjoss',role:'Voice Actor',avatar:'https://via.placeholder.com/50?text=JJ'},
-{name:'Diane Keaton',username:'dianekeaton',role:'Legend',avatar:'https://via.placeholder.com/50?text=DK'},
-{name:'Shelley Duvall',username:'shelleyduvall',role:'Icon',avatar:'https://via.placeholder.com/50?text=SD'},
-{name:'Michelle Trachtenberg',username:'michellet',role:'Actress',avatar:'https://via.placeholder.com/50?text=MT'},
-{name:'James Earl Jones',username:'jamesearljones',role:'Legend',avatar:'https://via.placeholder.com/50?text=JEJ'},
-{name:'Matthew Perry',username:'matthewperry',role:'Chandler',avatar:'https://via.placeholder.com/50?text=MP'},
-{name:'John Candy',username:'johncandy',role:'Comedy King',avatar:'https://via.placeholder.com/50?text=JC'},
-{name:'Chris Farley',username:'chrisfarley',role:'Comedy Legend',avatar:'https://via.placeholder.com/50?text=CF'},
-{name:'Harold Ramis',username:'haroldramis',role:'Ghostbuster',avatar:'https://via.placeholder.com/50?text=HR'},
-{name:'Adam Sandler',username:'adamsandler',role:'Comedy Star',avatar:'https://via.placeholder.com/50?text=AS'},
-{name:'Christopher McDonald',username:'christophermcdonald',role:'Actor',avatar:'https://via.placeholder.com/50?text=CM'},
-{name:'Jackie Sandler',username:'jackiesandler',role:'Actress',avatar:'https://via.placeholder.com/50?text=JS'},
-{name:'Kevin James',username:'kevinjames',role:'Paul Blart',avatar:'https://via.placeholder.com/50?text=KJ'},
-{name:'Queen Latifah',username:'queenlatifah',role:'Queen',avatar:'https://via.placeholder.com/50?text=QL'},
-{name:'Rob Schneider',username:'robschneider',role:'Comedian',avatar:'https://via.placeholder.com/50?text=RS'},
-{name:'Tyler Perry',username:'tylerperry',role:'Madea',avatar:'https://via.placeholder.com/50?text=TP'},
-{name:'Brendan O\'Carroll',username:'brendanocarroll',role:'Agnes Brown',avatar:'https://via.placeholder.com/50?text=BO'},
-{name:'Steve Martin',username:'stevemartin',role:'Wild & Crazy',avatar:'https://via.placeholder.com/50?text=SM'},
-{name:'Ben Stiller',username:'benstiller',role:'Zoolander',avatar:'https://via.placeholder.com/50?text=BS'},
-{name:'David Spade',username:'davidspade',role:'Comedian',avatar:'https://via.placeholder.com/50?text=DS'},
-{name:'Jennifer Aniston',username:'jenniferaniston',role:'Rachel',avatar:'https://via.placeholder.com/50?text=JA'},
-{name:'Chris Rock',username:'chrisrock',role:'Comedian',avatar:'https://via.placeholder.com/50?text=CR'},
-{name:'Cameron Boyce',username:'cameronboyce',role:'Star',avatar:'https://via.placeholder.com/50?text=CB'},
-{name:'Penney',username:'penney_ai',role:'Site AI Manager',avatar:'https://via.placeholder.com/50?text=PA',isAI:true},
-{name:'Melanie',username:'melanie_ai',role:'AI Assistant (Dormant)',avatar:'https://via.placeholder.com/50?text=MA',isAI:true,dormant:true}
-];
-const CLOTHING_ITEMS=[
-{id:'11216008776',name:'Game Killers Shirt 1'},
-{id:'11216011833',name:'Game Killers Shirt 2'},
-{id:'10718030200',name:'XXXTENTACION Remembrance'},
-{id:'11244489505',name:'Stan Smith'},
-{id:'11244499296',name:'Stan Smith Suit Pants'},
-{id:'11255247617',name:'Pilgrim'},
-{id:'11255250959',name:'Golden Pilgrim'},
-{id:'11255286659',name:'Golden Pilgrim Pants'},
-{id:'11267241982',name:'LFD TurnOut'},
-{id:'11267198788',name:'RCEMS Paramedic'},
-{id:'11267193266',name:'LPD Supervisors Uniform'},
-{id:'11267207454',name:'RCEMS EMT'},
-{id:'11267203014',name:'Rock County Deputy Uniform'},
-{id:'11422054658',name:'Remembrance of Robin Williams'}
-];
-const FORUM_CATEGORIES=[
-{id:'announcements',name:'📢 Studio Announcements',desc:'Latest news and updates from Kurrasch Systems'},
-{id:'roblox',name:'🎮 Roblox Games',desc:'Discuss Roblox games and development'},
-{id:'devhelp',name:'🛠️ Development Help',desc:'Get help with your projects'},
-{id:'support',name:'❓ Support',desc:'Technical support and assistance'},
-{id:'offtopic',name:'💭 Off-Topic',desc:'General discussion and community'}
-];
-function init(){
-loadFromStorage();
-if(!DB.currentUser){
-document.getElementById('authScreen').style.display='flex';
-}<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1970,133 +6,597 @@ document.getElementById('authScreen').style.display='flex';
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Kurrasch Systems Studios</title>
 <style>
-:root{--neon-blue:#00bfff;--neon-pink:#ff00ff;--neon-purple:#8a2be2;--dark-bg:#0a0a0f;--card-bg:#1a1a2e;--text-primary:#fff;--text-secondary:#b0b0b0}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',sans-serif;background:var(--dark-bg);color:var(--text-primary);overflow-x:hidden}.bg-animation{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;background:radial-gradient(circle at 20% 50%,rgba(138,43,226,.1) 0%,transparent 50%),radial-gradient(circle at 80% 50%,rgba(0,191,255,.1) 0%,transparent 50%);animation:bgPulse 8s ease-in-out infinite}@keyframes bgPulse{0%,100%{opacity:1}50%{opacity:.5}}.btn{padding:12px 24px;border:2px solid var(--neon-blue);background:rgba(0,191,255,.1);color:var(--text-primary);cursor:pointer;transition:all .3s ease;border-radius:8px;font-size:16px;font-weight:600}.btn:hover{background:rgba(0,191,255,.2);box-shadow:0 0 20px rgba(0,191,255,.6),0 0 40px rgba(0,191,255,.4);transform:translateY(-2px)}.btn:active{box-shadow:0 0 30px rgba(0,191,255,.8);transform:scale(.98)}#authScreen{position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;display:flex;justify-content:center;align-items:center;background:#0a0a0f}.auth-container{background:var(--card-bg);padding:40px;border-radius:16px;width:90%;max-width:450px;border:2px solid var(--neon-blue)}.auth-container h1{text-align:center;margin-bottom:30px;background:linear-gradient(90deg,var(--neon-blue),var(--neon-pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:32px}.input-group{margin-bottom:20px}.input-group label{display:block;margin-bottom:8px;color:var(--text-secondary)}.input-group input,.input-group select,.input-group textarea{width:100%;padding:12px;background:rgba(255,255,255,.05);border:1px solid var(--neon-blue);border-radius:8px;color:var(--text-primary);font-size:16px;transition:all .3s ease;font-family:'Segoe UI',sans-serif}.input-group input:focus,.input-group select:focus,.input-group textarea:focus{outline:none;border-color:var(--neon-pink);box-shadow:0 0 15px rgba(255,0,255,.5)}.auth-buttons{display:flex;flex-direction:column;gap:12px}.oauth-buttons{display:flex;gap:12px;margin-top:20px}.oauth-btn{flex:1;padding:10px;border:1px solid var(--neon-purple);background:rgba(138,43,226,.1);color:var(--text-primary);cursor:pointer;border-radius:8px;transition:all .3s ease}.oauth-btn:hover{background:rgba(138,43,226,.2);box-shadow:0 0 15px rgba(138,43,226,.5)}.auth-switch{text-align:center;margin-top:20px;color:var(--text-secondary)}.auth-switch a{color:var(--neon-blue);cursor:pointer;text-decoration:none}.auth-switch a:hover{text-decoration:underline}#mainApp{display:none;position:relative;z-index:1}header{background:rgba(26,26,46,.9);backdrop-filter:blur(10px);border-bottom:2px solid var(--neon-blue);padding:15px 30px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}.logo{font-size:28px;font-weight:700;background:linear-gradient(90deg,var(--neon-blue),var(--neon-pink),var(--neon-purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer}.nav-menu{display:flex;gap:20px;flex-wrap:wrap}.nav-btn{padding:10px 20px;background:transparent;border:1px solid var(--neon-blue);color:var(--text-primary);cursor:pointer;border-radius:8px;transition:all .3s ease;font-size:14px}.nav-btn:hover{background:rgba(0,191,255,.2);box-shadow:0 0 15px rgba(0,191,255,.5)}.nav-btn.active{background:rgba(0,191,255,.3);box-shadow:0 0 20px rgba(0,191,255,.6)}.user-section{display:flex;align-items:center;gap:15px}.user-avatar{width:40px;height:40px;border-radius:50%;border:2px solid var(--neon-pink);cursor:pointer;object-fit:cover}.main-layout{display:grid;grid-template-columns:250px 1fr 300px;gap:20px;padding:20px;max-width:1600px;margin:0 auto}.sidebar{background:rgba(26,26,46,.8);padding:20px;border-radius:12px;border:1px solid var(--neon-blue);height:fit-content;position:sticky;top:80px}.sidebar-btn{width:100%;padding:12px;margin-bottom:10px;background:rgba(0,191,255,.1);border:1px solid var(--neon-blue);color:var(--text-primary);cursor:pointer;border-radius:8px;transition:all .3s ease;text-align:left;font-size:15px}.sidebar-btn:hover{background:rgba(0,191,255,.2);box-shadow:0 0 15px rgba(0,191,255,.4);transform:translateX(5px)}.sidebar-btn.active{background:rgba(0,191,255,.3);box-shadow:0 0 20px rgba(0,191,255,.6)}.content{background:rgba(26,26,46,.6);padding:20px;border-radius:12px;border:1px solid var(--neon-purple);min-height:600px}.page{display:none}.page.active{display:block}.create-post{background:rgba(26,26,46,.9);padding:20px;border-radius:12px;border:1px solid var(--neon-pink);margin-bottom:20px}.create-post textarea{width:100%;padding:15px;background:rgba(255,255,255,.05);border:1px solid var(--neon-blue);border-radius:8px;color:var(--text-primary);font-size:16px;min-height:100px;font-family:'Segoe UI',sans-serif;resize:vertical}.create-post textarea:focus{outline:none;border-color:var(--neon-pink);box-shadow:0 0 15px rgba(255,0,255,.5)}.post-actions-create{display:flex;gap:10px;margin-top:15px;justify-content:space-between;align-items:center}.post{background:rgba(26,26,46,.9);padding:20px;margin-bottom:20px;border-radius:12px;border:1px solid var(--neon-blue);transition:all .3s ease}.post:hover{box-shadow:0 0 20px rgba(0,191,255,.3)}.post-header{display:flex;align-items:center;gap:15px;margin-bottom:15px}.post-avatar{width:50px;height:50px;border-radius:50%;border:2px solid var(--neon-pink);object-fit:cover}.post-info h3{color:var(--text-primary);font-size:16px;margin-bottom:5px}.post-time{color:var(--text-secondary);font-size:12px}.post-content{color:var(--text-secondary);line-height:1.6;margin-bottom:15px;white-space:pre-wrap}.post-actions{display:flex;gap:20px}.post-action{padding:8px 16px;background:rgba(0,191,255,.1);border:1px solid var(--neon-blue);color:var(--text-primary);cursor:pointer;border-radius:6px;transition:all .3s ease;font-size:14px}.post-action:hover{background:rgba(0,191,255,.2);box-shadow:0 0 10px rgba(0,191,255,.5)}.post-action.liked{background:rgba(255,0,255,.2);border-color:var(--neon-pink)}.post-comments{margin-top:15px;padding-top:15px;border-top:1px solid rgba(0,191,255,.2)}.comment{padding:10px;background:rgba(0,191,255,.05);border-left:3px solid var(--neon-blue);margin-bottom:10px;border-radius:4px}.comment-header{font-weight:600;color:var(--neon-blue);margin-bottom:5px;font-size:14px}.comment-content{color:var(--text-secondary);font-size:14px}.right-sidebar{background:rgba(26,26,46,.8);padding:20px;border-radius:12px;border:1px solid var(--neon-pink);height:fit-content;position:sticky;top:80px}.widget{margin-bottom:25px}.widget h3{color:var(--neon-pink);margin-bottom:15px;font-size:18px}.mini-game-card{background:rgba(138,43,226,.1);padding:15px;border-radius:8px;border:1px solid var(--neon-purple);margin-bottom:10px;cursor:pointer;transition:all .3s ease}.mini-game-card:hover{background:rgba(138,43,226,.2);box-shadow:0 0 15px rgba(138,43,226,.5);transform:translateY(-2px)}.badge{display:inline-block;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:700;margin-right:5px}.badge-org{background:linear-gradient(135deg,#FFD700,#FFA500);color:#000}.badge-founder{background:linear-gradient(135deg,var(--neon-purple),var(--neon-pink))}.badge-developer{background:linear-gradient(135deg,var(--neon-blue),var(--neon-purple))}.badge-partner{background:linear-gradient(135deg,#0f0,#0c0)}.badge-tier{background:linear-gradient(135deg,var(--neon-pink),var(--neon-blue))}.profile-header{position:relative;height:300px;border-radius:12px;overflow:hidden;margin-bottom:80px}.profile-cover{width:100%;height:100%;object-fit:cover;background:linear-gradient(135deg,var(--neon-blue),var(--neon-purple))}.profile-avatar-container{position:absolute;bottom:-50px;left:30px}.profile-avatar{width:150px;height:150px;border-radius:50%;border:5px solid var(--dark-bg);box-shadow:0 0 30px rgba(0,191,255,.6);object-fit:cover}.profile-info{padding:20px 30px}.profile-name{font-size:32px;font-weight:700;margin-bottom:10px}.profile-badges{margin-bottom:15px}.admin-section{background:rgba(138,43,226,.1);padding:20px;border-radius:12px;border:2px solid var(--neon-purple);margin-bottom:20px}.admin-section h2{color:var(--neon-purple);margin-bottom:15px}#penneyChatPanel{display:none;position:fixed;bottom:20px;right:20px;width:350px;height:500px;background:rgba(26,26,46,.95);border:2px solid var(--neon-pink);border-radius:12px;z-index:9998;flex-direction:column}.penney-chat-header{background:rgba(255,0,255,.2);padding:15px;border-bottom:1px solid var(--neon-pink);display:flex;justify-content:space-between;align-items:center}.penney-chat-header h3{color:var(--neon-pink)}.penney-chat-messages{flex:1;overflow-y:auto;padding:15px}.penney-message{background:rgba(255,0,255,.1);padding:10px;border-radius:8px;margin-bottom:10px;border-left:3px solid var(--neon-pink)}.user-message{background:rgba(0,191,255,.1);padding:10px;border-radius:8px;margin-bottom:10px;border-left:3px solid var(--neon-blue);text-align:right}.penney-chat-input{display:flex;padding:15px;border-top:1px solid var(--neon-pink)}.penney-chat-input input{flex:1;padding:10px;background:rgba(255,255,255,.05);border:1px solid var(--neon-pink);border-radius:6px;color:var(--text-primary);margin-right:10px}.penney-chat-input button{padding:10px 20px;background:rgba(255,0,255,.2);border:1px solid var(--neon-pink);color:var(--text-primary);border-radius:6px;cursor:pointer}.penney-toggle{position:fixed;bottom:20px;right:20px;width:60px;height:60px;border-radius:50%;background:rgba(255,0,255,.3);border:2px solid var(--neon-pink);display:none;justify-content:center;align-items:center;cursor:pointer;z-index:9997;box-shadow:0 0 20px rgba(255,0,255,.6);font-size:24px}.penney-toggle:hover{box-shadow:0 0 30px rgba(255,0,255,.8)}.movie-embed{width:100%;height:600px;border-radius:12px;border:2px solid var(--neon-blue);overflow:hidden}.game-card{background:rgba(26,26,46,.9);padding:20px;border-radius:12px;border:1px solid var(--neon-blue);margin-bottom:20px;transition:all .3s ease}.game-card:hover{box-shadow:0 0 25px rgba(0,191,255,.5);transform:translateY(-5px)}.game-card h3{color:var(--neon-blue);margin-bottom:10px}.clothing-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px}.clothing-item{background:rgba(26,26,46,.9);padding:15px;border-radius:12px;border:1px solid var(--neon-purple);transition:all .3s ease;text-align:center}.clothing-item:hover{box-shadow:0 0 20px rgba(138,43,226,.5);transform:scale(1.05)}.clothing-item img{width:100%;border-radius:8px;margin-bottom:10px}.tool-section{background:rgba(26,26,46,.9);padding:25px;border-radius:12px;border:1px solid var(--neon-blue);margin-bottom:20px}.tool-section h3{color:var(--neon-blue);margin-bottom:15px}.tool-input{width:100%;padding:12px;background:rgba(255,255,255,.05);border:1px solid var(--neon-blue);border-radius:8px;color:var(--text-primary);margin-bottom:15px}.forum-category{background:rgba(26,26,46,.9);padding:20px;border-radius:12px;border:1px solid var(--neon-purple);margin-bottom:15px;cursor:pointer;transition:all .3s ease}.forum-category:hover{box-shadow:0 0 20px rgba(138,43,226,.5)}.forum-category h3{color:var(--neon-purple);margin-bottom:5px}.education-section{background:rgba(26,26,46,.9);padding:25px;border-radius:12px;border:1px solid var(--neon-blue);margin-bottom:20px}.education-section h3{color:var(--neon-blue);margin-bottom:15px}.legal-page{background:rgba(26,26,46,.9);padding:30px;border-radius:12px;border:1px solid var(--neon-purple)}.legal-page h2{color:var(--neon-purple);margin-bottom:20px}.legal-page h3{color:var(--neon-blue);margin:20px 0 10px}.legal-page p{color:var(--text-secondary);line-height:1.8;margin-bottom:15px}.legal-page ul{color:var(--text-secondary);margin-left:30px;margin-bottom:15px}.subscription-tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-top:20px}.tier-card{background:rgba(26,26,46,.9);padding:25px;border-radius:12px;border:2px solid var(--neon-blue);text-align:center;transition:all .3s ease}.tier-card:hover{box-shadow:0 0 30px rgba(0,191,255,.6);transform:scale(1.05)}.tier-card h3{color:var(--neon-blue);margin-bottom:15px;font-size:24px}.tier-price{font-size:32px;color:var(--neon-pink);margin:15px 0}.tier-features{text-align:left;color:var(--text-secondary);margin:20px 0}.tier-features li{margin-bottom:10px}.friend-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:15px}.friend-card{background:rgba(26,26,46,.9);padding:15px;border-radius:12px;border:1px solid var(--neon-blue);display:flex;align-items:center;gap:15px;transition:all .3s ease;cursor:pointer}.friend-card:hover{box-shadow:0 0 20px rgba(0,191,255,.5);transform:translateY(-3px)}.friend-card img{width:50px;height:50px;border-radius:50%;border:2px solid var(--neon-pink);object-fit:cover}.messages-container{display:grid;grid-template-columns:300px 1fr;gap:20px;height:600px}.message-list{background:rgba(26,26,46,.9);border-radius:12px;border:1px solid var(--neon-blue);padding:15px;overflow-y:auto}.message-item{padding:15px;background:rgba(0,191,255,.05);border-radius:8px;margin-bottom:10px;cursor:pointer;transition:all .3s ease}.message-item:hover{background:rgba(0,191,255,.1);box-shadow:0 0 10px rgba(0,191,255,.3)}.message-item.active{background:rgba(0,191,255,.2);border-left:3px solid var(--neon-blue)}.message-chat{background:rgba(26,26,46,.9);border-radius:12px;border:1px solid var(--neon-pink);display:flex;flex-direction:column}.message-chat-header{padding:20px;border-bottom:1px solid var(--neon-pink);background:rgba(255,0,255,.1)}.message-chat-body{flex:1;padding:20px;overflow-y:auto}.message-bubble{max-width:70%;padding:12px;border-radius:12px;margin-bottom:15px}.message-bubble.sent{margin-left:auto;background:rgba(0,191,255,.2);border:1px solid var(--neon-blue);text-align:right}.message-bubble.received{background:rgba(255,0,255,.1);border:1px solid var(--neon-pink)}.message-chat-input{padding:20px;border-top:1px solid var(--neon-pink);display:flex;gap:10px}.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);z-index:10000;justify-content:center;align-items:center}.modal-content{background:var(--card-bg);padding:40px;border-radius:16px;width:90%;max-width:600px;border:2px solid var(--neon-blue);max-height:80vh;overflow-y:auto}.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.modal-header h2{color:var(--neon-blue)}.modal-close{background:none;border:none;color:var(--text-primary);font-size:28px;cursor:pointer;padding:0;width:30px;height:30px;display:flex;align-items:center;justify-content:center}.modal-close:hover{color:var(--neon-pink)}@media(max-width:1200px){.main-layout{grid-template-columns:1fr;gap:15px}.sidebar,.right-sidebar{position:relative;top:0}.messages-container{grid-template-columns:1fr;height:auto}}
+/* CSS Variables */
+:root {
+  --neon-blue: #00bfff;
+  --neon-pink: #ff00ff;
+  --neon-purple: #8a2be2;
+  --dark-bg: #0a0a14;
+  --card-bg: #1a1a2e;
+  --card-hover: #252540;
+  --text-primary: #ffffff;
+  --text-secondary: #b0b0b0;
+  --border-color: rgba(0, 191, 255, 0.3);
+}
+
+/* Reset & Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--dark-bg);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* Animated Background */
+.bg-particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(0, 191, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(255, 0, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.05) 0%, transparent 50%);
+  animation: bgShift 20s ease-in-out infinite;
+}
+
+@keyframes bgShift {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Grid Pattern Overlay */
+.bg-particles::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(0, 191, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 191, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: gridMove 30s linear infinite;
+}
+
+@keyframes gridMove {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
+}
+
+/* Button Styles */
+.btn {
+  padding: 12px 28px;
+  border: 2px solid var(--neon-blue);
+  background: rgba(0, 191, 255, 0.1);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(0, 191, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn:hover {
+  background: rgba(0, 191, 255, 0.2);
+  box-shadow: 
+    0 0 20px rgba(0, 191, 255, 0.6),
+    0 0 40px rgba(0, 191, 255, 0.4),
+    inset 0 0 20px rgba(0, 191, 255, 0.2);
+  transform: translateY(-2px);
+  border-color: var(--neon-blue);
+}
+
+.btn:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 0 30px rgba(0, 191, 255, 0.8),
+    inset 0 0 30px rgba(0, 191, 255, 0.3);
+}
+
+/* Auth Screen */
+#authScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--dark-bg);
+}
+
+.auth-container {
+  background: var(--card-bg);
+  padding: 50px 40px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 450px;
+  border: 2px solid var(--neon-blue);
+  box-shadow: 
+    0 0 40px rgba(0, 191, 255, 0.3),
+    0 0 80px rgba(0, 191, 255, 0.1);
+  position: relative;
+  z-index: 1;
+}
+
+.auth-container::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink), var(--neon-purple), var(--neon-blue));
+  border-radius: 20px;
+  z-index: -1;
+  opacity: 0.5;
+  filter: blur(10px);
+  animation: borderGlow 3s linear infinite;
+}
+
+@keyframes borderGlow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+}
+
+.auth-logo {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.auth-logo h1 {
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+
+.auth-logo p {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.input-group {
+  margin-bottom: 24px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: var(--neon-blue);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+}
+
+.auth-buttons {
+  margin: 30px 0 20px;
+}
+
+.auth-buttons .btn {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+}
+
+.oauth-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.oauth-btn {
+  padding: 12px 10px;
+  border: 1px solid var(--neon-purple);
+  background: rgba(138, 43, 226, 0.1);
+  color: var(--text-primary);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.oauth-btn:hover {
+  background: rgba(138, 43, 226, 0.2);
+  box-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+  transform: translateY(-2px);
+}
+
+.auth-switch {
+  text-align: center;
+  margin-top: 25px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.auth-switch a {
+  color: var(--neon-blue);
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.auth-switch a:hover {
+  color: var(--neon-pink);
+  text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+}
+
+/* Main App - Hidden by default */
+#mainApp {
+  display: none;
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+/* Coming Soon Message */
+.coming-soon {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  z-index: 2;
+}
+
+.coming-soon h2 {
+  font-size: 48px;
+  background: linear-gradient(135deg, var(--neon-blue), var(--neon-pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 20px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.coming-soon p {
+  font-size: 20px;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin-bottom: 30px;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .auth-container {
+    padding: 40px 30px;
+  }
+  
+  .auth-logo h1 {
+    font-size: 24px;
+  }
+  
+  .oauth-buttons {
+    grid-template-columns: 1fr;
+  }
+  
+  .coming-soon h2 {
+    font-size: 32px;
+  }
+  
+  .coming-soon p {
+    font-size: 16px;
+  }
+}
 </style>
 </head>
 <body>
-<div class="bg-animation"></div>
+<div class="bg-particles"></div>
+
+<!-- Auth Screen -->
 <div id="authScreen">
-<div class="auth-container">
-<h1>🚀 Kurrasch Systems Studios</h1>
-<div id="loginForm">
-<div class="input-group">
-<label>Email</label>
-<input type="email" id="loginEmail" placeholder="Enter your email">
+  <div class="auth-container">
+    <div class="auth-logo">
+      <h1>🚀 Kurrasch Systems Studios</h1>
+      <p>The Future of Roblox Development</p>
+    </div>
+    
+    <!-- Login Form -->
+    <div id="loginForm">
+      <div class="input-group">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="Enter your email" autocomplete="email">
+      </div>
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="current-password">
+      </div>
+      <div class="auth-buttons">
+        <button class="btn" onclick="login()">Login</button>
+      </div>
+      <div class="oauth-buttons">
+        <button class="oauth-btn" onclick="oauthLogin('google')">
+          <span>🔷</span>
+          <span>Google</span>
+        </button>
+        <button class="oauth-btn" onclick="oauthLogin('microsoft')">
+          <span>🟦</span>
+          <span>Microsoft</span>
+        </button>
+        <button class="oauth-btn" onclick="oauthLogin('discord')">
+          <span>💬</span>
+          <span>Discord</span>
+        </button>
+      </div>
+      <div class="auth-switch">
+        Don't have an account? <a onclick="showRegister()">Register</a>
+      </div>
+    </div>
+    
+    <!-- Register Form -->
+    <div id="registerForm" style="display:none">
+      <div class="input-group">
+        <label>Username</label>
+        <input type="text" id="regUsername" placeholder="Choose a username" autocomplete="username">
+      </div>
+      <div class="input-group">
+        <label>Email</label>
+        <input type="email" id="regEmail" placeholder="Enter your email" autocomplete="email">
+      </div>
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="regPassword" placeholder="Create a password" autocomplete="new-password">
+      </div>
+      <div class="auth-buttons">
+        <button class="btn" onclick="register()">Register</button>
+      </div>
+      <div class="oauth-buttons">
+        <button class="oauth-btn" onclick="oauthLogin('google')">
+          <span>🔷</span>
+          <span>Google</span>
+        </button>
+        <button class="oauth-btn" onclick="oauthLogin('microsoft')">
+          <span>🟦</span>
+          <span>Microsoft</span>
+        </button>
+        <button class="oauth-btn" onclick="oauthLogin('discord')">
+          <span>💬</span>
+          <span>Discord</span>
+        </button>
+      </div>
+      <div class="auth-switch">
+        Already have an account? <a onclick="showLogin()">Login</a>
+      </div>
+    </div>
+  </div>
 </div>
-<div class="input-group">
-<label>Password</label>
-<input type="password" id="loginPassword" placeholder="Enter your password">
-</div>
-<div class="auth-buttons">
-<button class="btn" onclick="login()">Login</button>
-</div>
-<div class="oauth-buttons">
-<button class="oauth-btn" onclick="oauthLogin('google')">🔷 Google</button>
-<button class="oauth-btn" onclick="oauthLogin('microsoft')">🟦 Microsoft</button>
-<button class="oauth-btn" onclick="oauthLogin('discord')">💬 Discord</button>
-</div>
-<div class="auth-switch">
-Don't have an account? <a onclick="showRegister()">Register</a>
-</div>
-</div>
-<div id="registerForm" style="display:none">
-<div class="input-group">
-<label>Username</label>
-<input type="text" id="regUsername" placeholder="Choose a username">
-</div>
-<div class="input-group">
-<label>Email</label>
-<input type="email" id="regEmail" placeholder="Enter your email">
-</div>
-<div class="input-group">
-<label>Password</label>
-<input type="password" id="regPassword" placeholder="Create a password">
-</div>
-<div class="auth-buttons">
-<button class="btn" onclick="register()">Register</button>
-</div>
-<div class="oauth-buttons">
-<button class="oauth-btn" onclick="oauthLogin('google')">🔷 Google</button>
-<button class="oauth-btn" onclick="oauthLogin('microsoft')">🟦 Microsoft</button>
-<button class="oauth-btn" onclick="oauthLogin('discord')">💬 Discord</button>
-</div>
-<div class="auth-switch">
-Already have an account? <a onclick="showLogin()">Login</a>
-</div>
-</div>
-</div>
-</div>
+
+<!-- Main App (Coming Soon) -->
 <div id="mainApp">
-<header>
-<div class="logo" onclick="navigate('home')">⚡ KURRASCH SYSTEMS</div>
-<div class="nav-menu">
-<button class="nav-btn active" onclick="navigate('home')">Home</button>
-<button class="nav-btn" onclick="navigate('games')">Games</button>
-<button class="nav-btn" onclick="navigate('messages')">Messages</button>
-<button class="nav-btn" onclick="navigate('friends')">Friends</button>
-<button class="nav-btn" onclick="navigate('tools')">Tools</button>
-<button class="nav-btn" onclick="navigate('forum')">Forum</button>
-<button class="nav-btn" onclick="navigate('help')">Help</button>
+  <div class="coming-soon">
+    <h2>🎉 Welcome to Kurrasch Systems Studios!</h2>
+    <p>The full platform is being built right now. Penney AI, all 27 AI celebrities, movie nights, mini games, and more are on the way!</p>
+    <p style="color: var(--neon-pink); margin-top: 20px;">Stay tuned for the complete experience...</p>
+    <button class="btn" onclick="logout()" style="margin-top: 30px;">Logout</button>
+  </div>
 </div>
-<div class="user-section">
-<span id="userCredits">💎 0 Credits</span>
-<img src="https://via.placeholder.com/40" alt="Avatar" class="user-avatar" onclick="navigate('profile')">
-<button class="btn" onclick="logout()" style="padding:8px 16px;font-size:14px">Logout</button>
-</div>
-</header>
-<div class="main-layout">
-<div class="sidebar">
-<button class="sidebar-btn active" onclick="sidebarNav('feed')">📰 News Feed</button>
-<button class="sidebar-btn" onclick="sidebarNav('games')">🎮 Games Hub</button>
-<button class="sidebar-btn" onclick="sidebarNav('movie')">🎬 Movie Night</button>
-<button class="sidebar-btn" onclick="sidebarNav('tools')">🧠 Tools</button>
-<button class="sidebar-btn" onclick="sidebarNav('education')">📚 Learn</button>
-<button class="sidebar-btn" onclick="sidebarNav('forum')">💬 Forum</button>
-<button class="sidebar-btn" onclick="sidebarNav('partnerships')">🤝 Partnerships</button>
-<button class="sidebar-btn" onclick="sidebarNav('applications')">📋 Apply</button>
-<button class="sidebar-btn" onclick="sidebarNav('subscriptions')">💎 Subscribe</button>
-<button class="sidebar-btn" id="adminBtn" style="display:none" onclick="sidebarNav('admin')">⚙️ Admin Panel</button>
-</div>
-<div class="content">
-<div id="feedPage" class="page active">
-<h2 style="margin-bottom:20px;color:var(--neon-blue)">📰 News Feed</h2>
-<div class="create-post">
-<textarea id="newPostContent" placeholder="What's on your mind?"></textarea>
-<div class="post-actions-create">
-<div style="color:var(--text-secondary);font-size:14px">Share your thoughts with the community</div>
-<button class="btn" onclick="createPost()">Post</button>
-</div>
-</div>
-<div id="feedContainer"></div>
-</div>
-<div id="gamesPage" class="page">
-<h2 style="margin-bottom:20px;color:var(--neon-blue)">🎮 Games Hub</h2>
-<div id="robloxGames">
-<h3 style="color:var(--neon-pink);margin:20px 0">Kurrasch Systems Current Games</h3>
-<div class="game-card">
-<h3>Game Killers International Fairgrounds (Beta)</h3>
-<p style="color:var(--text-secondary);margin:10px 0">Experience the ultimate fairground simulator!</p>
-<a href="https://www.roblox.com/games/5846279367/Game-Killers-International-Fairgrounds-Beta" target="_blank" class="btn" style="display:inline-block;margin-top:10px">Play Now</a>
-</div>
-<div class="game-card">
-<h3>Family Guy: The Quest For Stuff</h3>
-<p style="color:var(--text-secondary);margin:10px 0">Build your own Quahog!</p>
-<a href="https://www.roblox.com/games/11379726107/Family-Guy-The-Quest-For-Stuff" target="_blank" class="btn" style="display:inline-block;margin-top:10px">Play Now</a>
-</div>
-<div class="game-card">
-<h3>Cat Daddy Ninja Simulator (CDNS)</h3>
-<p style="color:var(--text-secondary);margin:10px 0">Coming Soon - Epic ninja action!</p>
-<a href="https://www.roblox.com/games/11204317306/Cat-Daddy-Ninja-Simulator-not-out-yet" target="_blank" class="btn" style="display:inline-block;margin-top:10px">View Game</a>
-</div>
-</div>
-<h3 style="color:var(--neon-pink);margin:30px 0 20px">👕 Kurrasch Systems Clothing</h3>
-<div class="clothing-grid" id="clothingGrid"></div>
-</div>
-<div id="moviePage" class="page">
-<h2 style="margin-bottom:20px;color:var(--neon-blue)">🎬 Movie Night</h2>
-<p style="color:var(--text-secondary);margin-bottom:20px">Watch movies together! Select your streaming service:</p>
-<div style="display:flex;gap:15px;margin-bottom:20px;flex-wrap:wrap">
-<button class="btn" onclick="loadMovie('hulu')">Hulu</button>
-<button class="btn" onclick="loadMovie('disney')">Disney+</button>
-<button class="btn" onclick="loadMovie('youtube')">YouTube TV</button>
-<button class="btn" id="hostMovieBtn" onclick="hostMovieNight()" style="background:rgba(255,0,255,.
+
+<script>
+// Database
+const DB = {
+  users: [],
+  currentUser: null
+};
+
+const ADMIN_EMAILS = [
+  'kurraschgamingmerchstore@gmail.com',
+  'tannerkurrasch@gmail.com',
+  'bredenkurrasch93@gmail.com'
+];
+
+// Initialize
+function init() {
+  loadFromStorage();
+  if (DB.currentUser) {
+    enterSite();
+  }
+}
+
+function loadFromStorage() {
+  const stored = localStorage.getItem('kurraschDB');
+  if (stored) {
+    const data = JSON.parse(stored);
+    DB.users = data.users || [];
+    DB.currentUser = data.currentUser || null;
+  }
+}
+
+function saveToStorage() {
+  localStorage.setItem('kurraschDB', JSON.stringify({
+    users: DB.users,
+    currentUser: DB.currentUser
+  }));
+}
+
+// Auth Functions
+function showRegister() {
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('registerForm').style.display = 'block';
+}
+
+function showLogin() {
+  document.getElementById('loginForm').style.display = 'block';
+  document.getElementById('registerForm').style.display = 'none';
+}
+
+function register() {
+  const username = document.getElementById('regUsername').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const password = document.getElementById('regPassword').value;
+  
+  if (!username || !email || !password) {
+    alert('❌ Please fill all fields!');
+    return;
+  }
+  
+  if (DB.users.find(u => u.email === email)) {
+    alert('❌ Email already registered!');
+    return;
+  }
+  
+  const isAdmin = ADMIN_EMAILS.includes(email);
+  
+  const user = {
+    username: username,
+    email: email,
+    password: password,
+    tier: isAdmin ? 5 : 0,
+    badges: isAdmin ? ['org', 'founder'] : [],
+    credits: isAdmin ? 999999 : 100,
+    isAdmin: isAdmin,
+    createdAt: Date.now()
+  };
+  
+  DB.users.push(user);
+  DB.currentUser = user;
+  saveToStorage();
+  enterSite();
+}
+
+function login() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  
+  if (!email || !password) {
+    alert('❌ Please fill all fields!');
+    return;
+  }
+  
+  const user = DB.users.find(u => u.email === email && u.password === password);
+  
+  if (!user) {
+    alert('❌ Invalid credentials!');
+    return;
+  }
+  
+  if (user.banned) {
+    alert('⚠️ Your account has been banned for policy violations.');
+    return;
+  }
+  
+  DB.currentUser = user;
+  saveToStorage();
+  enterSite();
+}
+
+function oauthLogin(provider) {
+  const username = prompt(`Enter your ${provider.toUpperCase()} username to link:`);
+  if (!username) return;
+  
+  const user = {
+    username: username,
+    email: `${username}@${provider}.oauth`,
+    password: 'oauth',
+    tier: 0,
+    badges: [],
+    credits: 100,
+    isAdmin: false,
+    createdAt: Date.now()
+  };
+  
+  DB.users.push(user);
+  DB.currentUser = user;
+  saveToStorage();
+  enterSite();
+}
+
+function enterSite() {
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'block';
+}
+
+function logout() {
+  if (confirm('Are you sure you want to logout?')) {
+    DB.currentUser = null;
+    saveToStorage();
+    location.reload();
+  }
+}
+
+// Auto-force HTTPS
+if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+  location.replace(`https:${location.href.substring(location.protocol.length)}`);
+}
+
+// Initialize on load
+window.onload = function() {
+  init();
+  console.log('🚀 Kurrasch Systems Studios loaded!');
+  console.log('🔒 HTTPS enforced');
+  console.log('✅ Ready for deployment to GitHub Pages');
+};
+</script>
+</body>
+</html>
