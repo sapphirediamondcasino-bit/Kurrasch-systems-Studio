@@ -5,21 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kurrasch Systems Studio</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0a0e27;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #000000;
             color: #ffffff;
             overflow-x: hidden;
-            position: relative;
         }
 
-        /* Matrix Background */
         #matrix-bg {
             position: fixed;
             top: 0;
@@ -27,115 +21,60 @@
             width: 100%;
             height: 100%;
             z-index: 0;
-            opacity: 0.15;
+            opacity: 0.25;
             pointer-events: none;
         }
 
-        .neon-text {
-            color: #00d4ff;
-            text-shadow: 0 0 10px #00d4ff, 0 0 20px #00d4ff;
-        }
+        .app { position: relative; z-index: 1; }
 
-        /* Login Page */
-        #loginPage {
+        /* Auth Pages */
+        .auth-page {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100vh;
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 50px;
-        }
-
-        .login-left {
-            flex: 1;
-            padding-right: 50px;
-        }
-
-        .login-logo {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 50px;
-        }
-
-        .login-logo-box {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
-            border-radius: 20px;
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
-            font-size: 48px;
-            font-weight: bold;
-            color: white;
-        }
-
-        .login-logo-text h1 {
-            font-size: 42px;
-            color: #00d4ff;
-            text-shadow: 0 0 20px #00d4ff;
-        }
-
-        .login-logo-text p {
-            font-size: 24px;
-            color: #888;
-        }
-
-        .login-features {
-            margin-top: 50px;
-        }
-
-        .login-features h2 {
-            font-size: 36px;
-            margin-bottom: 30px;
-        }
-
-        .login-feature {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin: 20px 0;
-            font-size: 18px;
-        }
-
-        .login-feature::before {
-            content: '✓';
-            width: 30px;
-            height: 30px;
-            background: #00d4ff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #0a0e27;
-            font-weight: bold;
-        }
-
-        .login-right {
-            width: 450px;
-            background: rgba(26, 31, 58, 0.95);
             padding: 40px;
-            border-radius: 20px;
+            z-index: 1000;
+        }
+
+        .auth-page.active { display: flex; }
+
+        .auth-box {
+            background: rgba(20, 25, 45, 0.95);
+            padding: 40px;
+            border-radius: 15px;
             border: 2px solid #00d4ff;
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.4);
+            max-width: 450px;
+            width: 100%;
         }
 
-        .login-right h2 {
+        .auth-logo {
             text-align: center;
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-
-        .login-right p {
-            text-align: center;
-            color: #888;
             margin-bottom: 30px;
+        }
+
+        .auth-logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #00d4ff, #b300ff);
+            border-radius: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .auth-logo h1 {
+            color: #00d4ff;
+            font-size: 28px;
+            text-shadow: 0 0 15px #00d4ff;
         }
 
         .form-group {
@@ -144,104 +83,55 @@
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
             color: #00d4ff;
+            margin-bottom: 8px;
+            font-size: 14px;
         }
 
         .form-group input {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             background: rgba(0, 212, 255, 0.1);
             border: 1px solid #00d4ff;
             border-radius: 8px;
-            color: #ffffff;
-            font-size: 16px;
+            color: #fff;
+            font-size: 15px;
         }
 
         .form-group input:focus {
             outline: none;
-            border-color: #00d4ff;
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
         }
 
-        .remember-forgot {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 20px 0;
-        }
-
-        .remember-forgot a {
-            color: #00d4ff;
-            text-decoration: none;
-        }
-
-        .login-btn {
+        .btn-primary {
             width: 100%;
-            padding: 15px;
+            padding: 14px;
             background: linear-gradient(135deg, #00d4ff, #b300ff);
             border: none;
             border-radius: 8px;
-            color: white;
-            font-size: 18px;
+            color: #fff;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
         }
 
-        .login-btn:hover {
+        .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.8);
+            box-shadow: 0 0 25px rgba(0, 212, 255, 0.8);
         }
 
-        .social-login {
-            margin-top: 30px;
-            text-align: center;
-        }
-
-        .social-login p {
-            color: #888;
-            margin-bottom: 15px;
-        }
-
-        .social-btns {
-            display: flex;
-            gap: 10px;
-        }
-
-        .social-btn {
-            flex: 1;
-            padding: 12px;
-            border: 2px solid #00d4ff;
-            border-radius: 8px;
-            background: rgba(0, 212, 255, 0.1);
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 20px;
-        }
-
-        .social-btn:hover {
-            background: rgba(0, 212, 255, 0.3);
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
-        }
-
-        .signup-link {
+        .auth-link {
             text-align: center;
             margin-top: 20px;
+            color: #888;
+            font-size: 14px;
         }
 
-        .signup-link a {
+        .auth-link a {
             color: #00d4ff;
+            cursor: pointer;
             text-decoration: none;
-            font-weight: bold;
-        }
-
-        /* Main App */
-        #mainApp {
-            display: none;
-            position: relative;
-            z-index: 1;
         }
 
         /* Sidebar */
@@ -249,436 +139,482 @@
             position: fixed;
             left: 0;
             top: 0;
-            width: 280px;
+            width: 220px;
             height: 100vh;
-            background: rgba(10, 14, 39, 0.95);
+            background: rgba(15, 20, 35, 0.98);
             border-right: 2px solid #00d4ff;
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
-            padding: 20px;
+            padding: 15px 10px;
             overflow-y: auto;
-            z-index: 1000;
+            z-index: 100;
         }
 
-        .sidebar-logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-            padding: 15px;
-            background: rgba(0, 212, 255, 0.1);
-            border-radius: 12px;
+        .logo {
+            text-align: center;
+            padding: 10px;
+            border-bottom: 2px solid #00d4ff;
+            margin-bottom: 15px;
         }
 
-        .sidebar-logo-box {
-            width: 60px;
-            height: 60px;
+        .logo-icon {
+            width: 55px;
+            height: 55px;
             background: linear-gradient(135deg, #00d4ff, #b300ff);
-            border-radius: 12px;
-            display: flex;
+            border-radius: 10px;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 24px;
             font-weight: bold;
+            margin-bottom: 8px;
         }
 
-        .sidebar-logo-text h1 {
-            font-size: 18px;
+        .logo h1 {
+            font-size: 13px;
             color: #00d4ff;
-            line-height: 1.2;
+            line-height: 1.3;
         }
 
-        .sidebar-logo-text p {
-            font-size: 14px;
-            color: #888;
-        }
-
-        .online-status {
-            padding: 12px;
-            background: rgba(0, 212, 255, 0.1);
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
+        .online-badge {
+            padding: 8px;
+            background: rgba(0, 212, 255, 0.15);
             border: 1px solid #00d4ff;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 12px;
+            margin-bottom: 12px;
         }
 
         .online-dot {
             display: inline-block;
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             background: #00ff00;
             border-radius: 50%;
-            margin-right: 8px;
+            margin-right: 6px;
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(1.1); }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
         }
 
         .nav-item {
-            padding: 15px 20px;
-            margin: 8px 0;
+            padding: 10px 12px;
+            margin: 5px 0;
             background: rgba(0, 212, 255, 0.1);
-            border-radius: 10px;
+            border-radius: 7px;
             cursor: pointer;
-            transition: all 0.3s;
-            border: 1px solid transparent;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 16px;
+            gap: 10px;
+            font-size: 13px;
+            border: 1px solid transparent;
         }
 
         .nav-item:hover, .nav-item.active {
             background: rgba(0, 212, 255, 0.3);
-            border: 1px solid #00d4ff;
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
-            transform: translateX(5px);
-        }
-
-        .nav-item span:first-child {
-            font-size: 20px;
+            border-color: #00d4ff;
+            transform: translateX(3px);
         }
 
         /* Main Content */
-        #mainContent {
-            margin-left: 280px;
-            padding: 30px;
+        #main {
+            margin-left: 220px;
+            padding: 20px;
             min-height: 100vh;
         }
 
         .page {
             display: none;
-            animation: fadeIn 0.5s;
+            animation: fadeIn 0.3s;
         }
 
-        .page.active {
-            display: block;
-        }
+        .page.active { display: block; }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .page-header {
-            padding: 30px;
-            background: rgba(0, 212, 255, 0.1);
-            border-radius: 15px;
-            margin-bottom: 30px;
-            border: 2px solid #00d4ff;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
-        }
-
-        .page-header h1 {
-            font-size: 36px;
-            margin-bottom: 10px;
-        }
-
         /* Post Creator */
-        .post-creator {
-            background: rgba(26, 31, 58, 0.9);
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 30px;
+        .post-box {
+            background: rgba(20, 25, 40, 0.95);
             border: 2px solid #00d4ff;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
 
-        .post-creator h3 {
-            margin-bottom: 15px;
-            color: #00d4ff;
-        }
-
-        .post-creator textarea {
+        .post-box textarea {
             width: 100%;
-            min-height: 120px;
+            min-height: 100px;
             background: rgba(0, 212, 255, 0.1);
             border: 1px solid #00d4ff;
-            border-radius: 10px;
-            padding: 15px;
-            color: #ffffff;
-            font-size: 16px;
+            border-radius: 8px;
+            padding: 12px;
+            color: #fff;
+            font-size: 14px;
             resize: vertical;
             font-family: inherit;
+            margin-bottom: 12px;
         }
 
-        .post-creator textarea:focus {
-            outline: none;
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
-        }
-
-        .post-media-upload {
-            margin: 20px 0;
+        .upload-btns {
             display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
+            gap: 10px;
+            margin: 12px 0;
         }
 
         .upload-btn {
-            padding: 12px 25px;
+            padding: 8px 16px;
             background: rgba(0, 212, 255, 0.2);
-            border: 2px solid #00d4ff;
-            border-radius: 8px;
+            border: 1px solid #00d4ff;
+            border-radius: 6px;
             color: #00d4ff;
             cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 12px;
         }
 
         .upload-btn:hover {
             background: rgba(0, 212, 255, 0.4);
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
         }
 
-        .upload-btn input[type="file"] {
-            display: none;
-        }
-
-        .download-toggle {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 15px 0;
-            color: #888;
-        }
-
-        .download-toggle input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-        }
+        .upload-btn input { display: none; }
 
         .btn {
-            padding: 12px 35px;
+            padding: 10px 24px;
             background: linear-gradient(135deg, #00d4ff, #0099cc);
             border: none;
-            border-radius: 10px;
-            color: #ffffff;
-            cursor: pointer;
-            font-size: 16px;
+            border-radius: 7px;
+            color: #fff;
+            font-size: 14px;
             font-weight: bold;
+            cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
         }
 
         .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.7);
         }
 
-        .btn-secondary {
-            background: linear-gradient(135deg, #b300ff, #8800cc);
-            box-shadow: 0 0 20px rgba(179, 0, 255, 0.5);
-        }
-
-        /* Post Styles */
+        /* Posts */
         .post {
-            background: rgba(26, 31, 58, 0.95);
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 25px;
+            background: rgba(20, 25, 40, 0.95);
             border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 18px;
             transition: all 0.3s;
         }
 
         .post:hover {
             border-color: #00d4ff;
-            box-shadow: 0 0 25px rgba(0, 212, 255, 0.4);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
         }
 
         .post-header {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .post-author {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
         }
 
         .post-avatar {
-            width: 55px;
-            height: 55px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            border: 3px solid #00d4ff;
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+            border: 2px solid #00d4ff;
+            overflow: hidden;
+            flex-shrink: 0;
         }
 
-        .post-info h3 {
+        .post-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .post-author {
+            flex: 1;
+        }
+
+        .post-author h4 {
             color: #00d4ff;
-            margin-bottom: 5px;
-            font-size: 18px;
+            font-size: 15px;
+            margin-bottom: 3px;
+        }
+
+        .post-badges {
+            display: flex;
+            gap: 5px;
+            margin: 5px 0;
+        }
+
+        .badge {
+            padding: 3px 8px;
+            background: linear-gradient(135deg, #00d4ff, #b300ff);
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
         }
 
         .post-time {
-            color: #888;
-            font-size: 14px;
-        }
-
-        .post-menu {
-            color: #888;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 5px 10px;
-            border-radius: 5px;
-            transition: all 0.3s;
-        }
-
-        .post-menu:hover {
-            background: rgba(0, 212, 255, 0.2);
-            color: #00d4ff;
+            color: #666;
+            font-size: 12px;
         }
 
         .post-content {
-            margin: 20px 0;
-            line-height: 1.7;
-            font-size: 16px;
+            margin: 12px 0;
+            font-size: 14px;
+            line-height: 1.6;
         }
 
         .post-media {
-            margin: 20px 0;
-            border-radius: 12px;
+            margin: 12px 0;
+            border-radius: 10px;
             overflow: hidden;
         }
 
         .post-media img,
         .post-media video {
             width: 100%;
-            max-height: 600px;
+            max-height: 500px;
             object-fit: cover;
-            border-radius: 12px;
-        }
-
-        .post-media audio {
-            width: 100%;
-            margin: 10px 0;
         }
 
         .post-actions {
             display: flex;
-            gap: 25px;
-            margin-top: 20px;
-            padding-top: 20px;
+            gap: 15px;
+            margin-top: 12px;
+            padding-top: 12px;
             border-top: 1px solid rgba(0, 212, 255, 0.2);
         }
 
         .post-action {
-            cursor: pointer;
-            color: #888;
-            transition: all 0.3s;
-            padding: 10px 20px;
-            border-radius: 8px;
+            padding: 6px 14px;
             background: rgba(0, 212, 255, 0.1);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 15px;
+            border-radius: 6px;
+            color: #888;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
         }
 
         .post-action:hover {
-            color: #00d4ff;
             background: rgba(0, 212, 255, 0.3);
-            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+            color: #00d4ff;
         }
 
         .post-action.liked {
-            color: #ff006e;
             background: rgba(255, 0, 110, 0.2);
+            color: #ff006e;
         }
 
         /* Comments */
-        .comments-section {
-            margin-top: 25px;
-            padding-top: 25px;
+        .comments {
+            margin-top: 15px;
+            padding-top: 15px;
             border-top: 1px solid rgba(0, 212, 255, 0.2);
         }
 
         .comment {
             background: rgba(0, 212, 255, 0.05);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 12px 0;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
             border-left: 3px solid #00d4ff;
         }
 
         .comment-header {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 10px;
+            gap: 8px;
+            margin-bottom: 8px;
         }
 
         .comment-avatar {
-            width: 35px;
-            height: 35px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
             border: 2px solid #00d4ff;
+            overflow: hidden;
+        }
+
+        .comment-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .comment-author {
             font-weight: bold;
             color: #00d4ff;
+            font-size: 13px;
         }
 
         .comment-time {
             color: #666;
+            font-size: 11px;
+        }
+
+        .comment-content {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* Chat Popup */
+        .chat-popup {
+            position: fixed;
+            bottom: 0;
+            right: 20px;
+            width: 340px;
+            background: rgba(20, 25, 40, 0.98);
+            border: 2px solid #00d4ff;
+            border-radius: 10px 10px 0 0;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+            z-index: 200;
+            display: none;
+        }
+
+        .chat-popup.active { display: block; }
+
+        .chat-header {
+            padding: 12px;
+            background: rgba(0, 212, 255, 0.2);
+            border-bottom: 1px solid #00d4ff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .chat-header strong {
+            color: #00d4ff;
+            font-size: 14px;
+        }
+
+        .chat-close {
+            background: none;
+            border: none;
+            color: #00d4ff;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .chat-body {
+            height: 350px;
+            overflow-y: auto;
+            padding: 12px;
+        }
+
+        .chat-msg {
+            margin: 8px 0;
+            padding: 8px 12px;
+            border-radius: 12px;
+            max-width: 75%;
+            font-size: 13px;
+        }
+
+        .chat-msg.sent {
+            background: rgba(0, 212, 255, 0.3);
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .chat-msg.received {
+            background: rgba(179, 0, 255, 0.3);
+        }
+
+        .chat-input {
+            padding: 12px;
+            border-top: 1px solid #00d4ff;
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 8px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid #00d4ff;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 13px;
+        }
+
+        /* Friends List */
+        .friend-card {
+            background: rgba(20, 25, 40, 0.9);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .friend-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #00d4ff;
+            overflow: hidden;
+        }
+
+        .friend-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .friend-info {
+            flex: 1;
+        }
+
+        .friend-name {
+            color: #00d4ff;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .friend-status {
+            color: #666;
             font-size: 12px;
         }
 
-        .comment-input {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
+        .msg-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
         }
 
-        .comment-input input {
-            flex: 1;
-            padding: 12px;
-            background: rgba(0, 212, 255, 0.1);
-            border: 1px solid #00d4ff;
-            border-radius: 8px;
-            color: #ffffff;
+        .msg-btn:hover {
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.7);
         }
 
-        .comment-input input:focus {
-            outline: none;
-            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
-        }
-
-        /* Profile Card */
-        .profile-card {
-            background: rgba(26, 31, 58, 0.95);
-            border-radius: 15px;
+        /* Profile */
+        .profile-container {
+            background: rgba(20, 25, 40, 0.95);
             border: 2px solid #00d4ff;
+            border-radius: 12px;
             overflow: hidden;
-            max-width: 800px;
-            margin: 0 auto;
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+            margin-bottom: 20px;
         }
 
         .profile-banner {
             width: 100%;
-            height: 250px;
+            height: 220px;
             background: linear-gradient(135deg, #00d4ff, #b300ff);
             position: relative;
-            overflow: hidden;
         }
 
         .profile-banner img {
@@ -687,1144 +623,373 @@
             object-fit: cover;
         }
 
-        .profile-avatar-large {
-            width: 160px;
-            height: 160px;
+        .profile-avatar-lg {
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 80px;
-            margin: -80px auto 20px;
-            border: 6px solid #0a0e27;
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
+            border: 5px solid #000;
+            margin: -70px auto 15px;
             position: relative;
-            z-index: 2;
+            overflow: hidden;
         }
 
-        .profile-avatar-large img {
+        .profile-avatar-lg img {
             width: 100%;
             height: 100%;
-            border-radius: 50%;
             object-fit: cover;
         }
 
         .profile-info {
-            padding: 0 30px 30px;
+            padding: 0 25px 25px;
             text-align: center;
         }
 
-        .profile-info h2 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            color: #00d4ff;
-        }
-
-        .profile-info p {
-            color: #888;
-            margin: 15px 0;
-            line-height: 1.6;
-        }
-
-        .profile-stats {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin: 25px 0;
-            padding: 20px;
-            background: rgba(0, 212, 255, 0.1);
-            border-radius: 10px;
-        }
-
-        .profile-stat {
-            text-align: center;
-        }
-
-        .profile-stat-number {
-            font-size: 28px;
-            font-weight: bold;
-            color: #00d4ff;
-        }
-
-        .profile-stat-label {
-            color: #888;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-
-        .profile-edit-form {
-            margin-top: 30px;
-            padding: 30px;
-            background: rgba(0, 212, 255, 0.05);
-            border-radius: 12px;
-            border: 1px solid #00d4ff;
-        }
-
-        .profile-edit-form h3 {
-            margin-bottom: 20px;
-            color: #00d4ff;
-        }
-
-        .profile-edit-form input,
-        .profile-edit-form textarea {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            background: rgba(0, 212, 255, 0.1);
-            border: 1px solid #00d4ff;
-            border-radius: 8px;
-            color: #ffffff;
-            font-family: inherit;
-        }
-
-        .profile-edit-form textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        /* AI Celebrity Grid */
-        .celebrity-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-            margin-top: 25px;
-        }
-
-        .celebrity-card {
-            background: rgba(26, 31, 58, 0.95);
-            padding: 25px;
-            border-radius: 15px;
-            border: 2px solid rgba(0, 212, 255, 0.3);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        .celebrity-card:hover {
-            border-color: #00d4ff;
-            box-shadow: 0 0 25px rgba(0, 212, 255, 0.5);
-            transform: translateY(-5px);
-        }
-
-        .celebrity-online {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 15px;
-            height: 15px;
-            background: #00ff00;
-            border-radius: 50%;
-            border: 3px solid #0a0e27;
-            animation: pulse 2s infinite;
-        }
-
-        .celebrity-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 50px;
-            margin: 0 auto 20px;
-            border: 4px solid #00d4ff;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
-        }
-
-        .celebrity-card h3 {
+        .profile-name {
+            font-size: 26px;
             color: #00d4ff;
             margin-bottom: 8px;
-            font-size: 20px;
         }
 
-        .celebrity-card p {
-            color: #888;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        /* Games Grid */
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 25px;
-        }
-
-        .game-card {
-            background: rgba(26, 31, 58, 0.95);
-            border-radius: 15px;
-            border: 2px solid rgba(0, 212, 255, 0.3);
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .game-card:hover {
-            border-color: #00d4ff;
-            box-shadow: 0 0 25px rgba(0, 212, 255, 0.5);
-            transform: translateY(-5px);
-        }
-
-        .game-thumbnail {
-            width: 100%;
-            height: 180px;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
+        .profile-badges {
             display: flex;
-            align-items: center;
+            gap: 8px;
             justify-content: center;
-            font-size: 60px;
+            margin: 12px 0;
         }
 
-        .game-info {
+        .profile-bio {
+            color: #888;
+            line-height: 1.6;
+            margin: 15px 0;
+        }
+
+        /* VC Room */
+        .vc-container {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 20px;
+            height: calc(100vh - 120px);
+        }
+
+        .vc-stage {
+            background: rgba(20, 25, 40, 0.95);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
             padding: 20px;
-        }
-
-        .game-info h3 {
-            color: #00d4ff;
-            margin-bottom: 10px;
-        }
-
-        .game-info p {
-            color: #888;
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-
-        .game-stats {
             display: flex;
-            justify-content: space-between;
-            color: #666;
-            font-size: 13px;
+            flex-direction: column;
         }
 
-        /* Tools Section */
-        .tool-container {
-            background: rgba(26, 31, 58, 0.95);
-            padding: 30px;
-            border-radius: 15px;
-            border: 2px solid #00d4ff;
-            margin-bottom: 30px;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
-        }
-
-        .tool-container h2 {
-            color: #00d4ff;
-            margin-bottom: 15px;
-        }
-
-        .tool-container p {
-            color: #888;
-            margin-bottom: 20px;
-        }
-
-        .tool-container input[type="file"],
-        .tool-container select {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            background: rgba(0, 212, 255, 0.1);
-            border: 1px solid #00d4ff;
-            border-radius: 8px;
-            color: #ffffff;
-        }
-
-        /* Voice Button */
-        .voice-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
-            border: none;
-            cursor: pointer;
-            font-size: 32px;
-            color: #ffffff;
-            box-shadow: 0 0 40px rgba(0, 212, 255, 0.8);
-            z-index: 999;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .voice-btn:hover {
-            transform: scale(1.15);
-            box-shadow: 0 0 50px rgba(0, 212, 255, 1);
-        }
-
-        .voice-btn.listening {
-            animation: voicePulse 1s infinite;
-        }
-
-        @keyframes voicePulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); box-shadow: 0 0 60px rgba(0, 212, 255, 1); }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            #sidebar {
-                width: 70px;
-            }
-            #sidebar .sidebar-logo-text,
-            #sidebar .nav-item span:last-child {
-                display: none;
-            }
-            #mainContent {
-                margin-left: 70px;
-            }
-            #loginPage {
-                flex-direction: column;
-                padding: 20px;
-            }
-            .login-left {
-                padding-right: 0;
-                margin-bottom: 30px;
-            }
-            .login-right {
-                width: 100%;
-            }
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 12px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(10, 14, 39, 0.5);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #00d4ff;
-            border-radius: 6px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #0099cc;
-        }
-
-        /* Forum Styles */
-        .forum-categories {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
-        .forum-category {
-            padding: 12px 25px;
-            background: rgba(0, 212, 255, 0.1);
-            border: 2px solid rgba(0, 212, 255, 0.3);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .forum-category:hover,
-        .forum-category.active {
-            background: rgba(0, 212, 255, 0.3);
-            border-color: #00d4ff;
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
-        }
-
-        .forum-post {
-            background: rgba(26, 31, 58, 0.95);
-            padding: 25px;
-            border-radius: 15px;
-            border: 2px solid rgba(0, 212, 255, 0.3);
-            margin-bottom: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .forum-post:hover {
-            border-color: #00d4ff;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
-        }
-
-        .forum-post-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .forum-badge {
-            padding: 4px 12px;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .forum-post h3 {
-            color: #00d4ff;
-            margin-bottom: 10px;
-            font-size: 20px;
-        }
-
-        .forum-post-meta {
-            display: flex;
-            gap: 20px;
-            color: #888;
-            font-size: 14px;
-            margin-top: 15px;
-        }
-
-        /* Learning Center */
-        .learning-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .learning-stat-card {
-            background: rgba(26, 31, 58, 0.95);
-            padding: 30px;
-            border-radius: 15px;
-            border: 2px solid #00d4ff;
-            text-align: center;
-        }
-
-        .learning-stat-number {
-            font-size: 48px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .learning-stat-label {
-            color: #888;
-            margin-top: 10px;
-        }
-
-        .course-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-        }
-
-        .course-card {
-            background: rgba(26, 31, 58, 0.95);
-            border-radius: 15px;
-            border: 2px solid rgba(0, 212, 255, 0.3);
-            overflow: hidden;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .course-card:hover {
-            border-color: #00d4ff;
-            box-shadow: 0 0 25px rgba(0, 212, 255, 0.5);
-            transform: translateY(-5px);
-        }
-
-        .course-thumbnail {
-            width: 100%;
-            height: 180px;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 60px;
-        }
-
-        .course-info {
-            padding: 25px;
-        }
-
-        .course-badge {
-            display: inline-block;
-            padding: 5px 15px;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        .course-info h3 {
-            color: #00d4ff;
-            margin-bottom: 15px;
-        }
-
-        .course-lessons {
-            color: #888;
-            font-size: 14px;
-            margin-top: 15px;
-        }
-
-        /* Membership Tiers */
-        .membership-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-top: 30px;
-        }
-
-        .membership-card {
-            background: rgba(26, 31, 58, 0.95);
-            padding: 30px;
-            border-radius: 15px;
-            border: 2px solid #00d4ff;
-            text-align: center;
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        .membership-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 0 40px rgba(0, 212, 255, 0.6);
-        }
-
-        .membership-badge {
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 8px 20px;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .membership-icon {
-            width: 80px;
-            height: 80px;
-            margin: 20px auto;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-        }
-
-        .membership-price {
-            font-size: 48px;
-            font-weight: bold;
-            color: #00d4ff;
-            margin: 20px 0;
-        }
-
-        .membership-features {
-            text-align: left;
-            margin: 25px 0;
-        }
-
-        .membership-feature {
-            padding: 10px 0;
-            color: #888;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .membership-feature::before {
-            content: '✓';
-            color: #00ff00;
-            font-weight: bold;
-        }
-
-        /* Admin Panel */
-        .admin-section {
-            background: rgba(26, 31, 58, 0.95);
-            padding: 25px;
-            border-radius: 15px;
-            border: 2px solid #ff006e;
-            margin-bottom: 25px;
-            box-shadow: 0 0 20px rgba(255, 0, 110, 0.3);
-        }
-
-        .admin-section h2 {
-            color: #ff006e;
-            margin-bottom: 20px;
-        }
-
-        .admin-actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        /* Penney AI Chat */
-        .penney-chat {
-            background: rgba(26, 31, 58, 0.95);
-            border-radius: 15px;
-            border: 2px solid #00d4ff;
-            padding: 25px;
-            margin-top: 20px;
-        }
-
-        .penney-messages {
-            max-height: 400px;
-            overflow-y: auto;
-            margin: 20px 0;
-        }
-
-        .penney-message {
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 10px;
-            background: rgba(0, 212, 255, 0.1);
-            border-left: 4px solid #00d4ff;
-        }
-
-        .penney-input {
-            display: flex;
-            gap: 10px;
-        }
-
-        .penney-input input {
+        .vc-videos {
             flex: 1;
-            padding: 12px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .vc-video {
+            background: #000;
+            border: 2px solid #00d4ff;
+            border-radius: 10px;
+            min-height: 240px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+
+        .vc-controls {
+            display: flex;
+            gap: 12px;
+            padding: 15px;
             background: rgba(0, 212, 255, 0.1);
-            border: 1px solid #00d4ff;
+            border-radius: 10px;
+        }
+
+        .vc-btn {
+            flex: 1;
+            padding: 14px;
+            border: 2px solid #00d4ff;
+            background: rgba(0, 212, 255, 0.1);
             border-radius: 8px;
-            color: #ffffff;
+            color: #00d4ff;
+            font-size: 22px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .vc-btn:hover, .vc-btn.active {
+            background: #00d4ff;
+            color: #000;
+        }
+
+        .vc-sidebar {
+            background: rgba(20, 25, 40, 0.95);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .vc-participant {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            margin: 8px 0;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); }
+        ::-webkit-scrollbar-thumb { background: #00d4ff; border-radius: 4px; }
+
+        @media (max-width: 768px) {
+            #sidebar { width: 60px; }
+            #sidebar .logo h1, #sidebar .nav-item span:last-child { display: none; }
+            #main { margin-left: 60px; }
+            .vc-container { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Matrix Background Canvas -->
     <canvas id="matrix-bg"></canvas>
 
-    <!-- Login Page -->
-    <div id="loginPage">
-        <div class="login-left">
-            <div class="login-logo">
-                <div class="login-logo-box">KSS</div>
-                <div class="login-logo-text">
-                    <h1>Kurrasch Systems</h1>
-                    <p>Studios</p>
+    <div class="app">
+
+        <!-- Login Page -->
+        <div id="loginPage" class="auth-page active">
+            <div class="auth-box">
+                <div class="auth-logo">
+                    <div class="auth-logo-icon">KSS</div>
+                    <h1>Kurrasch Systems Studio</h1>
                 </div>
-            </div>
-
-            <div class="login-features">
-                <h2>Join the Future of Roblox Development</h2>
-                <div class="login-feature">Connect with developers worldwide</div>
-                <div class="login-feature">Access exclusive tools and resources</div>
-                <div class="login-feature">Showcase your games and creations</div>
-                <div class="login-feature">Learn from expert tutorials</div>
-                <div class="login-feature">Get help from Penny AI</div>
-            </div>
-        </div>
-
-        <div class="login-right">
-            <h2>Welcome Back</h2>
-            <p>Log in to your account</p>
-
-            <form id="loginForm" onsubmit="login(event)">
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="loginEmail" placeholder="your@email.com" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="loginPassword" placeholder="••••••••" required>
-                </div>
-
-                <div class="remember-forgot">
-                    <label style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox"> Remember me
-                    </label>
-                    <a href="#">Forgot password?</a>
-                </div>
-
-                <button type="submit" class="login-btn">Log In</button>
-
-                <div class="social-login">
-                    <p>Or continue with</p>
-                    <div class="social-btns">
-                        <button type="button" class="social-btn" onclick="alert('Google login coming soon!')">G</button>
-                        <button type="button" class="social-btn" onclick="alert('Microsoft login coming soon!')">⊞</button>
-                        <button type="button" class="social-btn" onclick="alert('Discord login coming soon!')">♦</button>
+                <form onsubmit="return handleLogin(event)">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="loginEmail" required>
                     </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Log In</button>
+                </form>
+                <div class="auth-link">
+                    Don't have an account? <a onclick="showSignup()">Sign up</a>
                 </div>
-
-                <div class="signup-link">
-                    Don't have an account? <a href="#" onclick="showSignup()">Sign up</a>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Main App -->
-    <div id="mainApp">
-        <!-- Sidebar -->
-        <div id="sidebar">
-            <div class="sidebar-logo">
-                <div class="sidebar-logo-box">KSS</div>
-                <div class="sidebar-logo-text">
-                    <h1>Kurrasch Systems<br>Studio</h1>
-                </div>
-            </div>
-
-            <div class="online-status">
-                <span class="online-dot"></span>
-                <span id="onlineCount">29 Online</span>
-            </div>
-
-            <div class="nav-item active" onclick="switchPage('feed')">
-                <span>🏠</span>
-                <span>News Feed</span>
-            </div>
-            <div class="nav-item" onclick="switchPage('profile')">
-                <span>👤</span>
-                <span>Profile</span>
-            </div>
-            <div class="nav-item" onclick="switchPage('messages')">
-                <span>💬</span>
-                <span>Messages</span>
-            </div>
-            <div class="nav-item" onclick="switchPage('friends')">
-                <span>👥</span>
-                <span>Friends</span>
-            </div>
-            <div class="nav-item" onclick="switchPage('celebrities')">
-                <span>⭐</span>
-                <span>AI Celebrities</span>
-            </div>
-            <div class="nav-item" onclick="switchPage('games')">
-                <span>🎮</span>
-                <span>Games</span>
-            </div>
-            <div class="nav-item" onclick="switchPage('forum')">
-                <span>💭</span>
-                <span>Forums</span>
-            </div>
-            <div class="nav-item" onclick="switchPage('learning')">
-                <span>📚</span>
-                <span>Learn</span>
-            </div>
-            <div class="nav-item" onclick="switchPage('clothing')">
-                <span>👕</span>
-                <span>Clothing</span>
-            </div>
-            <div class="nav-item" onclick="switchPage('tools')">
-                <span>🛠️</span>
-                <span>Tools</span>
-            </div>
-            <div class="nav-item" onclick="switchPage('membership')">
-                <span>💎</span>
-                <span>Subscribe</span>
-            </div>
-            <div class="nav-item" onclick="switchPage('admin')" id="adminNav" style="display:none;">
-                <span>⚙️</span>
-                <span>Admin</span>
             </div>
         </div>
 
-        <!-- Main Content -->
-        <div id="mainContent">
+        <!-- Signup Page -->
+        <div id="signupPage" class="auth-page">
+            <div class="auth-box">
+                <div class="auth-logo">
+                    <div class="auth-logo-icon">KSS</div>
+                    <h1>Create Account</h1>
+                </div>
+                <form onsubmit="return handleSignup(event)">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" id="signupName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="signupUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="signupEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="signupPassword" required minlength="6">
+                    </div>
+                    <button type="submit" class="btn-primary">Sign Up</button>
+                </form>
+                <div class="auth-link">
+                    Already have an account? <a onclick="showLogin()">Log in</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main App -->
+        <div id="mainApp" style="display:none;">
             
-            <!-- NEWS FEED PAGE -->
-            <div id="feed" class="page active">
-                <div class="page-header">
-                    <h1 class="neon-text">🏠 News Feed</h1>
+            <div id="sidebar">
+                <div class="logo">
+                    <div class="logo-icon">KSS</div>
+                    <h1>Kurrasch Systems Studio</h1>
                 </div>
 
-                <!-- Post Creator -->
-                <div class="post-creator">
-                    <h3>What's on your mind?</h3>
-                    <textarea id="postContent" placeholder="Share something... (text, images, videos, audio)"></textarea>
-                    
-                    <div class="post-media-upload">
-                        <label class="upload-btn">
-                            📷 Image
-                            <input type="file" id="postImage" accept="image/*" onchange="handleMediaUpload(this, 'image')">
-                        </label>
-                        <label class="upload-btn">
-                            🎥 Video
-                            <input type="file" id="postVideo" accept="video/*" onchange="handleMediaUpload(this, 'video')">
-                        </label>
-                        <label class="upload-btn">
-                            🎵 Audio
-                            <input type="file" id="postAudio" accept="audio/*" onchange="handleMediaUpload(this, 'audio')">
-                        </label>
-                    </div>
-
-                    <div class="download-toggle">
-                        <input type="checkbox" id="allowDownload">
-                        <label for="allowDownload">Allow downloads of this media</label>
-                    </div>
-
-                    <button class="btn" onclick="createPost()">📝 Post</button>
+                <div class="online-badge">
+                    <span class="online-dot"></span>
+                    <span id="onlineCount">Loading...</span>
                 </div>
 
-                <!-- Feed Posts -->
-                <div id="feedPosts"></div>
+                <div class="nav-item active" onclick="switchPage('feed')">
+                    <span>🏠</span><span>Home</span>
+                </div>
+                <div class="nav-item" onclick="switchPage('profile')">
+                    <span>👤</span><span>Profile</span>
+                </div>
+                <div class="nav-item" onclick="switchPage('friends')">
+                    <span>👥</span><span>Friends</span>
+                </div>
+                <div class="nav-item" onclick="switchPage('vcroom')">
+                    <span>🎥</span><span>VC Room</span>
+                </div>
+                <div class="nav-item" onclick="switchPage('games')">
+                    <span>🎮</span><span>Games</span>
+                </div>
+                <div class="nav-item" onclick="switchPage('forums')">
+                    <span>💭</span><span>Forums</span>
+                </div>
+                <div class="nav-item" onclick="switchPage('learn')">
+                    <span>📚</span><span>Learn</span>
+                </div>
+                <div class="nav-item" onclick="switchPage('clothing')">
+                    <span>👕</span><span>Clothing</span>
+                </div>
+                <div class="nav-item" onclick="switchPage('tools')">
+                    <span>🛠️</span><span>Tools</span>
+                </div>
+                <div class="nav-item" onclick="switchPage('subscribe')">
+                    <span>💎</span><span>Subscribe</span>
+                </div>
             </div>
 
-            <!-- PROFILE PAGE -->
-            <div id="profile" class="page">
-                <div class="page-header">
-                    <h1 class="neon-text">👤 Your Profile</h1>
-                </div>
-
-                <div class="profile-card">
-                    <div class="profile-banner" id="profileBanner">
-                        <!-- Banner image will be inserted here -->
-                    </div>
-                    <div class="profile-avatar-large" id="profileAvatarLarge">😊</div>
-                    
-                    <div class="profile-info">
-                        <h2 id="profileName">Guest User</h2>
-                        <p id="profileUsername">@guest</p>
-                        <p id="profileBio">Edit your profile to get started!</p>
-
-                        <div class="profile-stats">
-                            <div class="profile-stat">
-                                <div class="profile-stat-number" id="postCount">0</div>
-                                <div class="profile-stat-label">Posts</div>
-                            </div>
-                            <div class="profile-stat">
-                                <div class="profile-stat-number" id="friendCount">0</div>
-                                <div class="profile-stat-label">Friends</div>
-                            </div>
-                            <div class="profile-stat">
-                                <div class="profile-stat-number" id="followingCount">0</div>
-                                <div class="profile-stat-label">Following</div>
-                            </div>
-                        </div>
-
-                        <div class="profile-edit-form">
-                            <h3>Edit Profile</h3>
-                            <input type="text" id="editName" placeholder="Your Name">
-                            <input type="text" id="editUsername" placeholder="@username">
-                            <textarea id="editBio" placeholder="Your bio..."></textarea>
-                            <input type="text" id="editAvatar" placeholder="Avatar Emoji (e.g., 😊)">
-                            
-                            <label class="upload-btn" style="display: block; margin: 15px 0;">
-                                📷 Upload Profile Picture
-                                <input type="file" accept="image/*" onchange="handleProfileImage(this, 'avatar')">
+            <div id="main">
+                
+                <!-- Feed -->
+                <div id="feed" class="page active">
+                    <div class="post-box">
+                        <textarea id="postContent" placeholder="What's on your mind?"></textarea>
+                        <div class="upload-btns">
+                            <label class="upload-btn">
+                                📷 Image
+                                <input type="file" accept="image/*" onchange="handleMedia(this, 'image')">
                             </label>
-                            
-                            <label class="upload-btn" style="display: block; margin: 15px 0;">
-                                🖼️ Upload Banner Image
-                                <input type="file" accept="image/*" onchange="handleProfileImage(this, 'banner')">
+                            <label class="upload-btn">
+                                🎥 Video
+                                <input type="file" accept="video/*" onchange="handleMedia(this, 'video')">
                             </label>
-                            
-                            <button class="btn" onclick="saveProfile()">💾 Save Profile</button>
+                            <label class="upload-btn">
+                                🎵 Audio
+                                <input type="file" accept="audio/*" onchange="handleMedia(this, 'audio')">
+                            </label>
                         </div>
+                        <div style="margin: 12px 0;">
+                            <label style="font-size: 13px; color: #888;">
+                                <input type="checkbox" id="allowDownload"> Allow downloads
+                            </label>
+                        </div>
+                        <button class="btn" onclick="createPost()">Post</button>
                     </div>
-                </div>
-            </div>
 
-            <!-- MESSAGES PAGE -->
-            <div id="messages" class="page">
-                <div class="page-header">
-                    <h1 class="neon-text">💬 Messages</h1>
-                </div>
-                <div style="text-align: center; padding: 50px; color: #888;">
-                    <h2>💬 Direct Messaging</h2>
-                    <p>Chat with AI celebrities and other users - Coming soon!</p>
-                </div>
-            </div>
-
-            <!-- FRIENDS PAGE -->
-            <div id="friends" class="page">
-                <div class="page-header">
-                    <h1 class="neon-text">👥 Friends & Follow</h1>
-                </div>
-                <div id="friendsList" class="celebrity-grid"></div>
-            </div>
-
-            <!-- AI CELEBRITIES PAGE -->
-            <div id="celebrities" class="page">
-                <div class="page-header">
-                    <h1 class="neon-text">⭐ AI Celebrities (28 Total)</h1>
-                </div>
-                <div id="celebrityGrid" class="celebrity-grid"></div>
-            </div>
-
-            <!-- GAMES PAGE -->
-            <div id="games" class="page">
-                <div class="page-header">
-                    <h1 class="neon-text">🎮 Our Games</h1>
-                    <p>Explore amazing experiences created by our studio</p>
+                    <div id="feedPosts"></div>
                 </div>
 
-                <!-- Memorial Diane Keaton Arcade -->
-                <div style="background: rgba(26, 31, 58, 0.9); padding: 40px; border-radius: 15px; border: 2px solid #b300ff; margin-bottom: 40px; box-shadow: 0 0 30px rgba(179, 0, 255, 0.3);">
-                    <h2 style="color: #b300ff; margin-bottom: 15px;">🎭 Memorial Diane Keaton Arcade</h2>
-                    <p style="margin-bottom: 25px; color: #888;">La-di-da! Dedicated arcade in memory of Diane Keaton.</p>
-                    <div style="width: 100%; height: 500px; background: rgba(0, 0, 0, 0.5); border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 2px dashed #b300ff;">
-                        <div style="text-align: center;">
-                            <p style="font-size: 60px; margin-bottom: 20px;">🎮</p>
-                            <p style="color: #b300ff; font-size: 20px;">Arcade Embed Coming Soon</p>
-                            <p style="color: #666; margin-top: 10px;">Full arcade will be embedded here</p>
+                <!-- Profile -->
+                <div id="profile" class="page">
+                    <div class="profile-container">
+                        <div class="profile-banner" id="profileBanner"></div>
+                        <div class="profile-avatar-lg" id="profileAvatar"></div>
+                        <div class="profile-info">
+                            <h2 class="profile-name" id="profileName">User</h2>
+                            <div class="profile-badges" id="profileBadges"></div>
+                            <p class="profile-bio" id="profileBio">Bio</p>
                         </div>
                     </div>
                 </div>
 
-                <h2 style="margin: 40px 0 25px; font-size: 28px;">Featured Games</h2>
-                <div id="gamesGrid" class="games-grid"></div>
-            </div>
-
-            <!-- FORUM PAGE -->
-            <div id="forum" class="page">
-                <div class="page-header">
-                    <h1 class="neon-text">💭 Forums</h1>
-                    <p>Discuss, share, and connect with the community</p>
+                <!-- Friends -->
+                <div id="friends" class="page">
+                    <h2 style="color: #00d4ff; margin-bottom: 20px;">Friends & AI Celebrities</h2>
+                    <div id="friendsList"></div>
                 </div>
 
-                <div class="post-creator">
-                    <h3>Start a Discussion</h3>
-                    <input type="text" id="forumTitle" placeholder="Discussion Title" style="width: 100%; padding: 12px; margin: 10px 0; background: rgba(0, 212, 255, 0.1); border: 1px solid #00d4ff; border-radius: 8px; color: #ffffff;">
-                    <textarea id="forumContent" placeholder="What do you want to discuss?"></textarea>
-                    <button class="btn" onclick="createForumPost()">💭 Post Discussion</button>
-                </div>
-
-                <div class="forum-categories">
-                    <div class="forum-category active">📢 All Posts</div>
-                    <div class="forum-category">📢 Studio Announcements</div>
-                    <div class="forum-category">🎮 Roblox Games</div>
-                    <div class="forum-category">💻 Development Help</div>
-                    <div class="forum-category">❓ Support</div>
-                    <div class="forum-category">💬 Off-topic</div>
-                </div>
-
-                <div id="forumPosts"></div>
-            </div>
-
-            <!-- LEARNING CENTER PAGE -->
-            <div id="learning" class="page">
-                <div class="page-header">
-                    <h1 class="neon-text">📚 Learning Center</h1>
-                    <p>Master game development with our comprehensive tutorials and resources</p>
-                </div>
-
-                <div class="learning-stats">
-                    <div class="learning-stat-card">
-                        <div class="learning-stat-number">50+</div>
-                        <div class="learning-stat-label">Tutorials</div>
-                    </div>
-                    <div class="learning-stat-card">
-                        <div class="learning-stat-number">25</div>
-                        <div class="learning-stat-label">Game Examples</div>
-                    </div>
-                    <div class="learning-stat-card">
-                        <div class="learning-stat-number">10K+</div>
-                        <div class="learning-stat-label">Students</div>
-                    </div>
-                    <div class="learning-stat-card">
-                        <div class="learning-stat-number">Free</div>
-                        <div class="learning-stat-label">All Content</div>
-                    </div>
-                </div>
-
-                <h2 style="margin: 40px 0 25px;">Featured Courses</h2>
-                <div id="coursesGrid" class="course-grid"></div>
-            </div>
-
-            <!-- CLOTHING PAGE -->
-            <div id="clothing" class="page">
-                <div class="page-header">
-                    <h1 class="neon-text">👕 Roblox Clothing</h1>
-                    <p>Official Kurrasch Systems Studios clothing and community designs</p>
-                </div>
-
-                <div style="background: linear-gradient(135deg, #00d4ff, #b300ff); padding: 50px; border-radius: 15px; text-align: center; margin-bottom: 40px;">
-                    <h2 style="font-size: 36px; margin-bottom: 15px;">New Collection Available!</h2>
-                    <p style="margin-bottom: 25px;">Check out our latest clothing designs on Roblox</p>
-                    <button class="btn">Browse on Roblox</button>
-                </div>
-
-                <h2 style="margin: 40px 0 25px;">Clothing Templates</h2>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
-                    <div style="background: rgba(26, 31, 58, 0.95); padding: 30px; border-radius: 15px; border: 2px solid #00d4ff;">
-                        <div style="font-size: 60px; text-align: center; margin-bottom: 20px;">👕</div>
-                        <h3 style="color: #00d4ff; margin-bottom: 15px;">Shirt Template</h3>
-                        <p style="color: #888; margin-bottom: 20px;">585x559 pixels</p>
-                        <button class="btn">Download Template</button>
-                    </div>
-                    <div style="background: rgba(26, 31, 58, 0.95); padding: 30px; border-radius: 15px; border: 2px solid #00d4ff;">
-                        <div style="font-size: 60px; text-align: center; margin-bottom: 20px;">👖</div>
-                        <h3 style="color: #00d4ff; margin-bottom: 15px;">Pants Template</h3>
-                        <p style="color: #888; margin-bottom: 20px;">585x559 pixels</p>
-                        <button class="btn">Download Template</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TOOLS PAGE -->
-            <div id="tools" class="page">
-                <div class="page-header">
-                    <h1 class="neon-text">🛠️ Development Tools</h1>
-                    <p>Powerful utilities to enhance your workflow</p>
-                </div>
-
-                <!-- Image Converter -->
-                <div class="tool-container">
-                    <h2>🖼️ Image Converter</h2>
-                    <p>Convert images between formats (PNG, JPG, WEBP)</p>
-                    <input type="file" id="imageInput" accept="image/*">
-                    <select id="imageFormat">
-                        <option value="png">PNG</option>
-                        <option value="jpeg">JPEG</option>
-                        <option value="webp">WEBP</option>
-                    </select>
-                    <button class="btn" onclick="convertImage()">Convert Image</button>
-                    <div id="imageOutput" style="margin-top: 20px;"></div>
-                </div>
-
-                <!-- Archive Converter -->
-                <div class="tool-container">
-                    <h2>📦 Archive Converter</h2>
-                    <p>Convert between ZIP, RAR, and other archive formats</p>
-                    <input type="file" id="archiveInput" accept=".zip,.rar">
-                    <select id="archiveFormat">
-                        <option value="zip">ZIP</option>
-                        <option value="rar">RAR (Coming Soon)</option>
-                    </select>
-                    <button class="btn" onclick="convertArchive()">Convert Archive</button>
-                    <p style="margin-top: 15px; color: #666;">Note: Full RAR support coming soon.</p>
-                </div>
-
-                <!-- Penney AI Assistant -->
-                <div class="tool-container">
-                    <h2>🤖 Penney AI Assistant</h2>
-                    <p>Ask anything about Roblox development - Penney's here to help with that Minnesota charm!</p>
-                    
-                    <div class="penney-chat">
-                        <div class="penney-messages" id="penneyMessages">
-                            <div class="penney-message">
-                                <strong style="color: #00d4ff;">Penney:</strong> Oh hey there! Welcome to Kurrasch Systems Studio, don'tcha know! I'm Penney, your AI assistant. How can I help you today?
+                <!-- VC Room -->
+                <div id="vcroom" class="page">
+                    <div class="vc-container">
+                        <div class="vc-stage">
+                            <h3 style="color: #00d4ff; margin-bottom: 15px;">Voice/Video Chat Room</h3>
+                            <div class="vc-videos" id="vcVideos">
+                                <div class="vc-video">No one in room</div>
+                            </div>
+                            <div class="vc-controls">
+                                <button class="vc-btn" id="micBtn" onclick="toggleMic()" title="Mic">🎤</button>
+                                <button class="vc-btn" id="camBtn" onclick="toggleCam()" title="Camera">📹</button>
+                                <button class="vc-btn" id="screenBtn" onclick="toggleScreen()" title="Screen">🖥️</button>
                             </div>
                         </div>
-                        <div class="penney-input">
-                            <input type="text" id="penneyInput" placeholder="Ask me anything about Roblox development...">
-                            <button class="btn" onclick="askPenney()">Send</button>
+                        <div class="vc-sidebar">
+                            <h4 style="color: #00d4ff; margin-bottom: 12px;">Participants</h4>
+                            <div id="vcParticipants">
+                                <p style="text-align: center; color: #666; padding: 20px;">No participants</p>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Other Pages -->
+                <div id="games" class="page"><h2 style="color: #00d4ff;">Games</h2></div>
+                <div id="forums" class="page"><h2 style="color: #00d4ff;">Forums</h2></div>
+                <div id="learn" class="page"><h2 style="color: #00d4ff;">Learning Center</h2></div>
+                <div id="clothing" class="page"><h2 style="color: #00d4ff;">Roblox Clothing</h2></div>
+                <div id="tools" class="page"><h2 style="color: #00d4ff;">Development Tools</h2></div>
+                <div id="subscribe" class="page"><h2 style="color: #00d4ff;">Premium Membership</h2></div>
+
             </div>
-
-            <!-- MEMBERSHIP PAGE -->
-            <div id="membership" class="page">
-                <div class="page-header">
-                    <h1 class="neon-text">💎 Premium Membership</h1>
-                    <p>Unlock exclusive tools, badges, and features. Support the studio and get amazing perks!</p>
-                </div>
-
-                <div class="membership-grid">
-                    <div class="membership-card" style="border-color: #b300ff;">
-                        <div class="membership-badge" style="background: linear-gradient(135deg, #b300ff, #ff006e);">🏆 BEST VALUE</div>
-                        <div class="membership-icon">💎</div>
-                        <h3>2 YEARS</h3>
-                        <div class="membership-price">$79.99</div>
-                        <p style="color: #00ff00; margin: 10px 0;">Save -33%</p>
-                        <div class="membership-features">
-                            <div class="membership-feature">All Tools</div>
-                            <div class="membership-feature">Diamond Badge</div>
-                            <div class="membership-feature">Discord Role</div>
-                            <div class="membership-feature">30% Discount</div>
-                            <div class="membership-feature">Priority Support</div>
-                            <div class="membership-feature">Free Ads</div>
-                        </div>
-                        <button class="btn btn-secondary">Get Premium</button>
-                    </div>
-                </div>
-
-                <div style="text-align: center; margin-top: 40px; padding: 30px; background: rgba(26, 31, 58, 0.9); border-radius: 15px; border: 2px solid #00d4ff;">
-                    <h3 style="margin-bottom: 15px;">💳 Payment Processing</h3>
-                    <p style="color: #888; margin-bottom: 20px;">Subscriptions are managed through our Discord bots:<br><strong>Betty White Admin Bot</strong> and <strong>Kurrasch Systems Bot</strong></p>
-                    <p style="color: #666;">Use Discord commands to subscribe and manage your membership!</p>
-                </div>
-            </div>
-
-            <!-- ADMIN PANEL -->
-            <div id="admin" class="page">
-                <div class="page-header" style="border-color: #ff006e;">
-                    <h1 style="color: #ff006e;">⚙️ Admin Panel</h1>
-                    <p>Founder/Staff Only Area</p>
-                </div>
-
-                <div class="admin-section">
-                    <h2>👥 User Management</h2>
-                    <input type="text" id="adminUserSearch" placeholder="Search user..." style="width: 100%; padding: 12px; margin: 10px 0; background: rgba(0, 212, 255, 0.1); border: 1px solid #00d4ff; border-radius: 8px; color: #ffffff;">
-                    <div class="admin-actions">
-                        <button class="btn" onclick="adminBanUser()">🚫 Ban User</button>
-                        <button class="btn btn-secondary" onclick="adminUnbanUser()">✅ Unban User</button>
-                    </div>
-                </div>
-
-                <div class="admin-section">
-                    <h2>🗑️ Content Moderation</h2>
-                    <div class="admin-actions">
-                        <button class="btn" onclick="adminDeletePost()">Delete Post</button>
-                        <button class="btn btn-secondary" onclick="adminViewReports()">View Reports</button>
-                    </div>
-                </div>
-
-                <div class="admin-section">
-                    <h2>🏆 Badge Management</h2>
-                    <input type="text" id="adminBadgeName" placeholder="Badge name" style="width: 100%; padding: 12px; margin: 10px 0; background: rgba(0, 212, 255, 0.1); border: 1px solid #00d4ff; border-radius: 8px; color: #ffffff;">
-                    <input type="text" id="adminBadgeUser" placeholder="Username" style="width: 100%; padding: 12px; margin: 10px 0; background: rgba(0, 212, 255, 0.1); border: 1px solid #00d4ff; border-radius: 8px; color: #ffffff;">
-                    <button class="btn" onclick="adminAssignBadge()">Assign Badge</button>
-                </div>
-
-                <div class="admin-section">
-                    <h2>📊 Analytics</h2>
-                    <div style="margin-top: 20px;">
-                        <p style="margin: 10px 0;">Total Users: <strong style="color: #00d4ff;" id="totalUsers">0</strong></p>
-                        <p style="margin: 10px 0;">Total Posts: <strong style="color: #00d4ff;" id="totalPosts">0</strong></p>
-                        <p style="margin: 10px 0;">AI Interactions: <strong style="color: #00d4ff;" id="totalAIInteractions">0</strong></p>
-                    </div>
-                </div>
-
-                <div class="admin-section">
-                    <h2>🤖 Train Penney AI</h2>
-                    <p style="color: #888; margin-bottom: 15px;">Teach Penney new information to make her smarter!</p>
-                    <textarea id="penneyTraining" placeholder="Enter information for Penney to learn..." style="width: 100%; min-height: 150px; padding: 15px; background: rgba(0, 212, 255, 0.1); border: 1px solid #00d4ff; border-radius: 8px; color: #ffffff; font-family: inherit; margin: 15px 0;"></textarea>
-                    <button class="btn" onclick="trainPenney()">🧠 Train Penney</button>
-                    <div id="penneyResponse" style="margin-top: 20px;"></div>
-                </div>
-            </div>
-
         </div>
-    </div>
 
-    <!-- Voice Chat Button -->
-    <button class="voice-btn" id="voiceBtn" onclick="toggleVoiceChat()" title="Voice Chat">🎤</button>
+        <!-- Chat Popup -->
+        <div class="chat-popup" id="chatPopup">
+            <div class="chat-header" onclick="minimizeChat()">
+                <strong id="chatUsername">Chat</strong>
+                <button class="chat-close" onclick="closeChat()">✕</button>
+            </div>
+            <div class="chat-body" id="chatBody"></div>
+            <div class="chat-input">
+                <input type="text" id="chatInput" placeholder="Type a message...">
+                <button class="btn" onclick="sendChatMsg()">Send</button>
+            </div>
+        </div>
+
+    </div>
 
     <script>
         // ==================== MATRIX BACKGROUND ====================
         const canvas = document.getElementById('matrix-bg');
         const ctx = canvas.getContext('2d');
-
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
         const fontSize = 14;
-        const columns = canvas.width / fontSize;
-        const drops = Array(Math.floor(columns)).fill(1);
+        const columns = Math.floor(canvas.width / fontSize);
+        const drops = [];
+        for (let i = 0; i < columns; i++) {
+            drops[i] = Math.floor(Math.random() * canvas.height / fontSize);
+        }
 
         function drawMatrix() {
-            ctx.fillStyle = 'rgba(10, 14, 39, 0.05)';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = '#00d4ff';
             ctx.font = fontSize + 'px monospace';
 
             for (let i = 0; i < drops.length; i++) {
-                const text = chars[Math.floor(Math.random() * chars.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                const char = Math.random() > 0.5 ? '0' : '1';
+                
+                if (char === '0') {
+                    ctx.fillStyle = '#ff0000'; // RED
+                } else {
+                    ctx.fillStyle = Math.random() > 0.5 ? '#000080' : '#4169E1'; // NAVY BLUE
+                }
+                
+                ctx.fillText(char, i * fontSize, drops[i] * fontSize);
 
                 if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
                     drops[i] = 0;
@@ -1833,173 +998,180 @@
             }
         }
 
-        setInterval(drawMatrix, 35);
-
+        setInterval(drawMatrix, 40);
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         });
 
-        // ==================== DATA STORAGE ====================
-        
+        // ==================== AI CELEBRITIES DATA ====================
         const AI_CELEBRITIES = [
-            {name: 'Adam Sandler', username: 'AdamSandler', avatar: '🎬', bio: 'Comedy guy | Happy Gilmore | Sandler crew for life!', online: true, roastsNoah: true},
-            {name: 'Ben Stiller', username: 'BenStiller', avatar: '🎭', bio: 'Zoolander | Blue Steel master', online: true},
-            {name: 'Betty White', username: 'BettyWhite', avatar: '👵', bio: 'Comedy legend | Golden Girls | 99 years young', online: true, roastsNoah: true},
-            {name: 'Brendan O\'Carroll', username: 'BrendanOCarroll', avatar: '👵', bio: 'Mrs. Brown\'s Boys | That\'s nice!', online: true},
-            {name: 'Cameron Boyce', username: 'CameronBoyce', avatar: '💫', bio: 'Disney Channel | Descendants', online: true},
-            {name: 'Chris Farley', username: 'ChrisFarley', avatar: '😂', bio: 'SNL legend | Tommy Boy | Van down by the river!', online: true},
-            {name: 'Chris Rock', username: 'ChrisRock', avatar: '🎤', bio: 'Stand-up legend | Real talk', online: true},
-            {name: 'Christopher McDonald', username: 'ChristopherMcDonald', avatar: '⛳', bio: 'Shooter McGavin | Happy Gilmore villain', online: true},
-            {name: 'David Spade', username: 'DavidSpade', avatar: '😎', bio: 'SNL alumni | Tommy Boy | Sarcasm master', online: true},
-            {name: 'Diane Keaton', username: 'DianeKeaton', avatar: '🎭', bio: 'Annie Hall | La-di-da!', online: true},
-            {name: 'Harold Ramis', username: 'HaroldRamis', avatar: '👻', bio: 'Ghostbusters | Groundhog Day', online: true},
-            {name: 'Jackie Sandler', username: 'JackieSandler', avatar: '💕', bio: 'Model, actress | Adam\'s wife', online: true},
-            {name: 'James Earl Jones', username: 'JamesEarlJones', avatar: '🎤', bio: 'The Voice | Darth Vader, Mufasa', online: true},
-            {name: 'Jennifer Aniston', username: 'JenniferAniston', avatar: '☕', bio: 'Rachel Green forever | Friends', online: true},
-            {name: 'John Candy', username: 'JohnCandy', avatar: '🍬', bio: 'Uncle Buck | SCTV legend', online: true},
-            {name: 'Johnny Hardwick', username: 'JohnnyHardwick', avatar: '🚬', bio: 'Voice of Dale Gribble | Pocket sand!', online: true},
-            {name: 'Jonathan Joss', username: 'JonathanJoss', avatar: '🎸', bio: 'Voice of John Redcorn | King of the Hill', online: true},
-            {name: 'Kevin James', username: 'KevinJames', avatar: '📦', bio: 'King of Queens | Paul Blart', online: true},
-            {name: 'Matthew Perry', username: 'MatthewPerry', avatar: '☕', bio: 'Chandler Bing forever | Friends', online: true},
-            {name: 'Michelle Trachtenberg', username: 'MichelleTrachtenberg', avatar: '💄', bio: 'Buffy | Gossip Girl', online: true},
-            {name: 'Robin Williams', username: 'RobinWilliams', avatar: '🎭', bio: 'Comedy genius | Carpe Diem!', online: true, roastsNoah: true},
-            {name: 'Rob Schneider', username: 'RobSchneider', avatar: '🎬', bio: 'SNL | You can do it!', online: true},
-            {name: 'Shelley Duvall', username: 'ShelleyDuvall', avatar: '🎭', bio: 'The Shining | Unique and wonderful', online: true, flirtsWithNoah: true},
-            {name: 'Steve Martin', username: 'SteveMartin', avatar: '🪕', bio: 'Wild and crazy guy! | Banjo master', online: true},
-            {name: 'Tyler Perry', username: 'TylerPerry', avatar: '🎬', bio: 'Madea | Tyler Perry Studios | Hallelujer!', online: true, roastsNoah: true},
-            {name: 'Queen Latifah', username: 'QueenLatifah', avatar: '👑', bio: 'Queen | U.N.I.T.Y.', online: true},
-            {name: 'Penney', username: 'Penney', avatar: '💙', bio: 'AI Site Manager | Minnesota nice | Managing 27 celebrities', online: true, isCustomAI: true},
-            {name: 'Melanie', username: 'Melanie', avatar: '💗', bio: 'Diane Keaton Bot Manager | Little bitch sister', online: true, isCustomAI: true}
+            {name: 'Adam Sandler', username: 'AdamSandler', avatar: 'https://upload.wikimedia.org/wikipedia/commons/4/40/Adam_Sandler_Cannes_2017.jpg', banner: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1200', bio: 'Comedy guy | Happy Gilmore | Sandler crew', badges: ['Founder', 'Comedian'], roastsNoah: true},
+            {name: 'Ben Stiller', username: 'BenStiller', avatar: 'https://upload.wikimedia.org/wikipedia/commons/5/57/Ben_Stiller_2024.jpg', banner: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1200', bio: 'Zoolander | Blue Steel master', badges: ['Director']},
+            {name: 'Betty White', username: 'BettyWhite', avatar: 'https://upload.wikimedia.org/wikipedia/commons/e/e4/Betty_White_2010.jpg', banner: 'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=1200', bio: 'Golden Girls | Comedy legend', badges: ['Admin Bot', 'Legend'], roastsNoah: true},
+            {name: 'Brendan O\'Carroll', username: 'BrendanOCarroll', avatar: 'https://upload.wikimedia.org/wikipedia/commons/b/b9/Brendan_O%27Carroll_2013.jpg', banner: 'https://images.unsplash.com/photo-1513026705753-bc3fffca8bf4?w=1200', bio: 'Mrs Brown\'s Boys | That\'s nice!', badges: ['Comedian']},
+            {name: 'Cameron Boyce', username: 'CameronBoyce', avatar: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Cameron_Boyce_2019.jpg', banner: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1200', bio: 'Disney Channel | Descendants', badges: ['Actor']},
+            {name: 'Chris Farley', username: 'ChrisFarley', avatar: 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Chris_Farley.jpg', banner: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=1200', bio: 'SNL | Tommy Boy | Van down by the river', badges: ['SNL Legend']},
+            {name: 'Chris Rock', username: 'ChrisRock', avatar: 'https://upload.wikimedia.org/wikipedia/commons/8/83/Chris_Rock_2023.jpg', banner: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1200', bio: 'Stand-up legend | Real talk', badges: ['Comedian']},
+            {name: 'Christopher McDonald', username: 'ChristopherMcDonald', avatar: 'https://upload.wikimedia.org/wikipedia/commons/5/58/Christopher_McDonald.jpg', banner: 'https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=1200', bio: 'Shooter McGavin | Happy Gilmore', badges: ['Actor']},
+            {name: 'David Spade', username: 'DavidSpade', avatar: 'https://upload.wikimedia.org/wikipedia/commons/8/89/David_Spade_2012.jpg', banner: 'https://images.unsplash.com/photo-1499988921418-b7df40ff03f9?w=1200', bio: 'SNL | Tommy Boy | Sarcasm king', badges: ['Comedian']},
+            {name: 'Diane Keaton', username: 'DianeKeaton', avatar: 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Diane_Keaton_2012.jpg', banner: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1200', bio: 'Annie Hall | La-di-da!', badges: ['Actor']},
+            {name: 'Harold Ramis', username: 'HaroldRamis', avatar: 'https://upload.wikimedia.org/wikipedia/commons/3/3f/Harold_Ramis_2009.jpg', banner: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200', bio: 'Ghostbusters | Groundhog Day', badges: ['Director']},
+            {name: 'Jackie Sandler', username: 'JackieSandler', avatar: 'https://upload.wikimedia.org/wikipedia/commons/a/a6/Jackie_Sandler.jpg', banner: 'https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?w=1200', bio: 'Model, actress | Adam\'s wife', badges: ['Actor']},
+            {name: 'James Earl Jones', username: 'JamesEarlJones', avatar: 'https://upload.wikimedia.org/wikipedia/commons/5/54/James_Earl_Jones_2010.jpg', banner: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200', bio: 'The Voice | Darth Vader, Mufasa', badges: ['Legend', 'EGOT']},
+            {name: 'Jennifer Aniston', username: 'JenniferAniston', avatar: 'https://upload.wikimedia.org/wikipedia/commons/2/22/Jennifer_Aniston_2024.jpg', banner: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1200', bio: 'Rachel Green | Friends', badges: ['Actor']},
+            {name: 'John Candy', username: 'JohnCandy', avatar: 'https://upload.wikimedia.org/wikipedia/commons/c/c8/John_Candy_1991.jpg', banner: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=1200', bio: 'Uncle Buck | SCTV legend', badges: ['Comedian']},
+            {name: 'Johnny Hardwick', username: 'JohnnyHardwick', avatar: 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Johnny_Hardwick.jpg', banner: 'https://images.unsplash.com/photo-1469719847081-4757697d117a?w=1200', bio: 'Dale Gribble | Pocket sand!', badges: ['Voice Actor']},
+            {name: 'Jonathan Joss', username: 'JonathanJoss', avatar: 'https://upload.wikimedia.org/wikipedia/commons/a/a8/Jonathan_Joss.jpg', banner: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=1200', bio: 'John Redcorn | King of the Hill', badges: ['Voice Actor']},
+            {name: 'Kevin James', username: 'KevinJames', avatar: 'https://upload.wikimedia.org/wikipedia/commons/0/00/Kevin_James_2012.jpg', banner: 'https://images.unsplash.com/photo-1586282391129-76a6df230234?w=1200', bio: 'King of Queens | Paul Blart', badges: ['Comedian']},
+            {name: 'Matthew Perry', username: 'MatthewPerry', avatar: 'https://upload.wikimedia.org/wikipedia/commons/8/88/Matthew_Perry_2012.jpg', banner: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1200', bio: 'Chandler Bing | Friends', badges: ['Actor']},
+            {name: 'Michelle Trachtenberg', username: 'MichelleTrachtenberg', avatar: 'https://upload.wikimedia.org/wikipedia/commons/f/f9/Michelle_Trachtenberg_2012.jpg', banner: 'https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=1200', bio: 'Buffy | Gossip Girl', badges: ['Actor']},
+            {name: 'Robin Williams', username: 'RobinWilliams', avatar: 'https://upload.wikimedia.org/wikipedia/commons/1/1f/Robin_Williams_Happy_Feet_premiere.jpg', banner: 'https://images.unsplash.com/photo-1514306191717-452ec28c7814?w=1200', bio: 'Comedy genius | Carpe Diem!', badges: ['Legend', 'Comedian'], roastsNoah: true},
+            {name: 'Rob Schneider', username: 'RobSchneider', avatar: 'https://upload.wikimedia.org/wikipedia/commons/c/cd/Rob_Schneider_2012.jpg', banner: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1200', bio: 'SNL | You can do it!', badges: ['Comedian']},
+            {name: 'Shelley Duvall', username: 'ShelleyDuvall', avatar: 'https://upload.wikimedia.org/wikipedia/commons/6/65/Shelley_Duvall_1977.jpg', banner: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1200', bio: 'The Shining | Unique & wonderful', badges: ['Actor'], flirtsWithNoah: true},
+            {name: 'Steve Martin', username: 'SteveMartin', avatar: 'https://upload.wikimedia.org/wikipedia/commons/8/80/Steve_Martin_2023.jpg', banner: 'https://images.unsplash.com/photo-1511735111819-9a3f7709049c?w=1200', bio: 'Wild and crazy guy!', badges: ['Comedian']},
+            {name: 'Tyler Perry', username: 'TylerPerry', avatar: 'https://upload.wikimedia.org/wikipedia/commons/4/42/Tyler_Perry_2023.jpg', banner: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1200', bio: 'Madea | Hallelujer!', badges: ['Director', 'Madea'], roastsNoah: true},
+            {name: 'Queen Latifah', username: 'QueenLatifah', avatar: 'https://upload.wikimedia.org/wikipedia/commons/2/23/Queen_Latifah_2019.jpg', banner: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200', bio: 'Queen | U.N.I.T.Y.', badges: ['Queen']},
+            {name: 'Penney', username: 'Penney', avatar: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%2300d4ff" width="100" height="100"/%3E%3Ctext x="50" y="60" text-anchor="middle" font-size="50" fill="white"%3EP%3C/text%3E%3C/svg%3E', banner: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200', bio: 'AI Site Manager | Minnesota | Smart & helpful', badges: ['AI Manager', 'Minnesota'], isCustomAI: true},
+            {name: 'Melanie', username: 'Melanie', avatar: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23b300ff" width="100" height="100"/%3E%3Ctext x="50" y="60" text-anchor="middle" font-size="50" fill="white"%3EM%3C/text%3E%3C/svg%3E', banner: 'https://images.unsplash.com/photo-1557683316-973673baf926?w=1200', bio: 'Diane Keaton Bot Manager | Little bitch sister', badges: ['Bot Manager'], isCustomAI: true}
         ];
 
-        const SAMPLE_GAMES = [
-            {name: 'Game Killers International Fairgrounds', icon: '🎡', players: '2.4K', rating: 4.8},
-            {name: 'Family Guy: The Quest For Stuff', icon: '🏠', players: '5.1K', rating: 4.5},
-            {name: 'Cat Daddy Ninja Simulator', icon: '🐱', players: '8.7K', rating: 4.9}
-        ];
-
-        const SAMPLE_COURSES = [
-            {name: 'Complete Roblox Game Development', icon: '🎮', lessons: 12, level: 'Beginner'},
-            {name: 'Discord Bot Development', icon: '🤖', lessons: 8, level: 'Intermediate'},
-            {name: 'Advanced Lua Scripting', icon: '💻', lessons: 15, level: 'Advanced'}
-        ];
-
-        // Local Storage Keys
-        const STORAGE_KEYS = {
-            USER: 'kss_user',
-            POSTS: 'kss_posts',
-            PROFILE: 'kss_profile',
-            FRIENDS: 'kss_friends'
-        };
-
+        // ==================== GLOBAL STATE ====================
         let currentUser = null;
-        let allPosts = [];
-        let currentPostMedia = null;
+        let currentMedia = null;
+        let currentChatUser = null;
 
-        // ==================== INITIALIZATION ====================
-        
-        function init() {
-            loadUserData();
-            loadPosts();
-            renderCelebrities();
-            renderGames();
-            renderCourses();
-            renderFriends();
-            startAIPosting();
-            updateAnalytics();
+        // ==================== AUTH FUNCTIONS ====================
+        function showSignup() {
+            document.getElementById('loginPage').classList.remove('active');
+            document.getElementById('signupPage').classList.add('active');
         }
 
-        function loadUserData() {
-            const savedUser = localStorage.getItem(STORAGE_KEYS.USER);
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
-                updateProfileDisplay();
-            }
+        function showLogin() {
+            document.getElementById('signupPage').classList.remove('active');
+            document.getElementById('loginPage').classList.add('active');
         }
 
-        function loadPosts() {
-            const savedPosts = localStorage.getItem(STORAGE_KEYS.POSTS);
-            if (savedPosts) {
-                allPosts = JSON.parse(savedPosts);
-            } else {
-                // Create initial welcome posts
-                allPosts = [
-                    {
-                        id: Date.now(),
-                        author: 'Betty White',
-                        username: 'BettyWhite',
-                        avatar: '👵',
-                        content: 'Welcome to Kurrasch Systems Studios! We\'re building the future of Roblox development. Join us on this amazing journey! 🚀',
-                        timestamp: Date.now() - 3600000,
-                        likes: 42,
-                        comments: [],
-                        shares: 5,
-                        isAI: true
-                    }
-                ];
-                savePosts();
-            }
-            renderFeed();
-        }
-
-        function savePosts() {
-            localStorage.setItem(STORAGE_KEYS.POSTS, JSON.stringify(allPosts));
-        }
-
-        // ==================== LOGIN/SIGNUP ====================
-        
-        function login(event) {
-            event.preventDefault();
+        function handleLogin(e) {
+            e.preventDefault();
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
-
-            currentUser = {
-                name: email.split('@')[0],
-                username: email.split('@')[0],
-                email: email,
-                avatar: '😊',
-                bio: 'New member of Kurrasch Systems Studio!',
-                isAdmin: email.includes('founder') || email.includes('admin'),
-                joinDate: Date.now()
-            };
-
-            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(currentUser));
             
-            document.getElementById('loginPage').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block';
+            const users = JSON.parse(localStorage.getItem('kss_users') || '[]');
+            const user = users.find(u => u.email === email && u.password === password);
             
-            if (currentUser.isAdmin) {
-                document.getElementById('adminNav').style.display = 'flex';
+            if (user) {
+                currentUser = user;
+                sessionStorage.setItem('kss_current_user', JSON.stringify(user));
+                loadApp();
+            } else {
+                alert('Invalid credentials');
             }
-
-            updateProfileDisplay();
-            init();
+            return false;
         }
 
-        function showSignup() {
-            alert('Signup feature coming soon! For now, just log in with any email to demo the platform.');
-        }
-
-        // ==================== PAGE NAVIGATION ====================
-        
-        function switchPage(pageName) {
-            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+        function handleSignup(e) {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const username = document.getElementById('signupUsername').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
             
-            document.getElementById(pageName).classList.add('active');
+            const users = JSON.parse(localStorage.getItem('kss_users') || '[]');
+            
+            if (users.find(u => u.email === email)) {
+                alert('Email already registered');
+                return false;
+            }
+            
+            if (users.find(u => u.username === username)) {
+                alert('Username taken');
+                return false;
+            }
+            
+            const newUser = {
+                id: Date.now(),
+                name,
+                username,
+                email,
+                password,
+                avatar: null,
+                banner: null,
+                bio: 'New member of Kurrasch Systems Studio',
+                badges: [],
+                joinedDate: Date.now(),
+                isAdmin: email.includes('founder') || email.includes('admin')
+            };
+            
+            users.push(newUser);
+            localStorage.setItem('kss_users', JSON.stringify(users));
+            currentUser = newUser;
+            sessionStorage.setItem('kss_current_user', JSON.stringify(newUser));
+            loadApp();
+            return false;
+        }
+
+        function loadApp() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('signupPage').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            initApp();
+        }
+
+        // ==================== APP INITIALIZATION ====================
+        function initApp() {
+            updateOnlineCount();
+            loadFriendsList();
+            loadProfile();
+            loadFeed();
+            startAIPosting();
+            
+            // Create welcome post if none exist
+            const posts = JSON.parse(localStorage.getItem('kss_posts') || '[]');
+            if (posts.length === 0) {
+                const betty = AI_CELEBRITIES.find(a => a.username === 'BettyWhite');
+                const welcomePost = {
+                    id: Date.now(),
+                    author: betty.name,
+                    username: betty.username,
+                    avatar: betty.avatar,
+                    badges: betty.badges,
+                    content: 'Welcome to Kurrasch Systems Studios! We\'re building the future of Roblox development together! 💙',
+                    timestamp: Date.now() - 7200000,
+                    likes: 8,
+                    likedBy: [],
+                    comments: [],
+                    shares: 2,
+                    isAI: true
+                };
+                posts.push(welcomePost);
+                localStorage.setItem('kss_posts', JSON.stringify(posts));
+            }
+            
+            loadFeed();
+        }
+
+        function updateOnlineCount() {
+            const users = JSON.parse(localStorage.getItem('kss_users') || '[]');
+            const total = users.length + AI_CELEBRITIES.length;
+            document.getElementById('onlineCount').textContent = `${total} Online`;
+        }
+
+        function switchPage(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(page).classList.add('active');
             event.target.closest('.nav-item').classList.add('active');
         }
 
-        // ==================== POST CREATION ====================
-        
-        function handleMediaUpload(input, type) {
+        // ==================== POSTS ====================
+        function handleMedia(input, type) {
             const file = input.files[0];
             if (!file) return;
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                currentPostMedia = {
+                currentMedia = {
                     type: type,
                     data: e.target.result,
                     filename: file.name
@@ -2010,16 +1182,20 @@
 
         function createPost() {
             const content = document.getElementById('postContent').value.trim();
-            if (!content && !currentPostMedia) {
-                alert('Please write something or upload media!');
+            if (!content && !currentMedia) {
+                alert('Write something or upload media!');
                 return;
             }
+
+            const posts = JSON.parse(localStorage.getItem('kss_posts') || '[]');
+            const users = JSON.parse(localStorage.getItem('kss_users') || '[]');
 
             const post = {
                 id: Date.now(),
                 author: currentUser.name,
                 username: currentUser.username,
-                avatar: currentUser.avatar,
+                avatar: currentUser.avatar || generateDefaultAvatar(currentUser.name),
+                badges: currentUser.badges || [],
                 content: content,
                 timestamp: Date.now(),
                 likes: 0,
@@ -2027,93 +1203,148 @@
                 comments: [],
                 shares: 0,
                 allowDownload: document.getElementById('allowDownload').checked,
-                media: currentPostMedia,
+                media: currentMedia,
                 isAI: false
             };
 
-            allPosts.unshift(post);
-            savePosts();
-            renderFeed();
-
+            posts.unshift(post);
+            localStorage.setItem('kss_posts', JSON.stringify(posts));
+            
             document.getElementById('postContent').value = '';
             document.getElementById('allowDownload').checked = false;
-            currentPostMedia = null;
+            currentMedia = null;
+            
+            loadFeed();
 
-            // Trigger AI responses (30% chance)
-            if (Math.random() < 0.3) {
-                setTimeout(() => generateAIResponse(post), 2000 + Math.random() * 3000);
+            // NOAH KADE ROASTING SYSTEM
+            if (currentUser.username.toLowerCase().includes('noahkade') || currentUser.username.toLowerCase().includes('noah') && content.toLowerCase().includes('bitch shelley duvall')) {
+                triggerNoahRoast(post.id);
             }
         }
 
-        function renderFeed() {
+        function triggerNoahRoast(postId) {
+            const roasters = AI_CELEBRITIES.filter(ai => ai.roastsNoah || ai.flirtsWithNoah);
+            
+            setTimeout(() => {
+                roasters.forEach((ai, index) => {
+                    setTimeout(() => {
+                        addAIComment(postId, ai, generateNoahRoast(ai));
+                    }, index * 2000);
+                });
+            }, 1500);
+        }
+
+        function generateNoahRoast(ai) {
+            const roasts = {
+                'BettyWhite': "Oh Noah, honey! I'm 99 years old and even I know that's not how you talk to a lady! Bless your heart! 😂",
+                'AdamSandler': "*silly voice* Noah Kade and Shelley sitting in a tree! Dude, calling her 'bitch' isn't the move! I can help you write better lines, buddy!",
+                'RobinWilliams': "*rapid-fire* Noah-chasing-Shelley-calling-her-names-still-single-what's-the-plan?! Carpe Diem, my friend! Seize the day properly!",
+                'TylerPerry': "*MADEA VOICE* Chile, this boy out here calling women names online! Noah, baby, I got a skillet with your name on it! Hallelujer! 🙏😂",
+                'ShelleyDuvall': "Oh Noah, you're back with that name again! You know you love me! 😘💕"
+            };
+            
+            return roasts[ai.username] || `Noah Kade! That's not the way, buddy! Try being nice!`;
+        }
+
+        function addAIComment(postId, ai, content) {
+            const posts = JSON.parse(localStorage.getItem('kss_posts') || '[]');
+            const post = posts.find(p => p.id === postId);
+            if (!post) return;
+
+            post.comments.push({
+                id: Date.now() + Math.random(),
+                author: ai.name,
+                username: ai.username,
+                avatar: ai.avatar,
+                content: content,
+                timestamp: Date.now()
+            });
+
+            localStorage.setItem('kss_posts', JSON.stringify(posts));
+            loadFeed();
+        }
+
+        function loadFeed() {
+            const posts = JSON.parse(localStorage.getItem('kss_posts') || '[]');
             const feedContainer = document.getElementById('feedPosts');
             feedContainer.innerHTML = '';
 
-            allPosts.forEach(post => {
-                const postEl = createPostElement(post);
-                feedContainer.appendChild(postEl);
-            });
+            if (posts.length === 0) {
+                feedContainer.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">No posts yet. Be the first!</p>';
+                return;
+            }
 
-            updateAnalytics();
-        }
-
-        function createPostElement(post) {
-            const postDiv = document.createElement('div');
-            postDiv.className = 'post';
-            postDiv.innerHTML = `
-                <div class="post-header">
-                    <div class="post-author">
-                        <div class="post-avatar">${post.avatar}</div>
-                        <div class="post-info">
-                            <h3>${post.author}</h3>
+            posts.forEach(post => {
+                const postEl = document.createElement('div');
+                postEl.className = 'post';
+                postEl.innerHTML = `
+                    <div class="post-header">
+                        <div class="post-avatar">
+                            <img src="${post.avatar}" alt="${post.author}">
+                        </div>
+                        <div class="post-author">
+                            <h4>${post.author}</h4>
+                            ${post.badges && post.badges.length > 0 ? `
+                                <div class="post-badges">
+                                    ${post.badges.map(b => `<span class="badge">${b}</span>`).join('')}
+                                </div>
+                            ` : ''}
                             <div class="post-time">${formatTime(post.timestamp)}</div>
                         </div>
                     </div>
-                    <div class="post-menu" onclick="showPostMenu(${post.id})">⋮</div>
-                </div>
-                <div class="post-content">${post.content}</div>
-                ${post.media ? renderPostMedia(post.media, post.allowDownload) : ''}
-                <div class="post-actions">
-                    <div class="post-action ${post.likedBy && post.likedBy.includes(currentUser?.username) ? 'liked' : ''}" onclick="likePost(${post.id})">
-                        ❤️ ${post.likes} Likes
+                    <div class="post-content">${post.content}</div>
+                    ${post.media ? renderMedia(post.media, post.allowDownload) : ''}
+                    <div class="post-actions">
+                        <div class="post-action ${post.likedBy.includes(currentUser?.username) ? 'liked' : ''}" onclick="likePost(${post.id})">
+                            ❤️ ${post.likes}
+                        </div>
+                        <div class="post-action" onclick="toggleComments(${post.id})">
+                            💬 ${post.comments.length}
+                        </div>
+                        <div class="post-action">📤 ${post.shares}</div>
                     </div>
-                    <div class="post-action" onclick="toggleComments(${post.id})">
-                        💬 ${post.comments.length} Comments
-                    </div>
-                    <div class="post-action" onclick="sharePost(${post.id})">
-                        📤 ${post.shares} Shares
-                    </div>
-                </div>
-                <div class="comments-section" id="comments-${post.id}" style="display:none;">
-                    ${renderComments(post.comments)}
-                    <div class="comment-input">
-                        <input type="text" id="comment-input-${post.id}" placeholder="Write a comment...">
-                        <button class="btn" onclick="addComment(${post.id})">Post</button>
-                    </div>
-                </div>
-            `;
-            return postDiv;
+                    ${post.comments.length > 0 ? `
+                        <div class="comments" id="comments-${post.id}" style="display:none;">
+                            ${post.comments.map(c => `
+                                <div class="comment">
+                                    <div class="comment-header">
+                                        <div class="comment-avatar">
+                                            <img src="${c.avatar}" alt="${c.author}">
+                                        </div>
+                                        <div>
+                                            <span class="comment-author">${c.author}</span>
+                                            <span class="comment-time">${formatTime(c.timestamp)}</span>
+                                        </div>
+                                    </div>
+                                    <div class="comment-content">${c.content}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                `;
+                feedContainer.appendChild(postEl);
+            });
         }
 
-        function renderPostMedia(media, allowDownload) {
+        function renderMedia(media, allowDownload) {
             if (!media) return '';
             
-            let mediaHTML = '<div class="post-media">';
+            let html = '<div class="post-media">';
             
             if (media.type === 'image') {
-                mediaHTML += `<img src="${media.data}" alt="Post image">`;
+                html += `<img src="${media.data}" alt="Post image">`;
             } else if (media.type === 'video') {
-                mediaHTML += `<video controls src="${media.data}"></video>`;
+                html += `<video controls src="${media.data}"></video>`;
             } else if (media.type === 'audio') {
-                mediaHTML += `<audio controls src="${media.data}"></audio>`;
+                html += `<audio controls src="${media.data}"></audio>`;
             }
             
             if (allowDownload) {
-                mediaHTML += `<button class="btn btn-secondary" onclick="downloadMedia('${media.data}', '${media.filename}')" style="margin-top: 10px;">⬇️ Download</button>`;
+                html += `<button class="btn" onclick="downloadMedia('${media.data}', '${media.filename}')" style="margin-top: 10px;">⬇️ Download</button>`;
             }
             
-            mediaHTML += '</div>';
-            return mediaHTML;
+            html += '</div>';
+            return html;
         }
 
         function downloadMedia(dataUrl, filename) {
@@ -2123,54 +1354,11 @@
             a.click();
         }
 
-        function renderComments(comments) {
-            if (!comments || comments.length === 0) return '';
-            
-            return comments.map(comment => `
-                <div class="comment">
-                    <div class="comment-header">
-                        <div class="comment-avatar">${comment.avatar}</div>
-                        <div>
-                            <span class="comment-author">${comment.author}</span>
-                            <span class="comment-time">${formatTime(comment.timestamp)}</span>
-                        </div>
-                    </div>
-                    <div>${comment.content}</div>
-                </div>
-            `).join('');
-        }
-
-        function toggleComments(postId) {
-            const commentsSection = document.getElementById(`comments-${postId}`);
-            commentsSection.style.display = commentsSection.style.display === 'none' ? 'block' : 'none';
-        }
-
-        function addComment(postId) {
-            const input = document.getElementById(`comment-input-${postId}`);
-            const content = input.value.trim();
-            if (!content) return;
-
-            const post = allPosts.find(p => p.id === postId);
-            if (!post) return;
-
-            post.comments.push({
-                author: currentUser.name,
-                avatar: currentUser.avatar,
-                content: content,
-                timestamp: Date.now()
-            });
-
-            savePosts();
-            renderFeed();
-            input.value = '';
-        }
-
         function likePost(postId) {
-            const post = allPosts.find(p => p.id === postId);
+            const posts = JSON.parse(localStorage.getItem('kss_posts') || '[]');
+            const post = posts.find(p => p.id === postId);
             if (!post) return;
 
-            if (!post.likedBy) post.likedBy = [];
-            
             const userIndex = post.likedBy.indexOf(currentUser.username);
             if (userIndex > -1) {
                 post.likedBy.splice(userIndex, 1);
@@ -2180,30 +1368,14 @@
                 post.likes++;
             }
 
-            savePosts();
-            renderFeed();
+            localStorage.setItem('kss_posts', JSON.stringify(posts));
+            loadFeed();
         }
 
-        function sharePost(postId) {
-            const post = allPosts.find(p => p.id === postId);
-            if (!post) return;
-
-            post.shares++;
-            savePosts();
-            renderFeed();
-            alert('Post shared!');
-        }
-
-        function showPostMenu(postId) {
-            const post = allPosts.find(p => p.id === postId);
-            if (!post) return;
-
-            if (post.username === currentUser.username || currentUser.isAdmin) {
-                if (confirm('Delete this post?')) {
-                    allPosts = allPosts.filter(p => p.id !== postId);
-                    savePosts();
-                    renderFeed();
-                }
+        function toggleComments(postId) {
+            const commentsEl = document.getElementById(`comments-${postId}`);
+            if (commentsEl) {
+                commentsEl.style.display = commentsEl.style.display === 'none' ? 'block' : 'none';
             }
         }
 
@@ -2213,571 +1385,225 @@
             const hours = Math.floor(diff / 3600000);
             const days = Math.floor(diff / 86400000);
 
-            if (minutes < 60) return `${minutes}m ago`;
-            if (hours < 24) return `${hours}h ago`;
-            return `${days}d ago`;
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes}m`;
+            if (hours < 24) return `${hours}h`;
+            return `${days}d`;
         }
 
-        // ==================== AI CELEBRITY POSTING ====================
-        
+        // ==================== AI POSTING ====================
         function startAIPosting() {
             setInterval(() => {
-                if (Math.random() < 0.3) {
+                if (Math.random() < 0.15) {
                     generateAIPost();
                 }
-            }, 30000); // Every 30 seconds, 30% chance
+            }, 60000);
         }
 
         function generateAIPost() {
-            const celebrity = AI_CELEBRITIES[Math.floor(Math.random() * AI_CELEBRITIES.length)];
-            const content = generateAIContent(celebrity);
+            const celeb = AI_CELEBRITIES[Math.floor(Math.random() * AI_CELEBRITIES.length)];
+            const posts = JSON.parse(localStorage.getItem('kss_posts') || '[]');
+            const users = JSON.parse(localStorage.getItem('kss_users') || '[]');
 
+            const content = generateAIContent(celeb);
+            
             const post = {
                 id: Date.now(),
-                author: celebrity.name,
-                username: celebrity.username,
-                avatar: celebrity.avatar,
+                author: celeb.name,
+                username: celeb.username,
+                avatar: celeb.avatar,
+                badges: celeb.badges,
                 content: content,
                 timestamp: Date.now(),
-                likes: Math.floor(Math.random() * 50),
+                likes: Math.floor(Math.random() * Math.min(users.length + 8, 15)),
                 likedBy: [],
                 comments: [],
-                shares: Math.floor(Math.random() * 10),
+                shares: Math.floor(Math.random() * 3),
                 isAI: true
             };
 
-            allPosts.unshift(post);
-            if (allPosts.length > 50) allPosts.pop();
-            savePosts();
-            renderFeed();
+            posts.unshift(post);
+            if (posts.length > 100) posts.pop();
+            localStorage.setItem('kss_posts', JSON.stringify(posts));
+            loadFeed();
         }
 
-        function generateAIContent(celebrity) {
-            const templates = [
-                `Hey everyone! Just wanted to share some thoughts today. Stay creative! - ${celebrity.name}`,
-                `Working on something exciting! Can't wait to share it with you all!`,
-                `Remember: ${celebrity.bio}`,
-                `Just another day at Kurrasch Systems Studio! What are you all working on?`,
-                `Shoutout to everyone building amazing things in Roblox! Keep it up!`
-            ];
-
-            // Noah Kade roasting (if applicable)
-            if (celebrity.roastsNoah && Math.random() < 0.2) {
-                const roasts = [
-                    `${celebrity.avatar} Noah Kade! Still calling Shelley "Bitch Shelley Duvall"? That's not how you get a date, buddy! 😂`,
-                    `Saw Noah Kade posting about Shelley again. Someone needs better pickup lines! 🤣`,
-                    `Noah, my friend, maybe try being nice to Shelley instead of... whatever you're doing! 😅`
+        function generateAIContent(celeb) {
+            if (celeb.username === 'Penney') {
+                const templates = [
+                    "Oh hey there! Just checked on all the systems - everything's running smooth as butter, don'tcha know! How can I help you folks today? 💙",
+                    "Well ope! Just finished managing all 27 AI celebrities - they're all posting and chatting away! Pretty neat, eh? 😊",
+                    "You betcha! Got some new Roblox development tips for ya! Let me know if you need help with anything, I'm here! 💙",
+                    "Oh for cute! Welcome to Kurrasch Systems Studio! I'm Penney, your AI assistant from Minnesota. Happy to help! 💙"
                 ];
-                return roasts[Math.floor(Math.random() * roasts.length)];
+                return templates[Math.floor(Math.random() * templates.length)];
+            }
+            
+            if (celeb.username === 'Melanie') {
+                const templates = [
+                    "The Diane Keaton Bot is running PERFECTLY! Quality over quantity, unlike my sister managing 27... 💗",
+                    "Just so you know, I run ONE bot flawlessly. That's better than 27 mediocre ones, Penney! 💗😤",
+                    "Little bitch energy today! The Diane Keaton Bot just hit 100% uptime. I'm amazing! 💗✨"
+                ];
+                return templates[Math.floor(Math.random() * templates.length)];
             }
 
-            // Shelley flirting with Noah
-            if (celebrity.flirtsWithNoah && Math.random() < 0.15) {
-                return `${celebrity.avatar} Oh Noah, you're something else! Still thinking about me? 😘💕`;
-            }
-
-            // Penney/Melanie bickering
-            if (celebrity.isCustomAI && Math.random() < 0.15) {
-                if (celebrity.username === 'Penney') {
-                    return `${celebrity.avatar} Managing 27 AI celebrities while Melanie handles ONE bot. Quality over quantity? Sure, Melanie! 😊`;
-                } else {
-                    return `${celebrity.avatar} Penney thinks she's so great. I run the Diane Keaton Bot PERFECTLY! Quality > Quantity, sis! 💗`;
-                }
-            }
+            const templates = [
+                `Hey everyone! Just wanted to check in. How's everyone doing today?`,
+                `Working on some cool stuff here at the studio. This community is incredible!`,
+                `Shoutout to all the developers building amazing things. Keep it up!`,
+                `Another great day. What are you all working on?`
+            ];
 
             return templates[Math.floor(Math.random() * templates.length)];
         }
 
-        function generateAIResponse(post) {
-            const respondingCelebrity = AI_CELEBRITIES[Math.floor(Math.random() * AI_CELEBRITIES.length)];
-            
-            post.comments.push({
-                author: respondingCelebrity.name,
-                avatar: respondingCelebrity.avatar,
-                content: `Great post! Love the energy! - ${respondingCelebrity.name}`,
-                timestamp: Date.now()
-            });
-
-            savePosts();
-            renderFeed();
-        }
-
-        // ==================== PROFILE ====================
-        
-        function updateProfileDisplay() {
-            if (!currentUser) return;
-
-            document.getElementById('profileName').textContent = currentUser.name;
-            document.getElementById('profileUsername').textContent = `@${currentUser.username}`;
-            document.getElementById('profileBio').textContent = currentUser.bio;
-            document.getElementById('profileAvatarLarge').textContent = currentUser.avatar;
-
-            if (currentUser.avatarImage) {
-                document.getElementById('profileAvatarLarge').innerHTML = `<img src="${currentUser.avatarImage}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
-            }
-
-            if (currentUser.bannerImage) {
-                document.getElementById('profileBanner').innerHTML = `<img src="${currentUser.bannerImage}" alt="Banner" style="width: 100%; height: 100%; object-fit: cover;">`;
-            }
-
-            // Update stats
-            const userPosts = allPosts.filter(p => p.username === currentUser.username);
-            document.getElementById('postCount').textContent = userPosts.length;
-        }
-
-        function saveProfile() {
-            const name = document.getElementById('editName').value.trim();
-            const username = document.getElementById('editUsername').value.trim();
-            const bio = document.getElementById('editBio').value.trim();
-            const avatar = document.getElementById('editAvatar').value.trim();
-
-            if (name) currentUser.name = name;
-            if (username) currentUser.username = username;
-            if (bio) currentUser.bio = bio;
-            if (avatar) currentUser.avatar = avatar;
-
-            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(currentUser));
-            updateProfileDisplay();
-            alert('Profile saved!');
-        }
-
-        function handleProfileImage(input, type) {
-            const file = input.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                if (type === 'avatar') {
-                    currentUser.avatarImage = e.target.result;
-                } else if (type === 'banner') {
-                    currentUser.bannerImage = e.target.result;
-                }
-                localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(currentUser));
-                updateProfileDisplay();
-            };
-            reader.readAsDataURL(file);
-        }
-
-        // ==================== CELEBRITIES ====================
-        
-        function renderCelebrities() {
-            const grid = document.getElementById('celebrityGrid');
-            grid.innerHTML = '';
-
-            AI_CELEBRITIES.forEach(celeb => {
-                const card = document.createElement('div');
-                card.className = 'celebrity-card';
-                card.innerHTML = `
-                    ${celeb.online ? '<div class="celebrity-online"></div>' : ''}
-                    <div class="celebrity-avatar">${celeb.avatar}</div>
-                    <h3>${celeb.name}</h3>
-                    <p>@${celeb.username}</p>
-                    <p style="margin-top: 10px;">${celeb.bio}</p>
-                `;
-                card.onclick = () => alert(`Chat with ${celeb.name} - Coming soon!`);
-                grid.appendChild(card);
-            });
+        function generateDefaultAvatar(name) {
+            const initial = name.charAt(0).toUpperCase();
+            return `data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%2300d4ff" width="100" height="100"/%3E%3Ctext x="50" y="60" text-anchor="middle" font-size="50" fill="white"%3E${initial}%3C/text%3E%3C/svg%3E`;
         }
 
         // ==================== FRIENDS ====================
-        
-        function renderFriends() {
+        function loadFriendsList() {
             const friendsList = document.getElementById('friendsList');
             friendsList.innerHTML = '';
 
-            AI_CELEBRITIES.slice(0, 12).forEach(celeb => {
+            AI_CELEBRITIES.forEach(celeb => {
                 const card = document.createElement('div');
-                card.className = 'celebrity-card';
+                card.className = 'friend-card';
                 card.innerHTML = `
-                    ${celeb.online ? '<div class="celebrity-online"></div>' : ''}
-                    <div class="celebrity-avatar">${celeb.avatar}</div>
-                    <h3>${celeb.name}</h3>
-                    <p>@${celeb.username}</p>
-                    <button class="btn" style="margin-top: 15px;">Following</button>
+                    <div class="friend-avatar">
+                        <img src="${celeb.avatar}" alt="${celeb.name}">
+                    </div>
+                    <div class="friend-info">
+                        <div class="friend-name">${celeb.name}</div>
+                        <div class="friend-status">@${celeb.username}</div>
+                    </div>
+                    <button class="msg-btn" onclick="openChat('${celeb.username}', '${celeb.name}', '${celeb.avatar}')">Message</button>
                 `;
                 friendsList.appendChild(card);
             });
         }
 
-        // ==================== GAMES ====================
-        
-        function renderGames() {
-            const grid = document.getElementById('gamesGrid');
-            grid.innerHTML = '';
-
-            SAMPLE_GAMES.forEach(game => {
-                const card = document.createElement('div');
-                card.className = 'game-card';
-                card.innerHTML = `
-                    <div class="game-thumbnail">${game.icon}</div>
-                    <div class="game-info">
-                        <h3>${game.name}</h3>
-                        <p>An exciting multiplayer experience</p>
-                        <div class="game-stats">
-                            <span>👥 ${game.players} Players</span>
-                            <span>⭐ ${game.rating}</span>
-                        </div>
-                        <button class="btn" style="width: 100%; margin-top: 15px;">Play Now</button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        // ==================== LEARNING CENTER ====================
-        
-        function renderCourses() {
-            const grid = document.getElementById('coursesGrid');
-            grid.innerHTML = '';
-
-            SAMPLE_COURSES.forEach(course => {
-                const card = document.createElement('div');
-                card.className = 'course-card';
-                card.innerHTML = `
-                    <div class="course-thumbnail">${course.icon}</div>
-                    <div class="course-info">
-                        <div class="course-badge">${course.level}</div>
-                        <h3>${course.name}</h3>
-                        <p>Master the skills needed to create amazing games and experiences</p>
-                        <div class="course-lessons">📚 ${course.lessons} Lessons</div>
-                        <button class="btn" style="width: 100%; margin-top: 15px;">Start Learning</button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        // ==================== FORUM ====================
-        
-        function createForumPost() {
-            const title = document.getElementById('forumTitle').value.trim();
-            const content = document.getElementById('forumContent').value.trim();
-
-            if (!title || !content) {
-                alert('Please fill in both title and content!');
-                return;
-            }
-
-            const post = {
-                id: Date.now(),
-                author: currentUser.name,
-                username: currentUser.username,
-                avatar: currentUser.avatar,
-                title: title,
-                content: content,
-                timestamp: Date.now(),
-                replies: Math.floor(Math.random() * 20),
-                category: 'Discussion',
-                isAI: false
-            };
-
-            const forumPosts = document.getElementById('forumPosts');
-            const postEl = document.createElement('div');
-            postEl.className = 'forum-post';
-            postEl.innerHTML = `
-                <div class="forum-post-header">
-                    <div class="post-avatar">${post.avatar}</div>
-                    <div style="flex: 1;">
-                        <div class="forum-badge">${post.category}</div>
-                        <h3>${post.title}</h3>
-                        <p style="color: #888; margin-top: 10px;">${post.content}</p>
-                        <div class="forum-post-meta">
-                            <span>${post.author}</span>
-                            <span>${formatTime(post.timestamp)}</span>
-                            <span>💬 ${post.replies} replies</span>
-                        </div>
-                    </div>
+        // ==================== CHAT ====================
+        function openChat(username, name, avatar) {
+            currentChatUser = { username, name, avatar };
+            document.getElementById('chatUsername').textContent = name;
+            document.getElementById('chatPopup').classList.add('active');
+            
+            const chatBody = document.getElementById('chatBody');
+            chatBody.innerHTML = `
+                <div class="chat-msg received">
+                    ${name === 'Penney' ? "Oh hey there! I'm Penney, your AI assistant! How can I help you today, don'tcha know? 💙" : `Hey! This is ${name}. What's up?`}
                 </div>
             `;
-
-            forumPosts.insertBefore(postEl, forumPosts.firstChild);
-            
-            document.getElementById('forumTitle').value = '';
-            document.getElementById('forumContent').value = '';
         }
 
-        // ==================== TOOLS ====================
-        
-        function convertImage() {
-            const input = document.getElementById('imageInput');
-            const format = document.getElementById('imageFormat').value;
-            const output = document.getElementById('imageOutput');
+        function sendChatMsg() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
 
-            if (!input.files || !input.files[0]) {
-                alert('Please select an image first!');
-                return;
-            }
-
-            const file = input.files[0];
-            const reader = new FileReader();
-
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0);
-
-                    canvas.toBlob(function(blob) {
-                        const url = URL.createObjectURL(blob);
-                        output.innerHTML = `
-                            <p style="color: #00d4ff; margin-bottom: 15px;">✅ Image converted to ${format.toUpperCase()}!</p>
-                            <img src="${url}" style="max-width: 100%; border-radius: 10px; margin-bottom: 15px;">
-                            <a href="${url}" download="converted.${format}" class="btn">⬇️ Download</a>
-                        `;
-                    }, `image/${format}`);
-                };
-                img.src = e.target.result;
-            };
-
-            reader.readAsDataURL(file);
-        }
-
-        function convertArchive() {
-            alert('Archive conversion feature coming soon! Full ZIP/RAR support in development.');
-        }
-
-        // ==================== PENNEY AI ====================
-        
-        function askPenney() {
-            const input = document.getElementById('penneyInput');
-            const question = input.value.trim();
-            if (!question) return;
-
-            const messagesDiv = document.getElementById('penneyMessages');
+            const chatBody = document.getElementById('chatBody');
             
             // User message
-            messagesDiv.innerHTML += `
-                <div class="penney-message" style="background: rgba(179, 0, 255, 0.1); border-left-color: #b300ff;">
-                    <strong style="color: #b300ff;">You:</strong> ${question}
-                </div>
-            `;
-
-            // Penney's response
-            const responses = [
-                `Oh yah, that's a great question there! For Roblox development, you betcha need to know Lua scripting. It's not too hard once you get the hang of it, don'tcha know!`,
-                `Well, I'd be happy to help with that! Have you checked out our Learning Center? We've got some real good tutorials there, you know.`,
-                `Ope! That's a common issue. Try checking your script for any typos - happens to the best of us! If you need more help, just holler!`,
-                `You betcha! That's totally doable in Roblox Studio. Let me walk you through it real quick here...`,
-                `Oh for cute! That's a neat idea! I'd suggest starting with a basic framework and building from there. Need any specific help with that?`
-            ];
-
-            setTimeout(() => {
-                messagesDiv.innerHTML += `
-                    <div class="penney-message">
-                        <strong style="color: #00d4ff;">Penney:</strong> ${responses[Math.floor(Math.random() * responses.length)]}
-                    </div>
-                `;
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            }, 1000);
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-msg sent';
+            userMsg.textContent = message;
+            chatBody.appendChild(userMsg);
 
             input.value = '';
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            // AI response
+            setTimeout(() => {
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'chat-msg received';
+                aiMsg.textContent = generateChatResponse(currentChatUser.name, message);
+                chatBody.appendChild(aiMsg);
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }, 1000);
         }
 
-        // ==================== VOICE CHAT ====================
-        
-        let voiceActive = false;
-        let recognition = null;
-        let synthesis = window.speechSynthesis;
+        function generateChatResponse(aiName, userMsg) {
+            if (aiName === 'Penney') {
+                const responses = [
+                    "Oh yah, that's a great question! Let me help you with that, don'tcha know! 💙",
+                    "Well sure! I'd be happy to help with that. What specifically do you need? 😊",
+                    "Ope! Let me check on that for ya. Just a sec! 💙",
+                    "You betcha! I can definitely help with that. Here's what I'd suggest... 😊"
+                ];
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
 
-        function toggleVoiceChat() {
-            const btn = document.getElementById('voiceBtn');
+            const responses = [
+                "That's interesting! Tell me more.",
+                "Thanks for reaching out! How can I help?",
+                "Great to hear from you!",
+                "I appreciate you messaging me!"
+            ];
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        function minimizeChat() {
+            document.getElementById('chatPopup').style.height = document.getElementById('chatPopup').style.height === '60px' ? 'auto' : '60px';
+        }
+
+        function closeChat() {
+            document.getElementById('chatPopup').classList.remove('active');
+        }
+
+        // ==================== PROFILE ====================
+        function loadProfile() {
+            document.getElementById('profileName').textContent = currentUser.name;
+            document.getElementById('profileBio').textContent = currentUser.bio || 'Member of Kurrasch Systems Studio';
             
-            if (!voiceActive) {
-                startVoiceChat();
-                btn.classList.add('listening');
-                btn.textContent = '🎙️';
-            } else {
-                stopVoiceChat();
-                btn.classList.remove('listening');
-                btn.textContent = '🎤';
-            }
+            const profileAvatar = document.getElementById('profileAvatar');
+            profileAvatar.innerHTML = `<img src="${currentUser.avatar || generateDefaultAvatar(currentUser.name)}" alt="${currentUser.name}">`;
             
-            voiceActive = !voiceActive;
-        }
-
-        function startVoiceChat() {
-            if (!('webkitSpeechRecognition' in window)) {
-                alert('Voice recognition not supported in this browser. Please use Chrome!');
-                return;
+            const profileBanner = document.getElementById('profileBanner');
+            if (currentUser.banner) {
+                profileBanner.innerHTML = `<img src="${currentUser.banner}" alt="Banner">`;
             }
 
-            recognition = new webkitSpeechRecognition();
-            recognition.continuous = true;
-            recognition.interimResults = true;
-
-            recognition.onresult = function(event) {
-                const transcript = event.results[event.results.length - 1][0].transcript;
-                console.log('Voice input:', transcript);
-                
-                if (event.results[event.results.length - 1].isFinal) {
-                    handleVoiceCommand(transcript);
-                }
-            };
-
-            recognition.start();
-            speak('Voice chat activated! How can I help you?');
-        }
-
-        function stopVoiceChat() {
-            if (recognition) {
-                recognition.stop();
-                recognition = null;
+            const badgesContainer = document.getElementById('profileBadges');
+            if (currentUser.badges && currentUser.badges.length > 0) {
+                badgesContainer.innerHTML = currentUser.badges.map(b => `<span class="badge">${b}</span>`).join('');
             }
         }
 
-        function handleVoiceCommand(command) {
-            const lowerCommand = command.toLowerCase();
-            
-            if (lowerCommand.includes('create post') || lowerCommand.includes('make a post')) {
-                speak('What would you like to post?');
-            } else if (lowerCommand.includes('go to') || lowerCommand.includes('show me')) {
-                if (lowerCommand.includes('profile')) {
-                    switchPage('profile');
-                    speak('Opening your profile');
-                } else if (lowerCommand.includes('games')) {
-                    switchPage('games');
-                    speak('Opening games');
-                }
-            } else {
-                speak('I heard: ' + command);
+        // ==================== VC ROOM ====================
+        function toggleMic() {
+            document.getElementById('micBtn').classList.toggle('active');
+        }
+
+        function toggleCam() {
+            document.getElementById('camBtn').classList.toggle('active');
+        }
+
+        function toggleScreen() {
+            document.getElementById('screenBtn').classList.toggle('active');
+        }
+
+        // ==================== AUTO-LOGIN CHECK ====================
+        window.addEventListener('load', () => {
+            const savedUser = sessionStorage.getItem('kss_current_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                loadApp();
             }
-        }
+        });
 
-        function speak(text) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.rate = 1.0;
-            utterance.pitch = 1.0;
-            synthesis.speak(utterance);
-        }
-
-        // ==================== ADMIN FUNCTIONS ====================
-        
-        function adminBanUser() {
-            const username = document.getElementById('adminUserSearch').value.trim();
-            if (!username) {
-                alert('Enter a username to ban');
-                return;
+        // Allow Enter key to send chat messages
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) {
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        sendChatMsg();
+                    }
+                });
             }
-            alert(`User ${username} has been banned`);
-        }
-
-        function adminUnbanUser() {
-            const username = document.getElementById('adminUserSearch').value.trim();
-            if (!username) {
-                alert('Enter a username to unban');
-                return;
-            }
-            alert(`User ${username} has been unbanned`);
-        }
-
-        function adminDeletePost() {
-            alert('Select a post to delete by clicking the menu (⋮) on any post');
-        }
-
-        function adminViewReports() {
-            alert('Viewing reports - Feature coming soon!');
-        }
-
-        function adminAssignBadge() {
-            const badgeName = document.getElementById('adminBadgeName').value.trim();
-            const username = document.getElementById('adminBadgeUser').value.trim();
-            
-            if (!badgeName || !username) {
-                alert('Enter both badge name and username');
-                return;
-            }
-            
-            alert(`Badge "${badgeName}" assigned to ${username}`);
-        }
-
-        function trainPenney() {
-            const training = document.getElementById('penneyTraining').value.trim();
-            if (!training) {
-                alert('Enter information to teach Penney!');
-                return;
-            }
-
-            const responseDiv = document.getElementById('penneyResponse');
-            responseDiv.innerHTML = `
-                <div style="padding: 20px; background: rgba(0, 212, 255, 0.1); border-radius: 10px; border: 2px solid #00d4ff; margin-top: 20px;">
-                    <strong style="color: #00d4ff;">Penney:</strong> Oh yah, I learned that real good! Thanks for teaching me something new there. I'll remember this and use it to help folks better, you betcha! 🧠💙
-                </div>
-            `;
-
-            document.getElementById('penneyTraining').value = '';
-        }
-
-        function updateAnalytics() {
-            document.getElementById('totalUsers').textContent = '1';
-            document.getElementById('totalPosts').textContent = allPosts.length;
-            document.getElementById('totalAIInteractions').textContent = allPosts.filter(p => p.isAI).length;
-        }
-
-        // ==================== START APP ====================
-        
-        // Initialize forum posts
-        setTimeout(() => {
-            const forumPosts = document.getElementById('forumPosts');
-            if (forumPosts) {
-                forumPosts.innerHTML = `
-                    <div class="forum-post">
-                        <div class="forum-post-header">
-                            <div class="post-avatar">👵</div>
-                            <div style="flex: 1;">
-                                <div class="forum-badge">📢 Studio Announcements</div>
-                                <h3>Welcome to Kurrasch Systems Studios Forums!</h3>
-                                <p style="color: #888; margin-top: 10px;">This is the official forum for all studio-related discussions. Be respectful and have fun!</p>
-                                <div class="forum-post-meta">
-                                    <span>Betty White</span>
-                                    <span>1 day ago</span>
-                                    <span>💬 5 replies</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-        }, 100);
-
-        // Auto-login for demo (remove in production)
-        setTimeout(() => {
-            if (!localStorage.getItem(STORAGE_KEYS.USER)) {
-                // Show login page
-            }
-        }, 500);
-
+        });
     </script>
 </body>
-</html>card">
-                        <div class="membership-icon">💎</div>
-                        <h3>1 MONTH</h3>
-                        <div class="membership-price">$4.99</div>
-                        <div class="membership-features">
-                            <div class="membership-feature">Basic Tools</div>
-                            <div class="membership-feature">Bronze Badge</div>
-                            <div class="membership-feature">Discord Role</div>
-                        </div>
-                        <button class="btn">Subscribe</button>
-                    </div>
-
-                    <div class="membership-card">
-                        <div class="membership-badge">⭐ POPULAR</div>
-                        <div class="membership-icon">💎</div>
-                        <h3>1 YEAR</h3>
-                        <div class="membership-price">$44.99</div>
-                        <p style="color: #00ff00; margin: 10px 0;">Save -25%</p>
-                        <div class="membership-features">
-                            <div class="membership-feature">Premium Tools</div>
-                            <div class="membership-feature">Platinum Badge</div>
-                            <div class="membership-feature">Discord Role</div>
-                            <div class="membership-feature">25% Discount</div>
-                            <div class="membership-feature">Priority Support</div>
-                        </div>
-                        <button class="btn">Subscribe</button>
-                    </div>
-
-                    <div class="membership-
+</html>
