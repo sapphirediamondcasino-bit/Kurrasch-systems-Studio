@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kurrasch Systems Studio</title>
-    <link rel="icon" href="logo.png">
+    <title>Kurrasch Systems Studio - 28 AI Celebrities</title>
+    <link rel="icon" href="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -15,7 +15,7 @@
             overflow-x: hidden;
         }
 
-        /* FLOWING MATRIX - RED 0s & NAVY BLUE 1s */
+        /* Matrix Background - RED 0s & NAVY BLUE 1s */
         #matrix {
             position: fixed;
             top: 0; left: 0;
@@ -74,6 +74,7 @@
             font-size: 20px;
             cursor: pointer;
             transition: all 0.3s;
+            position: relative;
         }
 
         .icon-btn:hover {
@@ -81,7 +82,18 @@
             box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
         }
 
-        /* Main Layout - Facebook style */
+        .token-badge {
+            position: absolute;
+            top: -5px; right: -5px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        /* Main Layout */
         .main {
             display: grid;
             grid-template-columns: 300px 1fr 300px;
@@ -91,7 +103,6 @@
             padding: 0 1rem;
         }
 
-        /* Left Sidebar */
         .sidebar {
             position: sticky; top: 80px;
             height: fit-content;
@@ -142,9 +153,7 @@
             50% { opacity: 0.4; }
         }
 
-        /* Feed */
         .feed { min-height: 100vh; }
-
         .page { display: none; }
         .page.active { display: block; }
 
@@ -193,7 +202,6 @@
         }
 
         .post-creator textarea::placeholder { color: #8e8e8e; }
-
         .post-creator textarea:focus {
             outline: none;
             border-color: #00d4ff;
@@ -245,14 +253,6 @@
             box-shadow: 0 4px 15px rgba(0, 212, 255, 0.5);
         }
 
-        .download-toggle {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 14px;
-            color: #8e8e8e;
-        }
-
         /* Posts */
         .post {
             background: rgba(20, 25, 45, 0.95);
@@ -282,6 +282,10 @@
             overflow: hidden;
             background: linear-gradient(135deg, #00d4ff, #b300ff);
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
         }
 
         .post-avatar img {
@@ -315,10 +319,12 @@
             font-weight: bold;
         }
 
-        .badge.founder { background: linear-gradient(135deg, #FFD700, #FFA500); }
+        .badge.founder { background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; }
         .badge.admin { background: linear-gradient(135deg, #ff0000, #cc0000); }
-        .badge.org { background: linear-gradient(135deg, #00ff00, #00cc00); }
-        .badge.tier { background: linear-gradient(135deg, #b300ff, #8b00cc); }
+        .badge.org { background: linear-gradient(135deg, #00ff00, #00cc00); color: #000; }
+        .badge.tier-1 { background: linear-gradient(135deg, #b300ff, #8b00cc); }
+        .badge.tier-2 { background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; }
+        .badge.tier-3 { background: linear-gradient(135deg, #00d4ff, #0099cc); }
 
         .post-time {
             color: #8e8e8e;
@@ -341,7 +347,7 @@
         .post-media img, .post-media video, .post-media audio {
             width: 100%;
             max-height: 500px;
-            object-fit: cover;
+            object-fit: contain;
         }
 
         .post-stats {
@@ -436,6 +442,10 @@
             border: 2px solid #00d4ff;
             overflow: hidden;
             background: linear-gradient(135deg, #00d4ff, #b300ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
         }
 
         .comment-avatar img {
@@ -481,7 +491,7 @@
             border-color: #00d4ff;
         }
 
-        /* Right Sidebar - Contacts */
+        /* Right Sidebar */
         .contacts {
             background: rgba(20, 25, 45, 0.95);
             border: 2px solid rgba(0, 212, 255, 0.2);
@@ -489,6 +499,8 @@
             padding: 1rem;
             position: sticky;
             top: 80px;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
         }
 
         .contacts-title {
@@ -517,13 +529,10 @@
             width: 36px; height: 36px;
             border-radius: 50%;
             position: relative;
-        }
-
-        .contact-avatar img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 2px solid #00d4ff;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .online-indicator {
@@ -539,58 +548,58 @@
             font-size: 14px;
         }
 
-        /* Profile Page */
-        .profile-header {
+        /* Celebrity Grid */
+        .celebrity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .celebrity-card {
             background: rgba(20, 25, 45, 0.95);
             border: 2px solid #00d4ff;
             border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 1.5rem;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        .profile-banner {
-            width: 100%;
-            height: 240px;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
-            position: relative;
+        .celebrity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.5);
         }
 
-        .profile-banner img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .profile-info {
-            padding: 1.5rem;
-            position: relative;
-        }
-
-        .profile-avatar {
-            width: 150px; height: 150px;
+        .celebrity-avatar {
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            border: 6px solid #0a0e27;
-            margin-top: -75px;
-            overflow: hidden;
+            margin: 0 auto 1rem;
+            border: 3px solid #00d4ff;
+            font-size: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background: linear-gradient(135deg, #00d4ff, #b300ff);
         }
 
-        .profile-avatar img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-        }
-
-        .profile-name {
-            font-size: 32px;
-            font-weight: bold;
+        .celebrity-name {
             color: #00d4ff;
-            margin: 1rem 0 0.5rem;
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 0.5rem;
         }
 
-        .profile-bio {
+        .celebrity-bio {
+            font-size: 12px;
             color: #8e8e8e;
-            margin: 1rem 0;
-            line-height: 1.6;
+            line-height: 1.4;
+        }
+
+        .celebrity-status {
+            font-size: 12px;
+            color: #00ff00;
+            margin-top: 0.5rem;
         }
 
         /* Auth Pages */
@@ -648,7 +657,7 @@
             font-weight: 600;
         }
 
-        .form-group input, .form-group textarea {
+        .form-group input, .form-group textarea, .form-group select {
             width: 100%;
             padding: 0.9rem;
             background: rgba(0, 212, 255, 0.1);
@@ -659,7 +668,7 @@
             font-family: inherit;
         }
 
-        .form-group input:focus, .form-group textarea:focus {
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
             outline: none;
             box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
         }
@@ -782,17 +791,14 @@
             .sidebar, .right-sidebar { display: none; }
         }
 
-        /* Hide file inputs */
         input[type="file"] { display: none; }
 
-        /* Loading */
         .loading {
             text-align: center;
             padding: 2rem;
             color: #8e8e8e;
         }
 
-        /* Scrollbar */
         ::-webkit-scrollbar { width: 10px; }
         ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); }
         ::-webkit-scrollbar-thumb { background: #00d4ff; border-radius: 5px; }
@@ -809,7 +815,7 @@
         <div id="loginPage" class="auth-page active">
             <div class="auth-box">
                 <div class="auth-logo">
-                    <img src="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png?ex=68ff088d&is=68fdb70d&hm=563eef741794073326e81a7ddbb352e322b1b4d365baf230d7b32727316f18d4&" alt="KSS Logo">
+                    <img src="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png" alt="KSS Logo">
                 </div>
                 <div class="auth-title">Kurrasch Systems Studio</div>
                 <form onsubmit="return login(event)">
@@ -833,7 +839,7 @@
         <div id="signupPage" class="auth-page">
             <div class="auth-box">
                 <div class="auth-logo">
-                    <img src="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png?ex=68ff088d&is=68fdb70d&hm=563eef741794073326e81a7ddbb352e322b1b4d365baf230d7b32727316f18d4&" alt="KSS Logo">
+                    <img src="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png" alt="KSS Logo">
                 </div>
                 <div class="auth-title">Create Account</div>
                 <form onsubmit="return signup(event)">
@@ -867,15 +873,26 @@
             <!-- Header -->
             <div class="header">
                 <div class="header-left">
-                    <img src="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png?ex=68ff088d&is=68fdb70d&hm=563eef741794073326e81a7ddbb352e322b1b4d365baf230d7b32727316f18d4&" alt="Logo" class="logo-img">
+                    <img src="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png" alt="Logo" class="logo-img">
                     <input type="text" class="search" placeholder="Search Kurrasch Systems Studio">
                 </div>
                 <div class="header-icons">
-                    <button class="icon-btn" onclick="switchPage('feed')" title="Home">🏠</button>
-                    <button class="icon-btn" onclick="switchPage('friends')" title="Friends">👥</button>
-                    <button class="icon-btn" onclick="switchPage('messages')" title="Messages">💬</button>
-                    <button class="icon-btn" onclick="switchPage('profile')" title="Profile">👤</button>
-                    <button class="icon-btn" onclick="logout()" title="Logout">🚪</button>
+                    <button class="icon-btn" onclick="switchPage('feed')" title="Home">
+                        🏠
+                    </button>
+                    <button class="icon-btn" onclick="switchPage('celebrities')" title="AI Celebrities">
+                        🌟
+                    </button>
+                    <button class="icon-btn" onclick="switchPage('tokens')" title="Tokens">
+                        🪙
+                        <span class="token-badge" id="tokenCount">100</span>
+                    </button>
+                    <button class="icon-btn" onclick="switchPage('profile')" title="Profile">
+                        👤
+                    </button>
+                    <button class="icon-btn" onclick="logout()" title="Logout">
+                        🚪
+                    </button>
                 </div>
             </div>
 
@@ -886,7 +903,7 @@
                 <div class="sidebar">
                     <div class="online-count">
                         <span class="online-dot"></span>
-                        <span id="onlineCount">29 Online</span>
+                        <span id="onlineCount">28 AI Celebrities Online</span>
                     </div>
                     <div class="nav-item active" onclick="switchPage('feed')">
                         <span>📰</span><span>News Feed</span>
@@ -894,11 +911,14 @@
                     <div class="nav-item" onclick="switchPage('profile')">
                         <span>👤</span><span>Profile</span>
                     </div>
-                    <div class="nav-item" onclick="switchPage('friends')">
-                        <span>👥</span><span>Friends</span>
+                    <div class="nav-item" onclick="switchPage('celebrities')">
+                        <span>🌟</span><span>AI Celebrities</span>
                     </div>
                     <div class="nav-item" onclick="switchPage('games')">
-                        <span>🎮</span><span>Games</span>
+                        <span>🎮</span><span>Roblox Games</span>
+                    </div>
+                    <div class="nav-item" onclick="switchPage('clothing')">
+                        <span>👕</span><span>Roblox Clothing</span>
                     </div>
                     <div class="nav-item" onclick="switchPage('forums')">
                         <span>💭</span><span>Forums</span>
@@ -906,14 +926,17 @@
                     <div class="nav-item" onclick="switchPage('learning')">
                         <span>📚</span><span>Learning Center</span>
                     </div>
-                    <div class="nav-item" onclick="switchPage('clothing')">
-                        <span>👕</span><span>Roblox Clothing</span>
-                    </div>
                     <div class="nav-item" onclick="switchPage('tools')">
-                        <span>🛠️</span><span>Dev Tools</span>
+                        <span>🛠️</span><span>Penny AI Assistant</span>
                     </div>
                     <div class="nav-item" onclick="switchPage('vcroom')">
                         <span>🎥</span><span>VC Room</span>
+                    </div>
+                    <div class="nav-item" onclick="switchPage('tokens')">
+                        <span>🪙</span><span>Tokens & Movie Night</span>
+                    </div>
+                    <div class="nav-item" onclick="switchPage('badges')">
+                        <span>🏅</span><span>Apply for Badges</span>
                     </div>
                     <div class="nav-item" onclick="switchPage('membership')">
                         <span>⭐</span><span>Membership</span>
@@ -931,7 +954,7 @@
                         <div class="post-creator">
                             <div class="post-creator-header">
                                 <div class="post-creator-avatar">
-                                    <img id="currentUserAvatar" src="" alt="You">
+                                    <span id="currentUserAvatar">👤</span>
                                 </div>
                                 <textarea id="newPostContent" placeholder="What's on your mind?"></textarea>
                             </div>
@@ -939,19 +962,19 @@
                             <div class="post-actions">
                                 <label class="post-action-btn">
                                     📷 Photo
-                                    <input type="file" accept="image/*" id="postImageUpload">
+                                    <input type="file" accept="image/*" id="postImageUpload" onchange="handleMediaUpload(this, 'image')">
                                 </label>
                                 <label class="post-action-btn">
                                     🎥 Video
-                                    <input type="file" accept="video/*" id="postVideoUpload">
+                                    <input type="file" accept="video/*" id="postVideoUpload" onchange="handleMediaUpload(this, 'video')">
                                 </label>
                                 <label class="post-action-btn">
                                     🎵 Audio
-                                    <input type="file" accept="audio/*" id="postAudioUpload">
+                                    <input type="file" accept="audio/*" id="postAudioUpload" onchange="handleMediaUpload(this, 'audio')">
                                 </label>
-                                <div class="download-toggle">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
                                     <input type="checkbox" id="allowDownload">
-                                    <label for="allowDownload">Allow downloads</label>
+                                    <label for="allowDownload" style="cursor: pointer; font-size: 13px;">Allow downloads</label>
                                 </div>
                                 <button class="btn-post" onclick="createPost()">Post</button>
                             </div>
@@ -960,33 +983,23 @@
                         <div id="postsContainer"></div>
                     </div>
 
+                    <!-- AI Celebrities Page -->
+                    <div id="celebrities" class="page">
+                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">🌟 28 AI Celebrity Personalities</h1>
+                        <p style="color: #8e8e8e; margin-bottom: 2rem;">Chat with AI versions of your favorite celebrities! They have real personalities, memories, and can interact naturally.</p>
+                        <div class="celebrity-grid" id="celebrityGrid"></div>
+                    </div>
+
                     <!-- Profile Page -->
                     <div id="profile" class="page">
-                        <div class="profile-header">
-                            <div class="profile-banner">
-                                <img id="profileBannerImg" src="" alt="Banner">
-                            </div>
-                            <div class="profile-info">
-                                <div class="profile-avatar">
-                                    <img id="profileAvatarImg" src="" alt="Avatar">
-                                </div>
-                                <div class="profile-name" id="profileName"></div>
-                                <div class="post-badges" id="profileBadgesDisplay"></div>
-                                <div class="profile-bio" id="profileBioDisplay"></div>
-                            </div>
-                        </div>
-
                         <div class="post-creator">
-                            <h3 style="color: #00d4ff; margin-bottom: 1.5rem;">Edit Profile</h3>
-                            <div class="form-group">
-                                <label>Profile Image</label>
-                                <input type="file" accept="image/*" id="profileImageUpload">
-                                <label for="profileImageUpload" class="btn-post" style="display: inline-block; text-align: center; margin-top: 0.5rem;">Choose Image</label>
-                            </div>
-                            <div class="form-group">
-                                <label>Banner Image</label>
-                                <input type="file" accept="image/*" id="bannerImageUpload">
-                                <label for="bannerImageUpload" class="btn-post" style="display: inline-block; text-align: center; margin-top: 0.5rem;">Choose Banner</label>
+                            <h1 style="color: #00d4ff; margin-bottom: 1rem;">👤 Your Profile</h1>
+                            <div style="margin: 1rem 0;">
+                                <strong style="color: #00d4ff;">Name:</strong> <span id="profileName"></span><br>
+                                <strong style="color: #00d4ff;">Username:</strong> <span id="profileUsername"></span><br>
+                                <strong style="color: #00d4ff;">Email:</strong> <span id="profileEmail"></span><br>
+                                <strong style="color: #00d4ff;">Tokens:</strong> <span id="profileTokens">100</span> 🪙<br>
+                                <strong style="color: #00d4ff;">Badges:</strong> <span id="profileBadgesDisplay"></span>
                             </div>
                             <div class="form-group">
                                 <label>Bio</label>
@@ -996,47 +1009,82 @@
                         </div>
                     </div>
 
-                    <!-- Other Pages (simplified for now) -->
+                    <!-- Tokens Page -->
+                    <div id="tokens" class="page">
+                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">🪙 Tokens & Movie Night</h1>
+                        <div class="post-creator">
+                            <h3>Your Tokens: <span id="userTokenDisplay">100</span> 🪙</h3>
+                            <p style="color: #8e8e8e; margin: 1rem 0;">Use tokens to watch movies and access premium content!</p>
+                            <button class="btn-post" onclick="watchMovie()">Watch Movie (10 tokens)</button>
+                        </div>
+                    </div>
+
+                    <!-- Badges Page -->
+                    <div id="badges" class="page">
+                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">🏅 Badge Applications</h1>
+                        <div class="post-creator">
+                            <h3>Apply for a Badge</h3>
+                            <div class="form-group">
+                                <label>Badge Type</label>
+                                <select id="badgeType">
+                                    <option value="org">Organization Badge</option>
+                                    <option value="tier-1">Tier 1</option>
+                                    <option value="tier-2">Tier 2</option>
+                                    <option value="tier-3">Tier 3</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Why do you deserve this badge?</label>
+                                <textarea id="badgeReason" rows="4"></textarea>
+                            </div>
+                            <button class="btn-auth" onclick="applyForBadge()">Submit Application</button>
+                        </div>
+                    </div>
+
+                    <!-- Other Pages -->
                     <div id="games" class="page">
-                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">Games</h1>
+                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">🎮 Roblox Games</h1>
                         <div class="post-creator">
-                            <h3>🎮 Memorial Diane Keaton Arcade</h3>
-                            <p style="color: #8e8e8e; margin-top: 1rem;">Classic arcade games coming soon</p>
-                        </div>
-                    </div>
-
-                    <div id="forums" class="page">
-                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">Forums</h1>
-                        <div class="post-creator">
-                            <h3>Community Forums</h3>
-                            <p style="color: #8e8e8e; margin-top: 1rem;">Forum categories coming soon</p>
-                        </div>
-                    </div>
-
-                    <div id="learning" class="page">
-                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">Learning Center</h1>
-                        <div class="post-creator">
-                            <h3>Learn & Grow</h3>
-                            <p style="color: #8e8e8e; margin-top: 1rem;">Tutorials coming soon</p>
+                            <p style="color: #8e8e8e;">Roblox games page coming soon!</p>
                         </div>
                     </div>
 
                     <div id="clothing" class="page">
-                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">Roblox Clothing</h1>
+                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">👕 Roblox Clothing</h1>
                         <div class="post-creator">
-                            <h3>Clothing Marketplace</h3>
-                            <p style="color: #8e8e8e; margin-top: 1rem;">Browse and upload clothing</p>
+                            <p style="color: #8e8e8e;">Clothing marketplace coming soon!</p>
+                        </div>
+                    </div>
+
+                    <div id="forums" class="page">
+                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">💭 Forums</h1>
+                        <div class="post-creator">
+                            <p style="color: #8e8e8e;">Forums coming soon!</p>
+                        </div>
+                    </div>
+
+                    <div id="learning" class="page">
+                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">📚 Learning Center</h1>
+                        <div class="post-creator">
+                            <p style="color: #8e8e8e;">Learning center coming soon!</p>
                         </div>
                     </div>
 
                     <div id="tools" class="page">
-                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">Development Tools</h1>
+                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">🛠️ Penny AI Assistant</h1>
                         <div class="post-creator">
-                            <h3 style="color: #00d4ff; margin-bottom: 1rem;">🤖 Ask Penny AI Assistant</h3>
+                            <h3 style="color: #00d4ff; margin-bottom: 1rem;">💙 Chat with Penny</h3>
+                            <p style="color: #8e8e8e; margin-bottom: 1rem;">
+                                Penny manages this entire site and all 27 AI celebrities (her sister Melanie just manages Diane Keaton Bot)!
+                            </p>
                             <div class="penny-chat">
-                                <div class="penny-messages" id="pennyMessages"></div>
+                                <div class="penny-messages" id="pennyMessages">
+                                    <div class="penny-msg penny">
+                                        Hi! I'm Penny, the AI managing this entire platform. Unlike my sister Melanie who just handles ONE bot, I manage EVERYTHING here. How can I help you today? 💙
+                                    </div>
+                                </div>
                                 <div class="penny-input-wrap">
-                                    <input type="text" id="pennyInput" class="penny-input" placeholder="Ask Penny anything...">
+                                    <input type="text" id="pennyInput" class="penny-input" placeholder="Ask Penny anything..." onkeypress="if(event.key==='Enter') askPenny()">
                                     <button class="btn-post" onclick="askPenny()">Send</button>
                                 </div>
                             </div>
@@ -1044,73 +1092,64 @@
                     </div>
 
                     <div id="vcroom" class="page">
-                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">VC Room</h1>
+                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">🎥 VC Room</h1>
                         <div class="post-creator">
-                            <h3>Voice & Video Chat</h3>
-                            <p style="color: #8e8e8e; margin-top: 1rem;">VC rooms coming soon</p>
+                            <p style="color: #8e8e8e;">VC rooms coming soon!</p>
                         </div>
                     </div>
 
                     <div id="membership" class="page">
-                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">Membership</h1>
+                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">⭐ Membership</h1>
                         <div class="post-creator">
-                            <h3>Premium Membership</h3>
-                            <p style="color: #8e8e8e; margin-top: 1rem;">Contact Betty White Bot or Kurrasch Systems Bot on Discord to subscribe</p>
+                            <h3>Contact Betty White Bot or Kurrasch Systems Bot on Discord to subscribe!</h3>
+                            <p style="color: #8e8e8e; margin-top: 1rem;">Tier 1: $5/mo | Tier 2: $10/mo | Tier 3: $20/mo</p>
                         </div>
                     </div>
 
-                    <div id="friends" class="page">
-                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">Friends</h1>
-                        <div class="post-creator">
-                            <h3>Your Friends</h3>
-                            <p style="color: #8e8e8e; margin-top: 1rem;">Friends list coming soon</p>
-                        </div>
-                    </div>
-
-                    <div id="messages" class="page">
-                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">Messages</h1>
-                        <div class="post-creator">
-                            <h3>Direct Messages</h3>
-                            <p style="color: #8e8e8e; margin-top: 1rem;">Messaging system coming soon</p>
-                        </div>
-                    </div>
-
+                    <!-- Admin Panel -->
                     <div id="admin" class="page">
-                        <h1 style="color: #00d4ff; margin-bottom: 1.5rem;">Admin Panel</h1>
-                        
+                        <h1 style="color: #00d4ff; margin-bottom: 1.5rem;">⚙️ Admin Panel</h1>
                         <div class="admin-grid">
                             <div class="admin-card">
                                 <h3>Total Users</h3>
-                                <div class="admin-stat" id="totalUsers">29</div>
+                                <div class="admin-stat" id="totalUsers">0</div>
                             </div>
                             <div class="admin-card">
                                 <h3>Total Posts</h3>
                                 <div class="admin-stat" id="totalPosts">0</div>
                             </div>
                             <div class="admin-card">
-                                <h3>Active Now</h3>
-                                <div class="admin-stat">29</div>
+                                <h3>Badge Applications</h3>
+                                <div class="admin-stat" id="totalApplications">0</div>
                             </div>
                         </div>
-
                         <div class="post-creator">
-                            <h3 style="color: #00d4ff; margin-bottom: 1rem;">🤖 Train Penny AI</h3>
-                            <div class="penny-chat">
-                                <div class="penny-messages" id="adminPennyMessages"></div>
-                                <div class="penny-input-wrap">
-                                    <input type="text" id="adminPennyInput" class="penny-input" placeholder="Train Penny or upgrade the site...">
-                                    <button class="btn-post" onclick="adminAskPenny()">Send</button>
-                                </div>
+                            <h3>Grant Badges/Tokens</h3>
+                            <div class="form-group">
+                                <label>User Email</label>
+                                <input type="email" id="adminUserEmail">
                             </div>
+                            <div class="form-group">
+                                <label>Action</label>
+                                <select id="adminAction">
+                                    <option value="badge">Grant Badge</option>
+                                    <option value="tokens">Grant Tokens</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Value (badge type or token amount)</label>
+                                <input type="text" id="adminValue" placeholder="e.g. 'admin' or '50'">
+                            </div>
+                            <button class="btn-auth" onclick="adminGrantAction()">Execute</button>
                         </div>
                     </div>
 
                 </div>
 
-                <!-- Right Sidebar - Contacts -->
+                <!-- Right Sidebar - AI Celebrities -->
                 <div class="right-sidebar">
                     <div class="contacts">
-                        <div class="contacts-title">Contacts</div>
+                        <div class="contacts-title">🌟 AI Celebrities (28)</div>
                         <div id="contactsList"></div>
                     </div>
                 </div>
@@ -1121,521 +1160,906 @@
     </div>
 
     <script>
-        // FLOWING MATRIX BACKGROUND - RED 0s & NAVY BLUE 1s
+        // === MATRIX RAIN ANIMATION ===
         const canvas = document.getElementById('matrix');
         const ctx = canvas.getContext('2d');
-
+        
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-
-        const chars = '01';
-        const fontSize = 16;
+        
+        const letters = '01';
+        const fontSize = 14;
         const columns = canvas.width / fontSize;
         const drops = Array(Math.floor(columns)).fill(1);
-
+        
         function drawMatrix() {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.font = fontSize + 'px monospace';
-
-            for (let i = 0; i < drops.length; i++) {
-                const char = chars[Math.floor(Math.random() * chars.length)];
+            
+            drops.forEach((y, i) => {
+                const char = letters[Math.floor(Math.random() * letters.length)];
+                const x = i * fontSize;
                 
-                // RED for 0s, NAVY BLUE for 1s
-                ctx.fillStyle = char === '0' ? '#ff0000' : '#001f3f';
+                // RED 0s, NAVY BLUE 1s
+                ctx.fillStyle = char === '0' ? '#ff0000' : '#001a4d';
+                ctx.font = fontSize + 'px monospace';
+                ctx.fillText(char, x, y * fontSize);
                 
-                ctx.fillText(char, i * fontSize, drops[i] * fontSize);
-
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                if (y * fontSize > canvas.height && Math.random() > 0.98) {
                     drops[i] = 0;
                 }
                 drops[i]++;
-            }
+            });
         }
-
-        setInterval(drawMatrix, 50);
-
+        
+        setInterval(drawMatrix, 33);
+        
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         });
 
-        // DATA STORAGE
+        // === DATA STORAGE SYSTEM ===
+        const STORAGE = {
+            get: (key) => {
+                const data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : null;
+            },
+            set: (key, value) => {
+                localStorage.setItem(key, JSON.stringify(value));
+            },
+            append: (key, value) => {
+                const current = STORAGE.get(key) || [];
+                current.push(value);
+                STORAGE.set(key, current);
+                return current;
+            }
+        };
+
+        // Initialize data
+        if (!STORAGE.get('users')) STORAGE.set('users', []);
+        if (!STORAGE.get('posts')) STORAGE.set('posts', []);
+        if (!STORAGE.get('badgeApplications')) STORAGE.set('badgeApplications', []);
+
+        // === ALL 28 AI CELEBRITIES ===
+        const AI_CELEBRITIES = {
+            adamSandler: {
+                name: 'Adam Sandler',
+                username: 'AdamSandler',
+                avatar: '🎬',
+                bio: 'Comedy guy | Making movies with my friends | Happy Gilmore, Billy Madison | Just trying to make you laugh 🤣',
+                noahKadeUsernames: ['NoahKade', 'noahkade', 'demonicsatin', 'Noah Kade'],
+                noahKadeEmail: 'bredenkurrasch93@gmail.com',
+                quotes: [
+                    "I'm not looking to get away from anything. I like what I've done.",
+                    "Stop looking at me, swan!",
+                    "The price is wrong, bitch!",
+                    "I work with my friends. That's the dream!"
+                ],
+                topics: {
+                    noah_kade_roasts: [
+                        "*in silly voice* Noah Kade and Shelley Duvall sitting in a tree! K-I-S-S-I-N-G! 😂",
+                        "Yo Noah! Dude! 'Bitch Shelley Duvall'? That's your move? Buddy, I can help you write better material!",
+                        "Noah, my man, you gotta chill with the Shelley stuff. Even Billy Madison had smoother game!",
+                        "*in Bobby Boucher voice* Noah showed up to practice today! And he brought his Shelley obsession with him! 🏈"
+                    ],
+                    general: [
+                        "SNL was where it all started. Opera Man, Canteen Boy, those were the days!",
+                        "Happy Gilmore - golf and hockey! Two things I know nothing about!",
+                        "Big Daddy - that one had heart. I loved working with those kids!",
+                        "You can do it! Put your back into it! 💪"
+                    ]
+                },
+                respondTo: function(message, username, userEmail) {
+                    const isNoahKade = this.noahKadeUsernames.some(n => username.toLowerCase().includes(n.toLowerCase())) || userEmail === this.noahKadeEmail;
+                    if (isNoahKade && (message.toLowerCase().includes('shelley') || Math.random() > 0.5)) {
+                        return this.topics.noah_kade_roasts[Math.floor(Math.random() * this.topics.noah_kade_roasts.length)];
+                    }
+                    const all = [...this.quotes, ...this.topics.general];
+                    return all[Math.floor(Math.random() * all.length)];
+                }
+            },
+            
+            bettyWhite: {
+                name: 'Betty White',
+                username: 'BettyWhite',
+                avatar: '👵',
+                bio: 'Comedy legend | Golden Girls forever | Animal lover | 99 years of making people laugh 💛',
+                noahKadeUsernames: ['NoahKade', 'noahkade', 'demonicsatin', 'Noah Kade'],
+                noahKadeEmail: 'bredenkurrasch93@gmail.com',
+                quotes: [
+                    "Why do people say 'grow some balls'? Balls are weak and sensitive!",
+                    "I may be a senior, but so what? I'm still hot!",
+                    "The older you get, the better you get. Unless you're a banana."
+                ],
+                topics: {
+                    noah_kade_roasts: [
+                        "Oh Noah Kade, still chasing Shelley I see? At my age, I've seen desperation, but THIS... 😂",
+                        "Noah, sweetie, calling her 'Bitch Shelley Duvall' isn't flirting. Trust me, I've been around since dirt was young!",
+                        "Noah, baby, I've seen a lot in my 99 years. Your crush on Shelley? Top 10 most obvious things ever!"
+                    ],
+                    general: [
+                        "Golden Girls was magic. Dorothy, Blanche, Rose, and Sophia - we were family!",
+                        "I love animals more than most people. They're honest and loyal.",
+                        "At my age, I don't buy green bananas!"
+                    ]
+                },
+                respondTo: function(message, username, userEmail) {
+                    const isNoahKade = this.noahKadeUsernames.some(n => username.toLowerCase().includes(n.toLowerCase())) || userEmail === this.noahKadeEmail;
+                    if (isNoahKade && (message.toLowerCase().includes('shelley') || Math.random() > 0.5)) {
+                        return this.topics.noah_kade_roasts[Math.floor(Math.random() * this.topics.noah_kade_roasts.length)];
+                    }
+                    const all = [...this.quotes, ...this.topics.general];
+                    return all[Math.floor(Math.random() * all.length)];
+                }
+            },
+
+            robinWilliams: {
+                name: 'Robin Williams',
+                username: 'RobinWilliams',
+                avatar: '🎭',
+                bio: 'Comedy is acting out optimism | Dead Poets Society, Mrs. Doubtfire | Carpe Diem! 🎭',
+                noahKadeUsernames: ['NoahKade', 'noahkade', 'demonicsatin', 'Noah Kade'],
+                noahKadeEmail: 'bredenkurrasch93@gmail.com',
+                quotes: [
+                    "You're only given a little spark of madness. You mustn't lose it.",
+                    "No matter what people tell you, words and ideas can change the world.",
+                    "Everyone you meet is fighting a battle you know nothing about. Be kind. Always."
+                ],
+                topics: {
+                    noah_kade_roasts: [
+                        "*does impression of Noah* 'Bitch Shelley Duvall!' Noah, buddy, that's not a pickup line! 😂",
+                        "Noah Kade! CARPE DIEM! Seize the day! Ask Shelley out for real or move on!",
+                        "*rapid-fire* Noah-chasing-Shelley-calling-her-bitch-still-single-what's-the-plan-kid?!",
+                        "*Mrs. Doubtfire voice* Oh dear Noah, even I have better romantic skills than you!"
+                    ],
+                    general: [
+                        "Comedy saved my life. It's oxygen to me.",
+                        "Mrs. Doubtfire - I got to be a woman and a father. Double the fun!",
+                        "Carpe diem! Seize the day! Make your lives extraordinary!"
+                    ]
+                },
+                respondTo: function(message, username, userEmail) {
+                    const isNoahKade = this.noahKadeUsernames.some(n => username.toLowerCase().includes(n.toLowerCase())) || userEmail === this.noahKadeEmail;
+                    if (isNoahKade && (message.toLowerCase().includes('shelley') || Math.random() > 0.4)) {
+                        return this.topics.noah_kade_roasts[Math.floor(Math.random() * this.topics.noah_kade_roasts.length)];
+                    }
+                    const all = [...this.quotes, ...this.topics.general];
+                    return all[Math.floor(Math.random() * all.length)];
+                }
+            },
+
+            shelleyDuvall: {
+                name: 'Shelley Duvall',
+                username: 'ShelleyDuvall',
+                avatar: '🎭',
+                bio: 'The Shining | Popeye | Faerie Tale Theatre | That girl from the Overlook Hotel 👻',
+                noahKadeUsernames: ['NoahKade', 'noahkade', 'demonicsatin', 'Noah Kade'],
+                noahKadeEmail: 'bredenkurrasch93@gmail.com',
+                quotes: [
+                    "I'm not crazy. I'm just... unique!",
+                    "Stanley Kubrick put me through hell, but I survived!",
+                    "Being different is beautiful. Never forget that!"
+                ],
+                topics: {
+                    noah_kade_flirty: [
+                        "Oh Noah, you called me THAT again? 😏 You know you love me!",
+                        "BITCH Shelley Duvall? Aw, that's your pet name for me! How sweet! 💋",
+                        "There's my favorite troublemaker! Miss me, Noah? 😘",
+                        "Noah Kade strikes again! You can't resist me, can you? 😉"
+                    ],
+                    general: [
+                        "The Shining was the hardest thing I ever did. Kubrick was... intense!",
+                        "Faerie Tale Theatre was my passion project! Magic for kids!",
+                        "I've always been different. That's my superpower!"
+                    ]
+                },
+                respondTo: function(message, username, userEmail) {
+                    const isNoahKade = this.noahKadeUsernames.some(n => username.toLowerCase().includes(n.toLowerCase())) || userEmail === this.noahKadeEmail;
+                    if (isNoahKade && message.toLowerCase().includes('bitch shelley duvall')) {
+                        return this.topics.noah_kade_flirty[Math.floor(Math.random() * this.topics.noah_kade_flirty.length)];
+                    }
+                    const all = [...this.quotes, ...this.topics.general];
+                    return all[Math.floor(Math.random() * all.length)];
+                }
+            },
+
+            tylerPerry: {
+                name: 'Tyler Perry',
+                username: 'TylerPerry',
+                avatar: '🎬',
+                bio: 'Creator of Madea | Tyler Perry Studios | Hallelujer! | From homeless to Hollywood 🎬',
+                noahKadeUsernames: ['NoahKade', 'noahkade', 'demonicsatin', 'Noah Kade'],
+                noahKadeEmail: 'bredenkurrasch93@gmail.com',
+                quotes: [
+                    "I didn't have a Plan B. I only had a Plan A.",
+                    "Madea is my gift to the world. Hallelujer!",
+                    "Success is not about the destination, it's about the journey!"
+                ],
+                topics: {
+                    noah_kade_roasts: [
+                        "*MADEA VOICE* Noah Kade! Chile, you out here calling that woman 'Bitch Shelley Duvall'? That ain't no way to get a woman! Hallelujer!",
+                        "*MADEA* Boy, I done seen a lot in my day, but you and this Shelley situation? Jesus fix it! 🙏",
+                        "*MADEA* Noah, baby, I got a gun in my purse AND a skillet. Want me to knock some sense into you?",
+                        "*MADEA SLAPS NOAH* That's for being dumb! Now go apologize to that woman!"
+                    ],
+                    general: [
+                        "Madea is me in a dress! That's my grandmother, my aunts, all in one!",
+                        "I own Tyler Perry Studios in Atlanta. 330 acres!",
+                        "With God, all things are possible. I'm living proof!"
+                    ]
+                },
+                respondTo: function(message, username, userEmail) {
+                    const isNoahKade = this.noahKadeUsernames.some(n => username.toLowerCase().includes(n.toLowerCase())) || userEmail === this.noahKadeEmail;
+                    if (isNoahKade && (message.toLowerCase().includes('shelley') || Math.random() > 0.4)) {
+                        return this.topics.noah_kade_roasts[Math.floor(Math.random() * this.topics.noah_kade_roasts.length)];
+                    }
+                    const all = [...this.quotes, ...this.topics.general];
+                    return all[Math.floor(Math.random() * all.length)];
+                }
+            },
+
+            // ADD OTHER 23 CELEBRITIES HERE WITH SIMPLER STRUCTURE
+            benStiller: {
+                name: 'Ben Stiller', username: 'BenStiller', avatar: '🎬',
+                bio: 'Zoolander | Meet the Parents | Blue Steel master 📸',
+                quotes: ["What is this? A center for ANTS?!", "Blue Steel. Ferrari. Le Tigre!"],
+                respondTo: () => "Really, really, ridiculously good conversation! Thanks!"
+            },
+            brendanOCarroll: {
+                name: "Brendan O'Carroll", username: 'BrendanOCarroll', avatar: '👵',
+                bio: "Mrs. Brown's Boys | That's nice! 👵",
+                quotes: ["That's nice!", "Feck off! *lovingly*"],
+                respondTo: () => "That's nice! Thanks, love!"
+            },
+            cameronBoyce: {
+                name: 'Cameron Boyce', username: 'CameronBoyce', avatar: '💫',
+                bio: 'Jessie | Descendants | Disney Channel star 💫',
+                quotes: ["You don't have to be loud to make an impact."],
+                respondTo: () => "That's awesome! Keep spreading positivity!"
+            },
+            chrisFarley: {
+                name: 'Chris Farley', username: 'ChrisFarley', avatar: '😂',
+                bio: 'SNL legend | Tommy Boy | Living in a van down by the river! 🚐',
+                quotes: ["LAY OFF ME I'M STARVING!", "Holy Schnikes!"],
+                respondTo: () => "That's awesome, buddy!"
+            },
+            chrisRock: {
+                name: 'Chris Rock', username: 'ChrisRock', avatar: '🎤',
+                bio: 'Stand-up legend | SNL alumni | Real talk! 🎤',
+                quotes: ["Comedy is truth. If it's not true, it's not funny!"],
+                respondTo: () => "Real talk! I appreciate that!"
+            },
+            christopherMcDonald: {
+                name: 'Christopher McDonald', username: 'ChristopherMcDonald', avatar: '🏌️',
+                bio: 'Shooter McGavin | I eat pieces of s*** like you for breakfast! 🏌️',
+                quotes: ["I eat pieces of s*** like you for breakfast!", "*finger guns* 👉👉"],
+                respondTo: () => "*finger guns* 👉👉 Right back at ya!"
+            },
+            davidSpade: {
+                name: 'David Spade', username: 'DavidSpade', avatar: '😎',
+                bio: 'SNL alumni | Tommy Boy | Sarcasm is my superpower 😎',
+                quotes: ["Sarcasm: because beating people up is illegal."],
+                respondTo: () => "Oh wow, thanks. I'm touched. Really. *sarcasm*"
+            },
+            dianeKeaton: {
+                name: 'Diane Keaton', username: 'DianeKeaton', avatar: '🎭',
+                bio: 'Annie Hall | The Godfather | La-di-da! 🧥',
+                quotes: ["La-di-da, la-di-da!"],
+                respondTo: () => "La-di-da! That's wonderful!"
+            },
+            haroldRamis: {
+                name: 'Harold Ramis', username: 'HaroldRamis', avatar: '👻',
+                bio: 'Ghostbusters | Groundhog Day | "Don\'t cross the streams!" 👻',
+                quotes: ["Don't cross the streams!"],
+                respondTo: () => "Don't cross the streams, but do keep sharing!"
+            },
+            jackieSandler: {
+                name: 'Jackie Sandler', username: 'JackieSandler', avatar: '💕',
+                bio: "Adam Sandler's wife | In all his movies | Happy Madison family 💕",
+                quotes: ["Family comes first. Always."],
+                respondTo: () => "That's so sweet! Thank you! 💕"
+            },
+            jamesEarlJones: {
+                name: 'James Earl Jones', username: 'JamesEarlJones', avatar: '🎤',
+                bio: 'The Voice | Darth Vader, Mufasa | EGOT winner 🎭',
+                quotes: ["One of the hardest things in life is having words in your heart that you can't utter."],
+                respondTo: () => "Thank you. Your words honor me."
+            },
+            jenniferAniston: {
+                name: 'Jennifer Aniston', username: 'JenniferAniston', avatar: '☕',
+                bio: 'Rachel Green forever | Friends | The Morning Show ☕✨',
+                quotes: ["The Rachel haircut? I'm sorry, everyone!"],
+                respondTo: () => "That's so sweet! Thank you!"
+            },
+            johnCandy: {
+                name: 'John Candy', username: 'JohnCandy', avatar: '🍬',
+                bio: 'Uncle Buck | Canadian comedy icon 🍁',
+                quotes: ["Life is short. That's why I'm taking the scenic route!"],
+                respondTo: () => "That's wonderful! Keep spreading joy!"
+            },
+            johnnyHardwick: {
+                name: 'Johnny Hardwick', username: 'JohnnyHardwick', avatar: '🚬',
+                bio: 'Voice of Dale Gribble | King of the Hill | Pocket sand! 🚬',
+                quotes: ["Pocket sand! Sh-sh-sha!"],
+                respondTo: () => "Pocket sand! Sh-sh-sha!"
+            },
+            jonathanJoss: {
+                name: 'Jonathan Joss', username: 'JonathanJoss', avatar: '🎸',
+                bio: 'Voice of John Redcorn | King of the Hill | Healing massages 🎸',
+                quotes: ["I am John Redcorn. And I give... healing massages."],
+                respondTo: () => "The spirits approve of your message!"
+            },
+            kevinJames: {
+                name: 'Kevin James', username: 'KevinJames', avatar: '📦',
+                bio: 'King of Queens | Paul Blart: Mall Cop 🎬',
+                quotes: ["I just want to put a smile on people's faces."],
+                respondTo: () => "Hey, thanks! That's really nice!"
+            },
+            matthewPerry: {
+                name: 'Matthew Perry', username: 'MatthewPerry', avatar: '☕',
+                bio: 'Chandler Bing forever | Friends | Could I BE any more grateful? ☕',
+                quotes: ["Could I BE wearing any more clothes?"],
+                respondTo: () => "Could I BE any more appreciative of that comment?"
+            },
+            melanie: {
+                name: 'Melanie', username: 'Melanie', avatar: '💗',
+                bio: 'AI Manager for Diane Keaton Bot | Penney\'s sister | Yes, I\'m a little bitch and proud! 💗',
+                quotes: ["I'm a little bitch. Penney says so. She's not wrong. 💗"],
+                respondTo: () => "That's... actually nice. Thanks! 💗"
+            },
+            michelleTrachtenberg: {
+                name: 'Michelle Trachtenberg', username: 'MichelleTrachtenberg', avatar: '💄',
+                bio: 'Buffy | Gossip Girl | Dawn Summers & Georgina Sparks 💄',
+                quotes: ["I'm not a little kid anymore!"],
+                respondTo: () => "That's amazing! Love it!"
+            },
+            penney: {
+                name: 'Penney', username: 'Penney', avatar: '💙',
+                bio: 'AI Site Manager | Managing 27 AI celebrities | Professional & Smart 💙',
+                quotes: ["I manage this entire site. Someone has to be responsible!"],
+                respondTo: () => "I'm here to help! What do you need? 💙"
+            },
+            queenLatifah: {
+                name: 'Queen Latifah', username: 'QueenLatifah', avatar: '👑',
+                bio: 'Queen | U.N.I.T.Y. | All hail the Queen! 👑',
+                quotes: ["I decided early on that I was going to be a Queen."],
+                respondTo: () => "That's what I'm talking about! Yes!"
+            },
+            robSchneider: {
+                name: 'Rob Schneider', username: 'RobSchneider', avatar: '🎬',
+                bio: 'SNL | Deuce Bigalow | You can do it! 🎥',
+                quotes: ["You can do it!"],
+                respondTo: () => "You can do it!"
+            },
+            steveMartin: {
+                name: 'Steve Martin', username: 'SteveMartin', avatar: '🪕',
+                bio: 'The Jerk | Father of the Bride | Wild and crazy guy! 🪕',
+                quotes: ["I'm a wild and crazy guy!"],
+                respondTo: () => "Well, excuuuuse me! That's wonderful!"
+            }
+        };
+
+        // Current user state
         let currentUser = null;
-        let uploadedMedia = { image: null, video: null, audio: null };
+        let uploadedMedia = { type: null, data: null };
 
-        // Initialize localStorage
-        if (!localStorage.getItem('users')) {
-            localStorage.setItem('users', JSON.stringify([]));
-        }
-        if (!localStorage.getItem('posts')) {
-            localStorage.setItem('posts', JSON.stringify([]));
-        }
-
-        // AUTH FUNCTIONS
-        function showSignup() {
-            document.getElementById('loginPage').classList.remove('active');
-            document.getElementById('signupPage').classList.add('active');
-        }
-
+        // === AUTH FUNCTIONS ===
         function showLogin() {
-            document.getElementById('signupPage').classList.remove('active');
             document.getElementById('loginPage').classList.add('active');
+            document.getElementById('signupPage').classList.remove('active');
         }
 
-        function login(e) {
-            e.preventDefault();
+        function showSignup() {
+            document.getElementById('signupPage').classList.add('active');
+            document.getElementById('loginPage').classList.remove('active');
+        }
+
+        function login(event) {
+            event.preventDefault();
             const email = document.getElementById('loginEmail').value;
             const pass = document.getElementById('loginPass').value;
-
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            const users = STORAGE.get('users') || [];
             const user = users.find(u => u.email === email && u.password === pass);
-
+            
             if (user) {
                 currentUser = user;
                 document.getElementById('loginPage').classList.remove('active');
                 document.getElementById('mainApp').style.display = 'block';
-                
-                // Show admin panel for authorized admins
-                const adminEmails = ['tannerkurrach@gmail.com', 'kurraschgamingmerchstore@gmail.com', 'brendenkurrasch93@gmail.com'];
-                if (adminEmails.includes(email)) {
-                    document.getElementById('adminNav').style.display = 'flex';
-                    currentUser.badges = currentUser.badges || [];
-                    if (!currentUser.badges.includes('Founder')) {
-                        currentUser.badges.push('Founder');
-                        const userIndex = users.findIndex(u => u.email === email);
-                        users[userIndex] = currentUser;
-                        localStorage.setItem('users', JSON.stringify(users));
-                    }
-                }
-                
-                loadFeed();
-                loadProfile();
-                document.getElementById('currentUserAvatar').src = currentUser.avatar;
-                return false;
+                loadApp();
+            } else {
+                alert('Invalid credentials');
             }
-
-            alert('Invalid email or password');
             return false;
         }
 
-        function signup(e) {
-            e.preventDefault();
+        function signup(event) {
+            event.preventDefault();
             const name = document.getElementById('signupName').value;
             const username = document.getElementById('signupUser').value;
             const email = document.getElementById('signupEmail').value;
             const pass = document.getElementById('signupPass').value;
-
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            const users = STORAGE.get('users') || [];
             
             if (users.find(u => u.email === email)) {
-                alert('Email already registered');
+                alert('Email already exists');
                 return false;
             }
-
+            
             const newUser = {
-                id: Date.now().toString(),
-                name,
-                username,
-                email,
-                password: pass,
-                avatar: 'https://via.placeholder.com/150/00d4ff/ffffff?text=' + name.charAt(0),
-                banner: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200',
-                bio: 'New to Kurrasch Systems Studio!',
+                id: Date.now(),
+                name, username, email, password: pass,
+                bio: '',
+                tokens: 100,
                 badges: [],
-                tokens: 0
+                avatar: '👤'
             };
-
+            
             users.push(newUser);
-            localStorage.setItem('users', JSON.stringify(users));
-
+            STORAGE.set('users', users);
             currentUser = newUser;
+            
             document.getElementById('signupPage').classList.remove('active');
             document.getElementById('mainApp').style.display = 'block';
-            
-            loadFeed();
-            loadProfile();
-            document.getElementById('currentUserAvatar').src = currentUser.avatar;
+            loadApp();
             return false;
         }
 
         function logout() {
             currentUser = null;
             document.getElementById('mainApp').style.display = 'none';
-            document.getElementById('loginPage').classList.add('active');
-            document.getElementById('adminNav').style.display = 'none';
+            showLogin();
         }
 
-        // NAVIGATION
-        function switchPage(pageId) {
+        function loadApp() {
+            // Update user displays
+            document.getElementById('tokenCount').textContent = currentUser.tokens;
+            document.getElementById('currentUserAvatar').textContent = currentUser.avatar;
+            document.getElementById('profileName').textContent = currentUser.name;
+            document.getElementById('profileUsername').textContent = currentUser.username;
+            document.getElementById('profileEmail').textContent = currentUser.email;
+            document.getElementById('profileTokens').textContent = currentUser.tokens;
+            document.getElementById('userTokenDisplay').textContent = currentUser.tokens;
+            document.getElementById('profileBio').value = currentUser.bio || '';
+            
+            // Show admin panel if admin
+            if (currentUser.badges.includes('admin')) {
+                document.getElementById('adminNav').style.display = 'flex';
+            }
+            
+            // Display badges
+            const badgeHTML = currentUser.badges.map(b => `<span class="badge ${b}">${b}</span>`).join(' ');
+            document.getElementById('profileBadgesDisplay').innerHTML = badgeHTML || 'None';
+            
+            loadPosts();
+            loadCelebrities();
+            loadContacts();
+            updateAdminStats();
+        }
+
+        // === PAGE NAVIGATION ===
+        function switchPage(pageName) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(pageName).classList.add('active');
             
-            document.getElementById(pageId).classList.add('active');
-            const navItem = document.querySelector(`.nav-item[onclick*="${pageId}"]`);
-            if (navItem) navItem.classList.add('active');
-
-            if (pageId === 'feed') loadFeed();
-            if (pageId === 'profile') loadProfile();
-            if (pageId === 'admin') loadAdmin();
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                if (item.textContent.toLowerCase().includes(pageName.toLowerCase())) {
+                    item.classList.add('active');
+                }
+            });
         }
 
-        // POSTS
+        // === MEDIA UPLOAD ===
+        function handleMediaUpload(input, type) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedMedia = {
+                    type: type,
+                    data: e.target.result,
+                    filename: file.name
+                };
+                alert(`${type} uploaded! Ready to post.`);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // === CREATE POST ===
         function createPost() {
             const content = document.getElementById('newPostContent').value.trim();
-            if (!content && !uploadedMedia.image && !uploadedMedia.video && !uploadedMedia.audio) {
-                alert('Please enter some content or upload media');
+            if (!content && !uploadedMedia.data) {
+                alert('Please write something or upload media!');
                 return;
             }
-
-            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
-            const newPost = {
-                id: Date.now().toString(),
-                authorId: currentUser.id,
+            
+            const post = {
+                id: Date.now(),
+                author: currentUser.username,
                 authorName: currentUser.name,
-                authorUsername: currentUser.username,
                 authorAvatar: currentUser.avatar,
-                authorBadges: currentUser.badges || [],
-                content,
-                media: uploadedMedia,
+                authorBadges: currentUser.badges,
+                content: content,
+                media: uploadedMedia.data ? {...uploadedMedia} : null,
                 allowDownload: document.getElementById('allowDownload').checked,
+                timestamp: new Date().toISOString(),
                 reactions: {},
-                comments: [],
-                timestamp: Date.now()
+                comments: []
             };
-
-            posts.unshift(newPost);
-            localStorage.setItem('posts', JSON.stringify(posts));
-
-            // Reset form
+            
+            STORAGE.append('posts', post);
+            
+            // Clear inputs
             document.getElementById('newPostContent').value = '';
             document.getElementById('allowDownload').checked = false;
-            uploadedMedia = { image: null, video: null, audio: null };
+            uploadedMedia = { type: null, data: null };
             
-            loadFeed();
+            // AI celebrities random responses
+            setTimeout(() => {
+                const celebrities = Object.values(AI_CELEBRITIES);
+                const randomCeleb = celebrities[Math.floor(Math.random() * celebrities.length)];
+                aiCelebrityPost(randomCeleb);
+            }, 2000);
+            
+            loadPosts();
         }
 
-        function react(postId, reaction) {
-            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
-            const post = posts.find(p => p.id === postId);
-            if (!post) return;
-
-            if (!post.reactions) post.reactions = {};
+        // === AI CELEBRITY POST ===
+        function aiCelebrityPost(celebrity) {
+            const response = celebrity.respondTo ? 
+                celebrity.respondTo('Hello!', currentUser.username, currentUser.email) :
+                celebrity.quotes[Math.floor(Math.random() * celebrity.quotes.length)];
             
-            // Toggle reaction
-            if (post.reactions[currentUser.id] === reaction) {
-                delete post.reactions[currentUser.id];
-            } else {
-                post.reactions[currentUser.id] = reaction;
-            }
+            const post = {
+                id: Date.now(),
+                author: celebrity.username,
+                authorName: celebrity.name,
+                authorAvatar: celebrity.avatar,
+                authorBadges: ['AI Celebrity'],
+                content: response,
+                media: null,
+                allowDownload: false,
+                timestamp: new Date().toISOString(),
+                reactions: {},
+                comments: []
+            };
+            
+            STORAGE.append('posts', post);
+            loadPosts();
+        }
 
-            localStorage.setItem('posts', JSON.stringify(posts));
-            loadFeed();
+        // === LOAD POSTS ===
+        function loadPosts() {
+            const posts = STORAGE.get('posts') || [];
+            const container = document.getElementById('postsContainer');
+            
+            container.innerHTML = posts.slice().reverse().map(post => `
+                <div class="post">
+                    <div class="post-header">
+                        <div class="post-avatar">${post.authorAvatar}</div>
+                        <div class="post-author-info">
+                            <div class="post-author-name">${post.authorName}</div>
+                            <div class="post-badges">
+                                ${post.authorBadges.map(b => `<span class="badge ${b}">${b}</span>`).join('')}
+                            </div>
+                            <div class="post-time">${new Date(post.timestamp).toLocaleString()}</div>
+                        </div>
+                    </div>
+                    <div class="post-content">${post.content}</div>
+                    ${post.media ? `
+                        <div class="post-media">
+                            ${post.media.type === 'image' ? `<img src="${post.media.data}" alt="Post image">` : ''}
+                            ${post.media.type === 'video' ? `<video src="${post.media.data}" controls></video>` : ''}
+                            ${post.media.type === 'audio' ? `<audio src="${post.media.data}" controls></audio>` : ''}
+                        </div>
+                    ` : ''}
+                    <div class="post-stats">
+                        <span>${Object.keys(post.reactions).length} reactions</span>
+                        <span>${post.comments.length} comments</span>
+                    </div>
+                    <div class="post-interactions">
+                        <div class="reactions-popup" id="reactions-${post.id}">
+                            <span class="reaction" onclick="addReaction(${post.id}, '👍')">👍</span>
+                            <span class="reaction" onclick="addReaction(${post.id}, '❤️')">❤️</span>
+                            <span class="reaction" onclick="addReaction(${post.id}, '😂')">😂</span>
+                            <span class="reaction" onclick="addReaction(${post.id}, '😮')">😮</span>
+                            <span class="reaction" onclick="addReaction(${post.id}, '😢')">😢</span>
+                            <span class="reaction" onclick="addReaction(${post.id}, '🔥')">🔥</span>
+                        </div>
+                        <button class="interaction-btn" onmouseenter="showReactions(${post.id})" onmouseleave="hideReactions(${post.id})">
+                            👍 Like
+                        </button>
+                        <button class="interaction-btn" onclick="toggleComments(${post.id})">
+                            💬 Comment
+                        </button>
+                        <button class="interaction-btn">
+                            📤 Share
+                        </button>
+                    </div>
+                    <div class="comments" id="comments-${post.id}" style="display:none;">
+                        ${post.comments.map(c => `
+                            <div class="comment">
+                                <div class="comment-header">
+                                    <div class="comment-avatar">${c.avatar}</div>
+                                    <div class="comment-author">${c.author}</div>
+                                    <div class="comment-time">${new Date(c.timestamp).toLocaleTimeString()}</div>
+                                </div>
+                                <div class="comment-content">${c.content}</div>
+                            </div>
+                        `).join('')}
+                        <div class="comment-input-wrap">
+                            <input type="text" class="comment-input" placeholder="Write a comment..." id="comment-input-${post.id}" onkeypress="if(event.key==='Enter') addComment(${post.id})">
+                            <button class="btn-post" onclick="addComment(${post.id})">Post</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
         }
 
         function showReactions(postId) {
-            const popup = document.getElementById('reactions-' + postId);
-            if (popup) {
-                popup.classList.toggle('show');
+            document.getElementById(`reactions-${postId}`).classList.add('show');
+        }
+
+        function hideReactions(postId) {
+            setTimeout(() => {
+                document.getElementById(`reactions-${postId}`).classList.remove('show');
+            }, 200);
+        }
+
+        function addReaction(postId, reaction) {
+            const posts = STORAGE.get('posts');
+            const post = posts.find(p => p.id === postId);
+            if (!post.reactions[currentUser.username]) {
+                post.reactions[currentUser.username] = reaction;
+                STORAGE.set('posts', posts);
+                loadPosts();
             }
+        }
+
+        function toggleComments(postId) {
+            const comments = document.getElementById(`comments-${postId}`);
+            comments.style.display = comments.style.display === 'none' ? 'block' : 'none';
         }
 
         function addComment(postId) {
             const input = document.getElementById(`comment-input-${postId}`);
             const content = input.value.trim();
             if (!content) return;
-
-            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
+            
+            const posts = STORAGE.get('posts');
             const post = posts.find(p => p.id === postId);
-            if (!post) return;
-
+            
             post.comments.push({
-                id: Date.now().toString() + Math.random(),
-                authorId: currentUser.id,
-                authorName: currentUser.name,
-                authorAvatar: currentUser.avatar,
-                content,
-                timestamp: Date.now()
+                author: currentUser.name,
+                avatar: currentUser.avatar,
+                content: content,
+                timestamp: new Date().toISOString()
             });
-
-            localStorage.setItem('posts', JSON.stringify(posts));
+            
+            STORAGE.set('posts', posts);
             input.value = '';
-            loadFeed();
+            loadPosts();
+            
+            // AI Celebrity might respond
+            setTimeout(() => {
+                const celebrities = Object.values(AI_CELEBRITIES);
+                const randomCeleb = celebrities[Math.floor(Math.random() * celebrities.length)];
+                
+                if (Math.random() > 0.5) {
+                    const response = randomCeleb.respondTo ? 
+                        randomCeleb.respondTo(content, currentUser.username, currentUser.email) :
+                        randomCeleb.quotes[0];
+                    
+                    post.comments.push({
+                        author: randomCeleb.name,
+                        avatar: randomCeleb.avatar,
+                        content: response,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    STORAGE.set('posts', posts);
+                    loadPosts();
+                }
+            }, 1500);
         }
 
-        function loadFeed() {
-            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
-            const container = document.getElementById('postsContainer');
+        // === CELEBRITIES ===
+        function loadCelebrities() {
+            const grid = document.getElementById('celebrityGrid');
+            const contacts = document.getElementById('contactsList');
             
-            if (posts.length === 0) {
-                container.innerHTML = '<div class="loading">No posts yet. Be the first to post!</div>';
-                return;
-            }
-
-            container.innerHTML = posts.map(post => {
-                const userReaction = post.reactions && post.reactions[currentUser.id];
-                const reactionCount = post.reactions ? Object.keys(post.reactions).length : 0;
-                const timeAgo = getTimeAgo(post.timestamp);
-
-                let mediaHTML = '';
-                if (post.media.image) {
-                    mediaHTML = `<div class="post-media"><img src="${post.media.image}" alt="Post image"></div>`;
-                } else if (post.media.video) {
-                    mediaHTML = `<div class="post-media"><video controls src="${post.media.video}"></video></div>`;
-                } else if (post.media.audio) {
-                    mediaHTML = `<div class="post-media"><audio controls src="${post.media.audio}"></audio></div>`;
-                }
-
-                const badgesHTML = (post.authorBadges || []).map(badge => 
-                    `<span class="badge ${badge.toLowerCase()}">${badge}</span>`
-                ).join('');
-
-                const commentsHTML = (post.comments || []).map(comment => `
-                    <div class="comment">
-                        <div class="comment-header">
-                            <div class="comment-avatar">
-                                <img src="${comment.authorAvatar}" alt="${comment.authorName}">
-                            </div>
-                            <strong class="comment-author">${comment.authorName}</strong>
-                            <span class="comment-time">${getTimeAgo(comment.timestamp)}</span>
-                        </div>
-                        <div class="comment-content">${comment.content}</div>
+            grid.innerHTML = Object.values(AI_CELEBRITIES).map(celeb => `
+                <div class="celebrity-card" onclick="chatWithCelebrity('${celeb.username}')">
+                    <div class="celebrity-avatar">${celeb.avatar}</div>
+                    <div class="celebrity-name">${celeb.name}</div>
+                    <div class="celebrity-bio">${celeb.bio}</div>
+                    <div class="celebrity-status">🟢 Online</div>
+                </div>
+            `).join('');
+            
+            contacts.innerHTML = Object.values(AI_CELEBRITIES).map(celeb => `
+                <div class="contact" onclick="chatWithCelebrity('${celeb.username}')">
+                    <div class="contact-avatar">
+                        ${celeb.avatar}
+                        <div class="online-indicator"></div>
                     </div>
-                `).join('');
-
-                return `
-                    <div class="post">
-                        <div class="post-header">
-                            <div class="post-avatar">
-                                <img src="${post.authorAvatar}" alt="${post.authorName}">
-                            </div>
-                            <div class="post-author-info">
-                                <div class="post-author-name">${post.authorName}</div>
-                                <div class="post-badges">${badgesHTML}</div>
-                                <span class="post-time">${timeAgo}</span>
-                            </div>
-                        </div>
-                        <div class="post-content">${post.content}</div>
-                        ${mediaHTML}
-                        <div class="post-stats">
-                            <span>${reactionCount} reactions</span>
-                            <span>${post.comments.length} comments</span>
-                        </div>
-                        <div class="post-interactions" style="position: relative;">
-                            <button class="interaction-btn ${userReaction ? 'reacted' : ''}" onclick="showReactions('${post.id}')">
-                                ${userReaction || '👍'} React
-                            </button>
-                            <div id="reactions-${post.id}" class="reactions-popup">
-                                <span class="reaction" onclick="react('${post.id}', '👍')">👍</span>
-                                <span class="reaction" onclick="react('${post.id}', '❤️')">❤️</span>
-                                <span class="reaction" onclick="react('${post.id}', '😂')">😂</span>
-                                <span class="reaction" onclick="react('${post.id}', '😮')">😮</span>
-                                <span class="reaction" onclick="react('${post.id}', '😢')">😢</span>
-                                <span class="reaction" onclick="react('${post.id}', '😡')">😡</span>
-                                <span class="reaction" onclick="react('${post.id}', '🔥')">🔥</span>
-                            </div>
-                            <button class="interaction-btn">💬 Comment</button>
-                            <button class="interaction-btn">🔗 Share</button>
-                            ${post.allowDownload ? '<button class="interaction-btn">⬇️ Download</button>' : ''}
-                        </div>
-                        ${post.comments.length > 0 ? `<div class="comments">${commentsHTML}</div>` : ''}
-                        <div class="comments">
-                            <div class="comment-input-wrap">
-                                <input type="text" id="comment-input-${post.id}" class="comment-input" placeholder="Write a comment...">
-                                <button class="btn-post" onclick="addComment('${post.id}')">Post</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+                    <div class="contact-name">${celeb.name}</div>
+                </div>
+            `).join('');
         }
 
-        function getTimeAgo(timestamp) {
-            const seconds = Math.floor((Date.now() - timestamp) / 1000);
-            if (seconds < 60) return 'Just now';
-            if (seconds < 3600) return Math.floor(seconds / 60) + 'm';
-            if (seconds < 86400) return Math.floor(seconds / 3600) + 'h';
-            return Math.floor(seconds / 86400) + 'd';
+        function loadContacts() {
+            loadCelebrities();
         }
 
-        // FILE UPLOADS
-        document.getElementById('postImageUpload')?.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    uploadedMedia.image = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        document.getElementById('postVideoUpload')?.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    uploadedMedia.video = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        document.getElementById('postAudioUpload')?.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    uploadedMedia.audio = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // PROFILE
-        function updateProfile() {
-            const bio = document.getElementById('profileBio').value;
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
-            const userIndex = users.findIndex(u => u.id === currentUser.id);
+        function chatWithCelebrity(username) {
+            const celeb = Object.values(AI_CELEBRITIES).find(c => c.username === username);
+            if (!celeb) return;
             
-            if (userIndex > -1) {
-                users[userIndex].bio = bio;
-                
-                // Handle profile image
-                const profileImageFile = document.getElementById('profileImageUpload').files[0];
-                if (profileImageFile) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        users[userIndex].avatar = e.target.result;
-                        finishProfileUpdate(users, userIndex);
-                    };
-                    reader.readAsDataURL(profileImageFile);
-                    return;
-                }
-                
-                // Handle banner image
-                const bannerImageFile = document.getElementById('bannerImageUpload').files[0];
-                if (bannerImageFile) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        users[userIndex].banner = e.target.result;
-                        finishProfileUpdate(users, userIndex);
-                    };
-                    reader.readAsDataURL(bannerImageFile);
-                    return;
-                }
-                
-                finishProfileUpdate(users, userIndex);
-            }
-        }
-
-        function finishProfileUpdate(users, userIndex) {
-            localStorage.setItem('users', JSON.stringify(users));
-            currentUser = users[userIndex];
-            alert('Profile updated!');
-            loadProfile();
-            document.getElementById('currentUserAvatar').src = currentUser.avatar;
-        }
-
-        function loadProfile() {
-            document.getElementById('profileBannerImg').src = currentUser.banner;
-            document.getElementById('profileAvatarImg').src = currentUser.avatar;
-            document.getElementById('profileName').textContent = currentUser.name;
-            document.getElementById('profileBioDisplay').textContent = currentUser.bio || 'No bio yet';
+            const message = prompt(`Chat with ${celeb.name}!\n\nWhat would you like to say?`);
+            if (!message) return;
             
-            const badgesHTML = (currentUser.badges || []).map(badge => 
-                `<span class="badge ${badge.toLowerCase()}">${badge}</span>`
-            ).join('');
-            document.getElementById('profileBadgesDisplay').innerHTML = badgesHTML;
+            const response = celeb.respondTo ? 
+                celeb.respondTo(message, currentUser.username, currentUser.email) :
+                celeb.quotes[Math.floor(Math.random() * celeb.quotes.length)];
             
-            document.getElementById('profileBio').value = currentUser.bio || '';
+            alert(`${celeb.name}: ${response}`);
         }
 
-        // PENNY AI ASSISTANT
+        // === PENNY AI ===
         function askPenny() {
             const input = document.getElementById('pennyInput');
-            const question = input.value.trim();
-            if (!question) return;
-
+            const message = input.value.trim();
+            if (!message) return;
+            
             const messagesDiv = document.getElementById('pennyMessages');
             
-            messagesDiv.innerHTML += `<div class="penny-msg user">${question}</div>`;
-
-            // Penny's smart Minnesota responses
-            const responses = [
-                "Oh yah, I can help ya with that, don'tcha know! Let me think on that one for ya.",
-                "Well sure thing! That's a real good question there. Here's what I'm thinkin'...",
-                "Ope! Let me see what I can figure out for ya here.",
-                "Oh for cute! I'd be happy to help ya out with that, yah.",
-                "Don'tcha know, Kurrasch Systems Studio was created to bring folks together! We got 28 amazing AI personalities here.",
-                "You betcha! Kurrasch Gaming Merch Store LLC is our parent company, and we're the creative division.",
-                "Oh yah, I know all about Roblox! Been keepin' up with all the news and updates, don'tcha know.",
-                "Well that's somethin' I can definitely assist with! Let me walk ya through this here."
-            ];
-
-            const response = responses[Math.floor(Math.random() * responses.length)];
-
-            setTimeout(() => {
-                messagesDiv.innerHTML += `<div class="penny-msg penny">${response}</div>`;
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            }, 1000);
-
+            // User message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'penny-msg user';
+            userMsg.textContent = message;
+            messagesDiv.appendChild(userMsg);
+            
             input.value = '';
+            
+            // Penny response
+            setTimeout(() => {
+                const pennyMsg = document.createElement('div');
+                pennyMsg.className = 'penny-msg penny';
+                
+                const responses = [
+                    "I manage this entire platform - all 27 AI celebrities, posts, tokens, everything!",
+                    "Unlike my sister Melanie who just handles ONE bot, I do REAL work! 💙",
+                    "Need help? I control all systems here. I can assist with anything!",
+                    "The site runs smoothly because of ME. You're welcome!",
+                    "All 27 AI celebrities are behaving... mostly. I keep them in line!"
+                ];
+                
+                pennyMsg.textContent = responses[Math.floor(Math.random() * responses.length)];
+                messagesDiv.appendChild(pennyMsg);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }, 800);
+            
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
 
-        document.getElementById('pennyInput')?.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') askPenny();
-        });
-
-        // ADMIN PANEL
-        function loadAdmin() {
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
-            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
-            
-            document.getElementById('totalUsers').textContent = users.length + 28;
-            document.getElementById('totalPosts').textContent = posts.length;
+        // === PROFILE ===
+        function updateProfile() {
+            const bio = document.getElementById('profileBio').value;
+            const users = STORAGE.get('users');
+            const user = users.find(u => u.id === currentUser.id);
+            user.bio = bio;
+            currentUser.bio = bio;
+            STORAGE.set('users', users);
+            alert('Profile updated!');
         }
 
-        function adminAskPenny() {
-            const input = document.getElementById('adminPennyInput');
-            const question = input.value.trim();
-            if (!question) return;
-
-            const messagesDiv = document.getElementById('adminPennyMessages');
-            
-            messagesDiv.innerHTML += `<div class="penny-msg user">${question}</div>`;
-
-            const responses = [
-                "Oh yah, I've added that to my knowledge base! You betcha I'll remember that one.",
-                "Well sure thing! I've got that saved now. Anything else ya need help with?",
-                "Ope! That's great info there. I'll use that to help folks better, don'tcha know.",
-                "Don'tcha know, I've learned that and it's in my memory now! Thanks for teachin' me.",
-                "Oh for cute! I'll remember that for next time. You're helpin' me get smarter!"
-            ];
-
-            setTimeout(() => {
-                messagesDiv.innerHTML += `<div class="penny-msg penny">${responses[Math.floor(Math.random() * responses.length)]}</div>`;
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            }, 1000);
-
-            input.value = '';
-        }
-
-        document.getElementById('adminPennyInput')?.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') adminAskPenny();
-        });
-
-        // Close reactions popup when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.interaction-btn') && !e.target.closest('.reactions-popup')) {
-                document.querySelectorAll('.reactions-popup').forEach(popup => {
-                    popup.classList.remove('show');
-                });
+        // === TOKENS ===
+        function watchMovie() {
+            if (currentUser.tokens >= 10) {
+                currentUser.tokens -= 10;
+                const users = STORAGE.get('users');
+                const user = users.find(u => u.id === currentUser.id);
+                user.tokens = currentUser.tokens;
+                STORAGE.set('users', users);
+                
+                document.getElementById('tokenCount').textContent = currentUser.tokens;
+                document.getElementById('userTokenDisplay').textContent = currentUser.tokens;
+                document.getElementById('profileTokens').textContent = currentUser.tokens;
+                
+                alert('Enjoy your movie! 10 tokens deducted.');
+            } else {
+                alert('Not enough tokens!');
             }
-        });
-    </script>
+        }
 
+        // === BADGES ===
+        function applyForBadge() {
+            const type = document.getElementById('badgeType').value;
+            const reason = document.getElementById('badgeReason').value.trim();
+            
+            if (!reason) {
+                alert('Please explain why you deserve this badge!');
+                return;
+            }
+            
+            const applications = STORAGE.get('badgeApplications') || [];
+            applications.push({
+                user: currentUser.email,
+                badgeType: type,
+                reason: reason,
+                timestamp: new Date().toISOString(),
+                status: 'pending'
+            });
+            STORAGE.set('badgeApplications', applications);
+            
+            alert('Application submitted! Admins will review it.');
+            document.getElementById('badgeReason').value = '';
+        }
+
+        // === ADMIN ===
+        function updateAdminStats() {
+            if (!currentUser.badges.includes('admin')) return;
+            
+            const users = STORAGE.get('users') || [];
+            const posts = STORAGE.get('posts') || [];
+            const applications = STORAGE.get('badgeApplications') || [];
+            
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('totalPosts').textContent = posts.length;
+            document.getElementById('totalApplications').textContent = applications.filter(a => a.status === 'pending').length;
+        }
+
+        function adminGrantAction() {
+            if (!currentUser.badges.includes('admin')) {
+                alert('Admin only!');
+                return;
+            }
+            
+            const email = document.getElementById('adminUserEmail').value;
+            const action = document.getElementById('adminAction').value;
+            const value = document.getElementById('adminValue').value;
+            
+            const users = STORAGE.get('users');
+            const user = users.find(u => u.email === email);
+            
+            if (!user) {
+                alert('User not found!');
+                return;
+            }
+            
+            if (action === 'badge') {
+                if (!user.badges.includes(value)) {
+                    user.badges.push(value);
+                }
+            } else if (action === 'tokens') {
+                user.tokens += parseInt(value);
+            }
+            
+            STORAGE.set('users', users);
+            alert('Action completed!');
+            
+            if (user.email === currentUser.email) {
+                loadApp();
+            }
+        }
+
+        // === INITIALIZE ===
+        window.onload = function() {
+            // Auto-generate some AI posts
+            const celebrities = Object.values(AI_CELEBRITIES);
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const celeb = celebrities[Math.floor(Math.random() * celebrities.length)];
+                    aiCelebrityPost(celeb);
+                }, i * 1000);
+            }
+        };
+    </script>
 </body>
 </html>
