@@ -4,202 +4,133 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kurrasch Systems Studio</title>
+    <link rel="icon" href="logo.png">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
             background: #000000;
-            color: #ffffff;
+            color: #e4e6eb;
             overflow-x: hidden;
-            position: relative;
         }
 
-        /* FLOWING MATRIX BACKGROUND - RED 0s & NAVY BLUE 1s */
-        #matrix-canvas {
+        /* FLOWING MATRIX - RED 0s & NAVY BLUE 1s */
+        #matrix {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
             pointer-events: none;
         }
 
-        .app-layer { 
-            position: relative; 
-            z-index: 10;
-        }
+        .app { position: relative; z-index: 1; }
 
-        /* Auth Pages */
-        .auth-page {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-        }
-
-        .auth-page.active { display: flex; }
-
-        .auth-container {
-            background: rgba(25, 30, 50, 0.95);
-            padding: 40px;
-            border-radius: 20px;
-            border: 3px solid #00d4ff;
-            box-shadow: 0 0 50px rgba(0, 212, 255, 0.6);
-            max-width: 450px;
-            width: 100%;
-        }
-
-        .logo-container {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .logo-image {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 20px;
-            border-radius: 20px;
-            overflow: hidden;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
+        /* Facebook-style Header */
+        .header {
+            position: sticky; top: 0;
+            background: rgba(10, 14, 39, 0.98);
+            border-bottom: 2px solid #00d4ff;
+            padding: 0.5rem 1rem;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(0, 212, 255, 0.3);
         }
 
-        .logo-image img {
-            width: 100%;
-            height: 100%;
+        .header-left { display: flex; align-items: center; gap: 1rem; }
+        
+        .logo-img {
+            width: 40px; height: 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
             object-fit: contain;
         }
 
-        .logo-text {
-            font-size: 28px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .form-group {
-            margin: 20px 0;
-        }
-
-        .form-group label {
-            display: block;
-            color: #00d4ff;
-            margin-bottom: 8px;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 14px;
+        .search {
+            padding: 0.6rem 1rem;
             background: rgba(0, 212, 255, 0.1);
             border: 2px solid #00d4ff;
-            border-radius: 10px;
+            border-radius: 20px;
             color: #fff;
+            width: 240px;
+        }
+
+        .search::placeholder { color: #8e8e8e; }
+        .search:focus { outline: none; box-shadow: 0 0 10px rgba(0, 212, 255, 0.5); }
+
+        .header-icons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            width: 40px; height: 40px;
+            background: rgba(0, 212, 255, 0.15);
+            border: none;
+            border-radius: 50%;
+            color: #00d4ff;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .icon-btn:hover {
+            background: rgba(0, 212, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+        }
+
+        /* Main Layout - Facebook style */
+        .main {
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            gap: 1rem;
+            max-width: 1600px;
+            margin: 1rem auto;
+            padding: 0 1rem;
+        }
+
+        /* Left Sidebar */
+        .sidebar {
+            position: sticky; top: 80px;
+            height: fit-content;
+        }
+
+        .nav-item {
+            padding: 0.8rem 1rem;
+            margin: 0.3rem 0;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid transparent;
             font-size: 15px;
         }
 
-        .form-group input:focus {
-            outline: none;
+        .nav-item:hover, .nav-item.active {
+            background: rgba(0, 212, 255, 0.25);
             border-color: #00d4ff;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            transform: translateX(5px);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
         }
 
-        .btn-auth {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
-            border: none;
-            border-radius: 10px;
-            color: #fff;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 10px;
-        }
-
-        .btn-auth:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0 40px rgba(0, 212, 255, 0.9);
-        }
-
-        .auth-link {
-            text-align: center;
-            margin-top: 25px;
-            color: #888;
-            font-size: 14px;
-        }
-
-        .auth-link a {
-            color: #00d4ff;
-            cursor: pointer;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        /* Sidebar */
-        #sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 240px;
-            height: 100vh;
-            background: rgba(15, 20, 35, 0.98);
-            border-right: 2px solid #00d4ff;
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
-            padding: 15px;
-            overflow-y: auto;
-            z-index: 200;
-        }
-
-        .sidebar-logo {
-            text-align: center;
-            padding: 15px 10px;
-            border-bottom: 2px solid #00d4ff;
-            margin-bottom: 20px;
-        }
-
-        .sidebar-logo img {
-            width: 80px;
-            height: 80px;
-            border-radius: 15px;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
-            padding: 5px;
-        }
-
-        .sidebar-logo h1 {
-            font-size: 16px;
-            color: #00d4ff;
-            line-height: 1.3;
-        }
-
-        .online-indicator {
-            padding: 10px;
+        .online-count {
+            padding: 0.8rem;
             background: rgba(0, 212, 255, 0.15);
             border: 1px solid #00d4ff;
             border-radius: 8px;
             text-align: center;
-            font-size: 13px;
-            margin-bottom: 15px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
         }
 
         .online-dot {
             display: inline-block;
-            width: 8px;
-            height: 8px;
+            width: 8px; height: 8px;
             background: #00ff00;
             border-radius: 50%;
             margin-right: 6px;
@@ -207,472 +138,688 @@
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; box-shadow: 0 0 10px #00ff00; }
+            0%, 100% { opacity: 1; box-shadow: 0 0 8px #00ff00; }
             50% { opacity: 0.4; }
         }
 
-        .nav-item {
-            padding: 12px 15px;
-            margin: 8px 0;
-            background: rgba(0, 212, 255, 0.1);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 14px;
-            border: 1px solid transparent;
-        }
+        /* Feed */
+        .feed { min-height: 100vh; }
 
-        .nav-item:hover, .nav-item.active {
-            background: rgba(0, 212, 255, 0.3);
-            border-color: #00d4ff;
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
-            transform: translateX(5px);
-        }
-
-        .nav-item span:first-child { font-size: 18px; }
-
-        /* Main Content */
-        #main-content {
-            margin-left: 240px;
-            padding: 30px;
-            min-height: 100vh;
-        }
-
-        .page {
-            display: none;
-            animation: fadeIn 0.4s;
-        }
-
+        .page { display: none; }
         .page.active { display: block; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .page-title {
-            font-size: 36px;
-            color: #00d4ff;
-            margin-bottom: 30px;
-            text-shadow: 0 0 20px #00d4ff;
-        }
 
         /* Post Creator */
         .post-creator {
             background: rgba(20, 25, 45, 0.95);
             border: 2px solid #00d4ff;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 0 25px rgba(0, 212, 255, 0.3);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .post-creator-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .post-creator-avatar {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            border: 2px solid #00d4ff;
+            overflow: hidden;
+            background: linear-gradient(135deg, #00d4ff, #b300ff);
+        }
+
+        .post-creator-avatar img {
+            width: 100%; height: 100%;
+            object-fit: cover;
         }
 
         .post-creator textarea {
             width: 100%;
-            min-height: 120px;
-            background: rgba(0, 212, 255, 0.1);
-            border: 2px solid #00d4ff;
-            border-radius: 10px;
-            padding: 15px;
-            color: #fff;
+            min-height: 80px;
+            background: rgba(0, 212, 255, 0.08);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            color: #e4e6eb;
             font-size: 15px;
             resize: vertical;
             font-family: inherit;
-            margin-bottom: 15px;
+            margin-bottom: 1rem;
         }
+
+        .post-creator textarea::placeholder { color: #8e8e8e; }
 
         .post-creator textarea:focus {
             outline: none;
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+            border-color: #00d4ff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
         }
 
-        .upload-options {
+        .post-actions {
             display: flex;
-            gap: 12px;
-            margin: 15px 0;
+            gap: 0.8rem;
             flex-wrap: wrap;
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            padding-top: 1rem;
         }
 
-        .upload-label {
-            padding: 10px 20px;
-            background: rgba(0, 212, 255, 0.2);
-            border: 2px solid #00d4ff;
-            border-radius: 8px;
+        .post-action-btn {
+            padding: 0.6rem 1rem;
+            background: rgba(0, 212, 255, 0.15);
+            border: 2px solid transparent;
+            border-radius: 6px;
             color: #00d4ff;
             cursor: pointer;
             font-size: 14px;
             transition: all 0.3s;
-        }
-
-        .upload-label:hover {
-            background: rgba(0, 212, 255, 0.4);
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
-        }
-
-        .upload-label input { display: none; }
-
-        .download-toggle {
             display: flex;
             align-items: center;
-            gap: 8px;
-            color: #00d4ff;
-            font-size: 14px;
-            margin: 10px 0;
+            gap: 0.5rem;
         }
 
-        .btn {
-            padding: 14px 30px;
+        .post-action-btn:hover {
+            background: rgba(0, 212, 255, 0.3);
+            border-color: #00d4ff;
+            box-shadow: 0 0 12px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-post {
+            margin-left: auto;
+            padding: 0.6rem 1.5rem;
             background: linear-gradient(135deg, #00d4ff, #0099cc);
             border: none;
-            border-radius: 10px;
+            border-radius: 6px;
             color: #fff;
-            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
         }
 
-        .btn:hover {
+        .btn-post:hover {
             transform: translateY(-2px);
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.8);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.5);
+        }
+
+        .download-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 14px;
+            color: #8e8e8e;
         }
 
         /* Posts */
         .post {
             background: rgba(20, 25, 45, 0.95);
-            border: 2px solid rgba(0, 212, 255, 0.3);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
             transition: all 0.3s;
         }
 
         .post:hover {
             border-color: #00d4ff;
-            box-shadow: 0 0 25px rgba(0, 212, 255, 0.4);
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
         }
 
         .post-header {
             display: flex;
-            align-items: flex-start;
-            gap: 15px;
-            margin-bottom: 15px;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
         }
 
         .post-avatar {
-            width: 55px;
-            height: 55px;
+            width: 45px; height: 45px;
             border-radius: 50%;
             border: 2px solid #00d4ff;
             overflow: hidden;
-            flex-shrink: 0;
+            background: linear-gradient(135deg, #00d4ff, #b300ff);
+            cursor: pointer;
         }
 
         .post-avatar img {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             object-fit: cover;
         }
 
-        .post-author {
-            flex: 1;
+        .post-author-info { flex: 1; }
+
+        .post-author-name {
+            font-weight: 600;
+            color: #00d4ff;
+            cursor: pointer;
+            font-size: 15px;
         }
 
-        .post-author h4 {
-            color: #00d4ff;
-            font-size: 17px;
-            margin-bottom: 6px;
-        }
+        .post-author-name:hover { text-decoration: underline; }
 
         .post-badges {
             display: flex;
-            gap: 6px;
-            margin: 6px 0;
+            gap: 4px;
+            margin: 4px 0;
             flex-wrap: wrap;
         }
 
         .badge {
-            padding: 4px 10px;
+            padding: 2px 8px;
             background: linear-gradient(135deg, #00d4ff, #b300ff);
-            border-radius: 12px;
+            border-radius: 10px;
             font-size: 10px;
             font-weight: bold;
         }
 
+        .badge.founder { background: linear-gradient(135deg, #FFD700, #FFA500); }
+        .badge.admin { background: linear-gradient(135deg, #ff0000, #cc0000); }
+        .badge.org { background: linear-gradient(135deg, #00ff00, #00cc00); }
+        .badge.tier { background: linear-gradient(135deg, #b300ff, #8b00cc); }
+
         .post-time {
-            color: #666;
-            font-size: 13px;
+            color: #8e8e8e;
+            font-size: 12px;
         }
 
         .post-content {
-            margin: 15px 0;
+            margin: 1rem 0;
+            line-height: 1.6;
             font-size: 15px;
-            line-height: 1.7;
         }
 
         .post-media {
-            margin: 15px 0;
-            border-radius: 12px;
+            margin: 1rem 0;
+            border-radius: 8px;
             overflow: hidden;
-            max-height: 500px;
+            background: #000;
         }
 
-        .post-media img, .post-media video {
+        .post-media img, .post-media video, .post-media audio {
             width: 100%;
             max-height: 500px;
             object-fit: cover;
         }
 
-        .post-actions {
+        .post-stats {
             display: flex;
-            gap: 20px;
-            margin-top: 15px;
-            padding-top: 15px;
+            justify-content: space-between;
+            padding: 0.8rem 0;
             border-top: 1px solid rgba(0, 212, 255, 0.2);
-        }
-
-        .post-action {
-            padding: 8px 18px;
-            background: rgba(0, 212, 255, 0.1);
-            border-radius: 8px;
-            color: #888;
-            cursor: pointer;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            margin: 0.8rem 0;
             font-size: 14px;
-            transition: all 0.3s;
+            color: #8e8e8e;
         }
 
-        .post-action:hover {
-            background: rgba(0, 212, 255, 0.3);
+        .post-interactions {
+            display: flex;
+            gap: 0.5rem;
+            position: relative;
+        }
+
+        .interaction-btn {
+            flex: 1;
+            padding: 0.6rem;
+            background: transparent;
+            border: none;
+            color: #8e8e8e;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+
+        .interaction-btn:hover {
+            background: rgba(0, 212, 255, 0.15);
             color: #00d4ff;
         }
 
-        .post-action.liked {
-            background: rgba(255, 0, 110, 0.3);
-            color: #ff006e;
+        .interaction-btn.reacted { color: #00d4ff; }
+
+        /* Reactions Popup */
+        .reactions-popup {
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            background: rgba(20, 25, 45, 0.98);
+            border: 2px solid #00d4ff;
+            border-radius: 20px;
+            padding: 0.5rem;
+            display: none;
+            gap: 0.3rem;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.5);
+            z-index: 10;
+        }
+
+        .reactions-popup.show { display: flex; }
+
+        .reaction {
+            font-size: 24px;
+            padding: 0.3rem;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .reaction:hover {
+            transform: scale(1.3);
+            background: rgba(0, 212, 255, 0.2);
         }
 
         /* Comments */
         .comments {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            margin-top: 1rem;
         }
 
         .comment {
             background: rgba(0, 212, 255, 0.08);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 12px 0;
-            border-left: 4px solid #00d4ff;
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin: 0.8rem 0;
+            border-left: 3px solid #00d4ff;
         }
 
         .comment-header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
+            gap: 0.6rem;
+            margin-bottom: 0.5rem;
         }
 
         .comment-avatar {
-            width: 40px;
-            height: 40px;
+            width: 32px; height: 32px;
             border-radius: 50%;
             border: 2px solid #00d4ff;
             overflow: hidden;
+            background: linear-gradient(135deg, #00d4ff, #b300ff);
         }
 
         .comment-avatar img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: #00d4ff;
+            font-size: 13px;
+        }
+
+        .comment-time {
+            color: #8e8e8e;
+            font-size: 11px;
+            margin-left: auto;
+        }
+
+        .comment-content {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .comment-input-wrap {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .comment-input {
+            flex: 1;
+            padding: 0.7rem;
+            background: rgba(0, 212, 255, 0.08);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 20px;
+            color: #e4e6eb;
+        }
+
+        .comment-input::placeholder { color: #8e8e8e; }
+        .comment-input:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        /* Right Sidebar - Contacts */
+        .contacts {
+            background: rgba(20, 25, 45, 0.95);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+            position: sticky;
+            top: 80px;
+        }
+
+        .contacts-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #8e8e8e;
+            margin-bottom: 1rem;
+        }
+
+        .contact {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.6rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 0.5rem 0;
+        }
+
+        .contact:hover {
+            background: rgba(0, 212, 255, 0.15);
+        }
+
+        .contact-avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .contact-avatar img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #00d4ff;
+        }
+
+        .online-indicator {
+            position: absolute;
+            bottom: 0; right: 0;
+            width: 10px; height: 10px;
+            background: #00ff00;
+            border: 2px solid #0a0e27;
+            border-radius: 50%;
+        }
+
+        .contact-name {
+            font-size: 14px;
+        }
+
+        /* Profile Page */
+        .profile-header {
+            background: rgba(20, 25, 45, 0.95);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-banner {
+            width: 100%;
+            height: 240px;
+            background: linear-gradient(135deg, #00d4ff, #b300ff);
+            position: relative;
+        }
+
+        .profile-banner img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .comment-author {
+        .profile-info {
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .profile-avatar {
+            width: 150px; height: 150px;
+            border-radius: 50%;
+            border: 6px solid #0a0e27;
+            margin-top: -75px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #00d4ff, #b300ff);
+        }
+
+        .profile-avatar img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-name {
+            font-size: 32px;
             font-weight: bold;
             color: #00d4ff;
-            font-size: 14px;
+            margin: 1rem 0 0.5rem;
         }
 
-        .comment-time {
-            color: #666;
-            font-size: 12px;
-        }
-
-        .comment-content {
-            font-size: 14px;
+        .profile-bio {
+            color: #8e8e8e;
+            margin: 1rem 0;
             line-height: 1.6;
         }
 
-        /* Chat Popup */
-        .chat-popup {
+        /* Auth Pages */
+        .auth-page {
             position: fixed;
-            bottom: 0;
-            right: 30px;
-            width: 360px;
-            background: rgba(20, 25, 45, 0.98);
-            border: 2px solid #00d4ff;
-            border-radius: 12px 12px 0 0;
-            box-shadow: 0 0 40px rgba(0, 212, 255, 0.6);
-            z-index: 200;
+            top: 0; left: 0;
+            width: 100%; height: 100vh;
             display: none;
-        }
-
-        .chat-popup.active { display: block; }
-
-        .chat-header {
-            padding: 15px;
-            background: rgba(0, 212, 255, 0.2);
-            border-bottom: 2px solid #00d4ff;
-            display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: center;
+            z-index: 200;
         }
 
-        .chat-header strong {
+        .auth-page.active { display: flex; }
+
+        .auth-box {
+            background: rgba(10, 14, 39, 0.98);
+            border: 3px solid #00d4ff;
+            border-radius: 15px;
+            padding: 2.5rem;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 8px 40px rgba(0, 212, 255, 0.6);
+        }
+
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-logo img {
+            width: 100px; height: 100px;
+            border-radius: 15px;
+            box-shadow: 0 0 25px rgba(0, 212, 255, 0.6);
+        }
+
+        .auth-title {
+            font-size: 28px;
+            text-align: center;
+            margin: 1rem 0;
+            background: linear-gradient(135deg, #00d4ff, #b300ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-group {
+            margin: 1.2rem 0;
+        }
+
+        .form-group label {
+            display: block;
             color: #00d4ff;
-            font-size: 16px;
+            margin-bottom: 0.5rem;
+            font-size: 14px;
+            font-weight: 600;
         }
 
-        .chat-close {
-            background: none;
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.9rem;
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid #00d4ff;
+            border-radius: 8px;
+            color: #e4e6eb;
+            font-size: 15px;
+            font-family: inherit;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-auth {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #00d4ff, #b300ff);
             border: none;
-            color: #00d4ff;
-            font-size: 22px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
             cursor: pointer;
+            margin-top: 1rem;
             transition: all 0.3s;
         }
 
-        .chat-close:hover {
-            color: #ff006e;
-            transform: rotate(90deg);
+        .btn-auth:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 212, 255, 0.8);
         }
 
-        .chat-body {
-            height: 400px;
-            overflow-y: auto;
-            padding: 15px;
-        }
-
-        .chat-msg {
-            margin: 10px 0;
-            padding: 12px 16px;
-            border-radius: 15px;
-            max-width: 80%;
+        .auth-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #8e8e8e;
             font-size: 14px;
+        }
+
+        .auth-link a {
+            color: #00d4ff;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .auth-link a:hover { text-decoration: underline; }
+
+        /* Admin Panel */
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .admin-card {
+            background: rgba(20, 25, 45, 0.95);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .admin-card h3 {
+            color: #00d4ff;
+            margin-bottom: 1rem;
+            font-size: 18px;
+        }
+
+        .admin-stat {
+            font-size: 36px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .penny-chat {
+            background: rgba(20, 25, 45, 0.95);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .penny-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+
+        .penny-msg {
+            margin: 0.8rem 0;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            max-width: 80%;
             line-height: 1.5;
         }
 
-        .chat-msg.sent {
+        .penny-msg.user {
             background: rgba(0, 212, 255, 0.3);
             margin-left: auto;
             text-align: right;
         }
 
-        .chat-msg.received {
+        .penny-msg.penny {
             background: rgba(179, 0, 255, 0.3);
         }
 
-        .chat-input-container {
-            padding: 15px;
-            border-top: 2px solid #00d4ff;
+        .penny-input-wrap {
             display: flex;
-            gap: 10px;
+            gap: 0.8rem;
         }
 
-        .chat-input-container input {
+        .penny-input {
             flex: 1;
-            padding: 12px;
+            padding: 0.8rem;
             background: rgba(0, 212, 255, 0.1);
             border: 2px solid #00d4ff;
             border-radius: 8px;
-            color: #fff;
-            font-size: 14px;
+            color: #e4e6eb;
         }
 
-        /* VC Room */
-        .vc-container {
-            background: rgba(20, 25, 45, 0.95);
-            border: 2px solid #00d4ff;
-            border-radius: 15px;
-            padding: 30px;
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .main { grid-template-columns: 1fr; }
+            .sidebar, .right-sidebar { display: none; }
         }
 
-        .vc-videos {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+        /* Hide file inputs */
+        input[type="file"] { display: none; }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #8e8e8e;
         }
 
-        .vc-video {
-            background: #000;
-            border: 2px solid #00d4ff;
-            border-radius: 12px;
-            min-height: 280px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #666;
-        }
-
-        .vc-controls {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            padding: 20px;
-            background: rgba(0, 212, 255, 0.1);
-            border-radius: 12px;
-        }
-
-        .vc-control {
-            padding: 18px 24px;
-            border: 2px solid #00d4ff;
-            background: rgba(0, 212, 255, 0.1);
-            border-radius: 10px;
-            color: #00d4ff;
-            font-size: 26px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .vc-control:hover, .vc-control.active {
-            background: #00d4ff;
-            color: #000;
-            box-shadow: 0 0 25px rgba(0, 212, 255, 0.6);
-        }
-
-        ::-webkit-scrollbar { width: 12px; }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
         ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); }
-        ::-webkit-scrollbar-thumb { background: #00d4ff; border-radius: 6px; }
+        ::-webkit-scrollbar-thumb { background: #00d4ff; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #0099cc; }
     </style>
 </head>
 <body>
 
-    <canvas id="matrix-canvas"></canvas>
+    <canvas id="matrix"></canvas>
 
-    <div class="app-layer">
-
+    <div class="app">
+        
         <!-- Login Page -->
         <div id="loginPage" class="auth-page active">
-            <div class="auth-container">
-                <div class="logo-container">
-                    <div class="logo-image">
-                        <!-- PLACEHOLDER: Replace with your actual logo URL -->
-                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: bold; color: white;">KSS</div>
-                    </div>
-                    <div class="logo-text">Kurrasch Systems Studio</div>
+            <div class="auth-box">
+                <div class="auth-logo">
+                    <img src="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png?ex=68ff088d&is=68fdb70d&hm=563eef741794073326e81a7ddbb352e322b1b4d365baf230d7b32727316f18d4&" alt="KSS Logo">
                 </div>
+                <div class="auth-title">Kurrasch Systems Studio</div>
                 <form onsubmit="return login(event)">
                     <div class="form-group">
                         <label>Email</label>
-                        <input type="email" id="loginEmail" required>
+                        <input type="email" id="loginEmail" required autocomplete="email">
                     </div>
                     <div class="form-group">
                         <label>Password</label>
-                        <input type="password" id="loginPass" required>
+                        <input type="password" id="loginPass" required autocomplete="current-password">
                     </div>
                     <button type="submit" class="btn-auth">Log In</button>
                 </form>
@@ -684,17 +831,14 @@
 
         <!-- Signup Page -->
         <div id="signupPage" class="auth-page">
-            <div class="auth-container">
-                <div class="logo-container">
-                    <div class="logo-image">
-                        <!-- PLACEHOLDER: Replace with your actual logo URL -->
-                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: bold; color: white;">KSS</div>
-                    </div>
-                    <div class="logo-text">Create Account</div>
+            <div class="auth-box">
+                <div class="auth-logo">
+                    <img src="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png?ex=68ff088d&is=68fdb70d&hm=563eef741794073326e81a7ddbb352e322b1b4d365baf230d7b32727316f18d4&" alt="KSS Logo">
                 </div>
+                <div class="auth-title">Create Account</div>
                 <form onsubmit="return signup(event)">
                     <div class="form-group">
-                        <label>Name</label>
+                        <label>Full Name</label>
                         <input type="text" id="signupName" required>
                     </div>
                     <div class="form-group">
@@ -703,11 +847,11 @@
                     </div>
                     <div class="form-group">
                         <label>Email</label>
-                        <input type="email" id="signupEmail" required>
+                        <input type="email" id="signupEmail" required autocomplete="email">
                     </div>
                     <div class="form-group">
                         <label>Password</label>
-                        <input type="password" id="signupPass" required minlength="6">
+                        <input type="password" id="signupPass" required minlength="6" autocomplete="new-password">
                     </div>
                     <button type="submit" class="btn-auth">Sign Up</button>
                 </form>
@@ -720,135 +864,778 @@
         <!-- Main App -->
         <div id="mainApp" style="display:none;">
             
-            <div id="sidebar">
-                <div class="sidebar-logo">
-                    <!-- PLACEHOLDER: Replace with your actual logo URL -->
-                    <img src="" alt="KSS" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
-                    <div style="display: none; width: 80px; height: 80px; background: linear-gradient(135deg, #00d4ff, #b300ff); border-radius: 15px; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; color: white; margin: 0 auto 10px;">KSS</div>
-                    <h1>Kurrasch Systems Studio</h1>
+            <!-- Header -->
+            <div class="header">
+                <div class="header-left">
+                    <img src="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png?ex=68ff088d&is=68fdb70d&hm=563eef741794073326e81a7ddbb352e322b1b4d365baf230d7b32727316f18d4&" alt="Logo" class="logo-img">
+                    <input type="text" class="search" placeholder="Search Kurrasch Systems Studio">
                 </div>
-
-                <div class="online-indicator">
-                    <span class="online-dot"></span>
-                    <span id="onlineCount">29 Online</span>
-                </div>
-
-                <div class="nav-item active" onclick="switchPage('feed')">
-                    <span>🏠</span><span>News Feed</span>
-                </div>
-                <div class="nav-item" onclick="switchPage('profile')">
-                    <span>👤</span><span>Profile</span>
-                </div>
-                <div class="nav-item" onclick="switchPage('games')">
-                    <span>🎮</span><span>Games</span>
-                </div>
-                <div class="nav-item" onclick="switchPage('forums')">
-                    <span>💭</span><span>Forums</span>
-                </div>
-                <div class="nav-item" onclick="switchPage('learning')">
-                    <span>📚</span><span>Learning Center</span>
-                </div>
-                <div class="nav-item" onclick="switchPage('clothing')">
-                    <span>👕</span><span>Roblox Clothing</span>
-                </div>
-                <div class="nav-item" onclick="switchPage('tools')">
-                    <span>🛠️</span><span>Development Tools</span>
-                </div>
-                <div class="nav-item" onclick="switchPage('vcroom')">
-                    <span>🎥</span><span>VC Room</span>
-                </div>
-                <div class="nav-item" onclick="switchPage('membership')">
-                    <span>⭐</span><span>Membership</span>
-                </div>
-                <div class="nav-item" onclick="logout()">
-                    <span>🚪</span><span>Logout</span>
+                <div class="header-icons">
+                    <button class="icon-btn" onclick="switchPage('feed')" title="Home">🏠</button>
+                    <button class="icon-btn" onclick="switchPage('friends')" title="Friends">👥</button>
+                    <button class="icon-btn" onclick="switchPage('messages')" title="Messages">💬</button>
+                    <button class="icon-btn" onclick="switchPage('profile')" title="Profile">👤</button>
+                    <button class="icon-btn" onclick="logout()" title="Logout">🚪</button>
                 </div>
             </div>
 
-            <div id="main-content">
+            <!-- Main Layout -->
+            <div class="main">
                 
-                <!-- News Feed Page -->
-                <div id="feed" class="page active">
-                    <h1 class="page-title">News Feed</h1>
+                <!-- Left Sidebar -->
+                <div class="sidebar">
+                    <div class="online-count">
+                        <span class="online-dot"></span>
+                        <span id="onlineCount">29 Online</span>
+                    </div>
+                    <div class="nav-item active" onclick="switchPage('feed')">
+                        <span>📰</span><span>News Feed</span>
+                    </div>
+                    <div class="nav-item" onclick="switchPage('profile')">
+                        <span>👤</span><span>Profile</span>
+                    </div>
+                    <div class="nav-item" onclick="switchPage('friends')">
+                        <span>👥</span><span>Friends</span>
+                    </div>
+                    <div class="nav-item" onclick="switchPage('games')">
+                        <span>🎮</span><span>Games</span>
+                    </div>
+                    <div class="nav-item" onclick="switchPage('forums')">
+                        <span>💭</span><span>Forums</span>
+                    </div>
+                    <div class="nav-item" onclick="switchPage('learning')">
+                        <span>📚</span><span>Learning Center</span>
+                    </div>
+                    <div class="nav-item" onclick="switchPage('clothing')">
+                        <span>👕</span><span>Roblox Clothing</span>
+                    </div>
+                    <div class="nav-item" onclick="switchPage('tools')">
+                        <span>🛠️</span><span>Dev Tools</span>
+                    </div>
+                    <div class="nav-item" onclick="switchPage('vcroom')">
+                        <span>🎥</span><span>VC Room</span>
+                    </div>
+                    <div class="nav-item" onclick="switchPage('membership')">
+                        <span>⭐</span><span>Membership</span>
+                    </div>
+                    <div class="nav-item" id="adminNav" style="display:none;" onclick="switchPage('admin')">
+                        <span>⚙️</span><span>Admin Panel</span>
+                    </div>
+                </div>
+
+                <!-- Feed -->
+                <div class="feed">
                     
-                    <div class="post-creator">
-                        <textarea id="newPostContent" placeholder="What's on your mind?"></textarea>
+                    <!-- News Feed Page -->
+                    <div id="feed" class="page active">
+                        <div class="post-creator">
+                            <div class="post-creator-header">
+                                <div class="post-creator-avatar">
+                                    <img id="currentUserAvatar" src="" alt="You">
+                                </div>
+                                <textarea id="newPostContent" placeholder="What's on your mind?"></textarea>
+                            </div>
+                            
+                            <div class="post-actions">
+                                <label class="post-action-btn">
+                                    📷 Photo
+                                    <input type="file" accept="image/*" id="postImageUpload">
+                                </label>
+                                <label class="post-action-btn">
+                                    🎥 Video
+                                    <input type="file" accept="video/*" id="postVideoUpload">
+                                </label>
+                                <label class="post-action-btn">
+                                    🎵 Audio
+                                    <input type="file" accept="audio/*" id="postAudioUpload">
+                                </label>
+                                <div class="download-toggle">
+                                    <input type="checkbox" id="allowDownload">
+                                    <label for="allowDownload">Allow downloads</label>
+                                </div>
+                                <button class="btn-post" onclick="createPost()">Post</button>
+                            </div>
+                        </div>
+
+                        <div id="postsContainer"></div>
+                    </div>
+
+                    <!-- Profile Page -->
+                    <div id="profile" class="page">
+                        <div class="profile-header">
+                            <div class="profile-banner">
+                                <img id="profileBannerImg" src="" alt="Banner">
+                            </div>
+                            <div class="profile-info">
+                                <div class="profile-avatar">
+                                    <img id="profileAvatarImg" src="" alt="Avatar">
+                                </div>
+                                <div class="profile-name" id="profileName"></div>
+                                <div class="post-badges" id="profileBadgesDisplay"></div>
+                                <div class="profile-bio" id="profileBioDisplay"></div>
+                            </div>
+                        </div>
+
+                        <div class="post-creator">
+                            <h3 style="color: #00d4ff; margin-bottom: 1.5rem;">Edit Profile</h3>
+                            <div class="form-group">
+                                <label>Profile Image</label>
+                                <input type="file" accept="image/*" id="profileImageUpload">
+                                <label for="profileImageUpload" class="btn-post" style="display: inline-block; text-align: center; margin-top: 0.5rem;">Choose Image</label>
+                            </div>
+                            <div class="form-group">
+                                <label>Banner Image</label>
+                                <input type="file" accept="image/*" id="bannerImageUpload">
+                                <label for="bannerImageUpload" class="btn-post" style="display: inline-block; text-align: center; margin-top: 0.5rem;">Choose Banner</label>
+                            </div>
+                            <div class="form-group">
+                                <label>Bio</label>
+                                <textarea id="profileBio" rows="4" placeholder="Tell us about yourself..."></textarea>
+                            </div>
+                            <button class="btn-auth" onclick="updateProfile()">Save Changes</button>
+                        </div>
+                    </div>
+
+                    <!-- Other Pages (simplified for now) -->
+                    <div id="games" class="page">
+                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">Games</h1>
+                        <div class="post-creator">
+                            <h3>🎮 Memorial Diane Keaton Arcade</h3>
+                            <p style="color: #8e8e8e; margin-top: 1rem;">Classic arcade games coming soon</p>
+                        </div>
+                    </div>
+
+                    <div id="forums" class="page">
+                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">Forums</h1>
+                        <div class="post-creator">
+                            <h3>Community Forums</h3>
+                            <p style="color: #8e8e8e; margin-top: 1rem;">Forum categories coming soon</p>
+                        </div>
+                    </div>
+
+                    <div id="learning" class="page">
+                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">Learning Center</h1>
+                        <div class="post-creator">
+                            <h3>Learn & Grow</h3>
+                            <p style="color: #8e8e8e; margin-top: 1rem;">Tutorials coming soon</p>
+                        </div>
+                    </div>
+
+                    <div id="clothing" class="page">
+                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">Roblox Clothing</h1>
+                        <div class="post-creator">
+                            <h3>Clothing Marketplace</h3>
+                            <p style="color: #8e8e8e; margin-top: 1rem;">Browse and upload clothing</p>
+                        </div>
+                    </div>
+
+                    <div id="tools" class="page">
+                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">Development Tools</h1>
+                        <div class="post-creator">
+                            <h3 style="color: #00d4ff; margin-bottom: 1rem;">🤖 Ask Penny AI Assistant</h3>
+                            <div class="penny-chat">
+                                <div class="penny-messages" id="pennyMessages"></div>
+                                <div class="penny-input-wrap">
+                                    <input type="text" id="pennyInput" class="penny-input" placeholder="Ask Penny anything...">
+                                    <button class="btn-post" onclick="askPenny()">Send</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="vcroom" class="page">
+                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">VC Room</h1>
+                        <div class="post-creator">
+                            <h3>Voice & Video Chat</h3>
+                            <p style="color: #8e8e8e; margin-top: 1rem;">VC rooms coming soon</p>
+                        </div>
+                    </div>
+
+                    <div id="membership" class="page">
+                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">Membership</h1>
+                        <div class="post-creator">
+                            <h3>Premium Membership</h3>
+                            <p style="color: #8e8e8e; margin-top: 1rem;">Contact Betty White Bot or Kurrasch Systems Bot on Discord to subscribe</p>
+                        </div>
+                    </div>
+
+                    <div id="friends" class="page">
+                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">Friends</h1>
+                        <div class="post-creator">
+                            <h3>Your Friends</h3>
+                            <p style="color: #8e8e8e; margin-top: 1rem;">Friends list coming soon</p>
+                        </div>
+                    </div>
+
+                    <div id="messages" class="page">
+                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">Messages</h1>
+                        <div class="post-creator">
+                            <h3>Direct Messages</h3>
+                            <p style="color: #8e8e8e; margin-top: 1rem;">Messaging system coming soon</p>
+                        </div>
+                    </div>
+
+                    <div id="admin" class="page">
+                        <h1 style="color: #00d4ff; margin-bottom: 1.5rem;">Admin Panel</h1>
                         
-                        <div class="upload-options">
-                            <label class="upload-label">
-                                📷 Photo
-                                <input type="file" accept="image/*" onchange="handleImageUpload(event)">
-                            </label>
-                            <label class="upload-label">
-                                🎥 Video
-                                <input type="file" accept="video/*" onchange="handleVideoUpload(event)">
-                            </label>
-                            <label class="upload-label">
-                                🎵 Audio
-                                <input type="file" accept="audio/*" onchange="handleAudioUpload(event)">
-                            </label>
+                        <div class="admin-grid">
+                            <div class="admin-card">
+                                <h3>Total Users</h3>
+                                <div class="admin-stat" id="totalUsers">29</div>
+                            </div>
+                            <div class="admin-card">
+                                <h3>Total Posts</h3>
+                                <div class="admin-stat" id="totalPosts">0</div>
+                            </div>
+                            <div class="admin-card">
+                                <h3>Active Now</h3>
+                                <div class="admin-stat">29</div>
+                            </div>
                         </div>
 
-                        <div class="download-toggle">
-                            <input type="checkbox" id="allowDownload">
-                            <label for="allowDownload">Allow downloads</label>
+                        <div class="post-creator">
+                            <h3 style="color: #00d4ff; margin-bottom: 1rem;">🤖 Train Penny AI</h3>
+                            <div class="penny-chat">
+                                <div class="penny-messages" id="adminPennyMessages"></div>
+                                <div class="penny-input-wrap">
+                                    <input type="text" id="adminPennyInput" class="penny-input" placeholder="Train Penny or upgrade the site...">
+                                    <button class="btn-post" onclick="adminAskPenny()">Send</button>
+                                </div>
+                            </div>
                         </div>
-
-                        <button class="btn" onclick="createPost()">Post</button>
                     </div>
 
-                    <div id="postsContainer"></div>
                 </div>
 
-                <!-- Profile Page -->
-                <div id="profile" class="page">
-                    <h1 class="page-title">My Profile</h1>
-                    <div class="post-creator">
-                        <div class="form-group">
-                            <label>Profile Image URL</label>
-                            <input type="text" id="profileImageUrl" placeholder="Enter image URL">
-                        </div>
-                        <div class="form-group">
-                            <label>Banner Image URL</label>
-                            <input type="text" id="bannerImageUrl" placeholder="Enter banner URL">
-                        </div>
-                        <div class="form-group">
-                            <label>Bio</label>
-                            <textarea id="profileBio" rows="4" placeholder="Tell us about yourself..." style="width: 100%; background: rgba(0,212,255,0.1); border: 2px solid #00d4ff; border-radius: 10px; padding: 15px; color: #fff; font-family: inherit;"></textarea>
-                        </div>
-                        <button class="btn" onclick="updateProfile()">Save Changes</button>
+                <!-- Right Sidebar - Contacts -->
+                <div class="right-sidebar">
+                    <div class="contacts">
+                        <div class="contacts-title">Contacts</div>
+                        <div id="contactsList"></div>
                     </div>
                 </div>
 
-                <!-- Games Page -->
-                <div id="games" class="page">
-                    <h1 class="page-title">Games</h1>
-                    <div class="post-creator">
-                        <h2 style="color: #00d4ff; margin-bottom: 20px;">🎮 Memorial Diane Keaton Arcade</h2>
-                        <p style="margin-bottom: 20px;">Classic arcade games in memory of Diane Keaton</p>
-                        <!-- PLACEHOLDER: Add arcade embed URL here when ready -->
-                        <div id="arcadeContainer" style="min-height: 600px; border: 2px solid #00d4ff; border-radius: 12px; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; color: #888;">
-                            Arcade games will be embedded here
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // FLOWING MATRIX BACKGROUND - RED 0s & NAVY BLUE 1s
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const chars = '01';
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const char = chars[Math.floor(Math.random() * chars.length)];
+                
+                // RED for 0s, NAVY BLUE for 1s
+                ctx.fillStyle = char === '0' ? '#ff0000' : '#001f3f';
+                
+                ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 50);
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // DATA STORAGE
+        let currentUser = null;
+        let uploadedMedia = { image: null, video: null, audio: null };
+
+        // Initialize localStorage
+        if (!localStorage.getItem('users')) {
+            localStorage.setItem('users', JSON.stringify([]));
+        }
+        if (!localStorage.getItem('posts')) {
+            localStorage.setItem('posts', JSON.stringify([]));
+        }
+
+        // AUTH FUNCTIONS
+        function showSignup() {
+            document.getElementById('loginPage').classList.remove('active');
+            document.getElementById('signupPage').classList.add('active');
+        }
+
+        function showLogin() {
+            document.getElementById('signupPage').classList.remove('active');
+            document.getElementById('loginPage').classList.add('active');
+        }
+
+        function login(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPass').value;
+
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.email === email && u.password === pass);
+
+            if (user) {
+                currentUser = user;
+                document.getElementById('loginPage').classList.remove('active');
+                document.getElementById('mainApp').style.display = 'block';
+                
+                // Show admin panel for authorized admins
+                const adminEmails = ['tannerkurrach@gmail.com', 'kurraschgamingmerchstore@gmail.com', 'brendenkurrasch93@gmail.com'];
+                if (adminEmails.includes(email)) {
+                    document.getElementById('adminNav').style.display = 'flex';
+                    currentUser.badges = currentUser.badges || [];
+                    if (!currentUser.badges.includes('Founder')) {
+                        currentUser.badges.push('Founder');
+                        const userIndex = users.findIndex(u => u.email === email);
+                        users[userIndex] = currentUser;
+                        localStorage.setItem('users', JSON.stringify(users));
+                    }
+                }
+                
+                loadFeed();
+                loadProfile();
+                document.getElementById('currentUserAvatar').src = currentUser.avatar;
+                return false;
+            }
+
+            alert('Invalid email or password');
+            return false;
+        }
+
+        function signup(e) {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const username = document.getElementById('signupUser').value;
+            const email = document.getElementById('signupEmail').value;
+            const pass = document.getElementById('signupPass').value;
+
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            if (users.find(u => u.email === email)) {
+                alert('Email already registered');
+                return false;
+            }
+
+            const newUser = {
+                id: Date.now().toString(),
+                name,
+                username,
+                email,
+                password: pass,
+                avatar: 'https://via.placeholder.com/150/00d4ff/ffffff?text=' + name.charAt(0),
+                banner: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200',
+                bio: 'New to Kurrasch Systems Studio!',
+                badges: [],
+                tokens: 0
+            };
+
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+
+            currentUser = newUser;
+            document.getElementById('signupPage').classList.remove('active');
+            document.getElementById('mainApp').style.display = 'block';
+            
+            loadFeed();
+            loadProfile();
+            document.getElementById('currentUserAvatar').src = currentUser.avatar;
+            return false;
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('mainApp').style.display = 'none';
+            document.getElementById('loginPage').classList.add('active');
+            document.getElementById('adminNav').style.display = 'none';
+        }
+
+        // NAVIGATION
+        function switchPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById(pageId).classList.add('active');
+            const navItem = document.querySelector(`.nav-item[onclick*="${pageId}"]`);
+            if (navItem) navItem.classList.add('active');
+
+            if (pageId === 'feed') loadFeed();
+            if (pageId === 'profile') loadProfile();
+            if (pageId === 'admin') loadAdmin();
+        }
+
+        // POSTS
+        function createPost() {
+            const content = document.getElementById('newPostContent').value.trim();
+            if (!content && !uploadedMedia.image && !uploadedMedia.video && !uploadedMedia.audio) {
+                alert('Please enter some content or upload media');
+                return;
+            }
+
+            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
+            const newPost = {
+                id: Date.now().toString(),
+                authorId: currentUser.id,
+                authorName: currentUser.name,
+                authorUsername: currentUser.username,
+                authorAvatar: currentUser.avatar,
+                authorBadges: currentUser.badges || [],
+                content,
+                media: uploadedMedia,
+                allowDownload: document.getElementById('allowDownload').checked,
+                reactions: {},
+                comments: [],
+                timestamp: Date.now()
+            };
+
+            posts.unshift(newPost);
+            localStorage.setItem('posts', JSON.stringify(posts));
+
+            // Reset form
+            document.getElementById('newPostContent').value = '';
+            document.getElementById('allowDownload').checked = false;
+            uploadedMedia = { image: null, video: null, audio: null };
+            
+            loadFeed();
+        }
+
+        function react(postId, reaction) {
+            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
+            const post = posts.find(p => p.id === postId);
+            if (!post) return;
+
+            if (!post.reactions) post.reactions = {};
+            
+            // Toggle reaction
+            if (post.reactions[currentUser.id] === reaction) {
+                delete post.reactions[currentUser.id];
+            } else {
+                post.reactions[currentUser.id] = reaction;
+            }
+
+            localStorage.setItem('posts', JSON.stringify(posts));
+            loadFeed();
+        }
+
+        function showReactions(postId) {
+            const popup = document.getElementById('reactions-' + postId);
+            if (popup) {
+                popup.classList.toggle('show');
+            }
+        }
+
+        function addComment(postId) {
+            const input = document.getElementById(`comment-input-${postId}`);
+            const content = input.value.trim();
+            if (!content) return;
+
+            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
+            const post = posts.find(p => p.id === postId);
+            if (!post) return;
+
+            post.comments.push({
+                id: Date.now().toString() + Math.random(),
+                authorId: currentUser.id,
+                authorName: currentUser.name,
+                authorAvatar: currentUser.avatar,
+                content,
+                timestamp: Date.now()
+            });
+
+            localStorage.setItem('posts', JSON.stringify(posts));
+            input.value = '';
+            loadFeed();
+        }
+
+        function loadFeed() {
+            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
+            const container = document.getElementById('postsContainer');
+            
+            if (posts.length === 0) {
+                container.innerHTML = '<div class="loading">No posts yet. Be the first to post!</div>';
+                return;
+            }
+
+            container.innerHTML = posts.map(post => {
+                const userReaction = post.reactions && post.reactions[currentUser.id];
+                const reactionCount = post.reactions ? Object.keys(post.reactions).length : 0;
+                const timeAgo = getTimeAgo(post.timestamp);
+
+                let mediaHTML = '';
+                if (post.media.image) {
+                    mediaHTML = `<div class="post-media"><img src="${post.media.image}" alt="Post image"></div>`;
+                } else if (post.media.video) {
+                    mediaHTML = `<div class="post-media"><video controls src="${post.media.video}"></video></div>`;
+                } else if (post.media.audio) {
+                    mediaHTML = `<div class="post-media"><audio controls src="${post.media.audio}"></audio></div>`;
+                }
+
+                const badgesHTML = (post.authorBadges || []).map(badge => 
+                    `<span class="badge ${badge.toLowerCase()}">${badge}</span>`
+                ).join('');
+
+                const commentsHTML = (post.comments || []).map(comment => `
+                    <div class="comment">
+                        <div class="comment-header">
+                            <div class="comment-avatar">
+                                <img src="${comment.authorAvatar}" alt="${comment.authorName}">
+                            </div>
+                            <strong class="comment-author">${comment.authorName}</strong>
+                            <span class="comment-time">${getTimeAgo(comment.timestamp)}</span>
+                        </div>
+                        <div class="comment-content">${comment.content}</div>
+                    </div>
+                `).join('');
+
+                return `
+                    <div class="post">
+                        <div class="post-header">
+                            <div class="post-avatar">
+                                <img src="${post.authorAvatar}" alt="${post.authorName}">
+                            </div>
+                            <div class="post-author-info">
+                                <div class="post-author-name">${post.authorName}</div>
+                                <div class="post-badges">${badgesHTML}</div>
+                                <span class="post-time">${timeAgo}</span>
+                            </div>
+                        </div>
+                        <div class="post-content">${post.content}</div>
+                        ${mediaHTML}
+                        <div class="post-stats">
+                            <span>${reactionCount} reactions</span>
+                            <span>${post.comments.length} comments</span>
+                        </div>
+                        <div class="post-interactions" style="position: relative;">
+                            <button class="interaction-btn ${userReaction ? 'reacted' : ''}" onclick="showReactions('${post.id}')">
+                                ${userReaction || '👍'} React
+                            </button>
+                            <div id="reactions-${post.id}" class="reactions-popup">
+                                <span class="reaction" onclick="react('${post.id}', '👍')">👍</span>
+                                <span class="reaction" onclick="react('${post.id}', '❤️')">❤️</span>
+                                <span class="reaction" onclick="react('${post.id}', '😂')">😂</span>
+                                <span class="reaction" onclick="react('${post.id}', '😮')">😮</span>
+                                <span class="reaction" onclick="react('${post.id}', '😢')">😢</span>
+                                <span class="reaction" onclick="react('${post.id}', '😡')">😡</span>
+                                <span class="reaction" onclick="react('${post.id}', '🔥')">🔥</span>
+                            </div>
+                            <button class="interaction-btn">💬 Comment</button>
+                            <button class="interaction-btn">🔗 Share</button>
+                            ${post.allowDownload ? '<button class="interaction-btn">⬇️ Download</button>' : ''}
+                        </div>
+                        ${post.comments.length > 0 ? `<div class="comments">${commentsHTML}</div>` : ''}
+                        <div class="comments">
+                            <div class="comment-input-wrap">
+                                <input type="text" id="comment-input-${post.id}" class="comment-input" placeholder="Write a comment...">
+                                <button class="btn-post" onclick="addComment('${post.id}')">Post</button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                `;
+            }).join('');
+        }
 
-                <!-- Forums Page -->
-                <div id="forums" class="page">
-                    <h1 class="page-title">Forums</h1>
-                    <div class="post-creator">
-                        <h3 style="color: #00d4ff; margin-bottom: 15px;">Forum Categories</h3>
-                        <div style="display: grid; gap: 15px;">
-                            <div style="padding: 20px; background: rgba(0,212,255,0.1); border: 2px solid #00d4ff; border-radius: 10px; cursor: pointer;">
-                                <h4 style="color: #00d4ff;">💻 Roblox Development</h4>
-                                <p style="color: #888; font-size: 14px;">Discuss game development, scripting, and building</p>
-                            </div>
-                            <div style="padding: 20px; background: rgba(0,212,255,0.1); border: 2px solid #00d4ff; border-radius: 10px; cursor: pointer;">
-                                <h4 style="color: #00d4ff;">🎨 Showcase Your Work</h4>
-                                <p style="color: #888; font-size: 14px;">Share your games, models, and creations</p>
-                            </div>
-                            <div style="padding: 20px; background: rgba(0,212,255,0.1); border: 2px solid #00d4ff; border-radius: 10px; cursor: pointer;">
-                                <h4 style="color: #00d4ff;">❓ Help & Support</h4>
-                                <p style="color: #888; font-size: 14px;">Get help from the community</p>
-                            </div>
-                        </div>
+        function getTimeAgo(timestamp) {
+            const seconds = Math.floor((Date.now() - timestamp) / 1000);
+            if (seconds < 60) return 'Just now';
+            if (seconds < 3600) return Math.floor(seconds / 60) + 'm';
+            if (seconds < 86400) return Math.floor(seconds / 3600) + 'h';
+            return Math.floor(seconds / 86400) + 'd';
+        }
+
+        // FILE UPLOADS
+        document.getElementById('postImageUpload')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedMedia.image = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('postVideoUpload')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedMedia.video = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('postAudioUpload')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedMedia.audio = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // PROFILE
+        function updateProfile() {
+            const bio = document.getElementById('profileBio').value;
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const userIndex = users.findIndex(u => u.id === currentUser.id);
+            
+            if (userIndex > -1) {
+                users[userIndex].bio = bio;
+                
+                // Handle profile image
+                const profileImageFile = document.getElementById('profileImageUpload').files[0];
+                if (profileImageFile) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        users[userIndex].avatar = e.target.result;
+                        finishProfileUpdate(users, userIndex);
+                    };
+                    reader.readAsDataURL(profileImageFile);
+                    return;
+                }
+                
+                // Handle banner image
+                const bannerImageFile = document.getElementById('bannerImageUpload').files[0];
+                if (bannerImageFile) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        users[userIndex].banner = e.target.result;
+                        finishProfileUpdate(users, userIndex);
+                    };
+                    reader.readAsDataURL(bannerImageFile);
+                    return;
+                }
+                
+                finishProfileUpdate(users, userIndex);
+            }
+        }
+
+        function finishProfileUpdate(users, userIndex) {
+            localStorage.setItem('users', JSON.stringify(users));
+            currentUser = users[userIndex];
+            alert('Profile updated!');
+            loadProfile();
+            document.getElementById('currentUserAvatar').src = currentUser.avatar;
+        }
+
+        function loadProfile() {
+            document.getElementById('profileBannerImg').src = currentUser.banner;
+            document.getElementById('profileAvatarImg').src = currentUser.avatar;
+            document.getElementById('profileName').textContent = currentUser.name;
+            document.getElementById('profileBioDisplay').textContent = currentUser.bio || 'No bio yet';
+            
+            const badgesHTML = (currentUser.badges || []).map(badge => 
+                `<span class="badge ${badge.toLowerCase()}">${badge}</span>`
+            ).join('');
+            document.getElementById('profileBadgesDisplay').innerHTML = badgesHTML;
+            
+            document.getElementById('profileBio').value = currentUser.bio || '';
+        }
+
+        // PENNY AI ASSISTANT
+        function askPenny() {
+            const input = document.getElementById('pennyInput');
+            const question = input.value.trim();
+            if (!question) return;
+
+            const messagesDiv = document.getElementById('pennyMessages');
+            
+            messagesDiv.innerHTML += `<div class="penny-msg user">${question}</div>`;
+
+            // Penny's smart Minnesota responses
+            const responses = [
+                "Oh yah, I can help ya with that, don'tcha know! Let me think on that one for ya.",
+                "Well sure thing! That's a real good question there. Here's what I'm thinkin'...",
+                "Ope! Let me see what I can figure out for ya here.",
+                "Oh for cute! I'd be happy to help ya out with that, yah.",
+                "Don'tcha know, Kurrasch Systems Studio was created to bring folks together! We got 28 amazing AI personalities here.",
+                "You betcha! Kurrasch Gaming Merch Store LLC is our parent company, and we're the creative division.",
+                "Oh yah, I know all about Roblox! Been keepin' up with all the news and updates, don'tcha know.",
+                "Well that's somethin' I can definitely assist with! Let me walk ya through this here."
+            ];
+
+            const response = responses[Math.floor(Math.random() * responses.length)];
+
+            setTimeout(() => {
+                messagesDiv.innerHTML += `<div class="penny-msg penny">${response}</div>`;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }, 1000);
+
+            input.value = '';
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        document.getElementById('pennyInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') askPenny();
+        });
+
+        // ADMIN PANEL
+        function loadAdmin() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
+            
+            document.getElementById('totalUsers').textContent = users.length + 28;
+            document.getElementById('totalPosts').textContent = posts.length;
+        }
+
+        function adminAskPenny() {
+            const input = document.getElementById('adminPennyInput');
+            const question = input.value.trim();
+            if (!question) return;
+
+            const messagesDiv = document.getElementById('adminPennyMessages');
+            
+            messagesDiv.innerHTML += `<div class="penny-msg user">${question}</div>`;
+
+            const responses = [
+                "Oh yah, I've added that to my knowledge base! You betcha I'll remember that one.",
+                "Well sure thing! I've got that saved now. Anything else ya need help with?",
+                "Ope! That's great info there. I'll use that to help folks better, don'tcha know.",
+                "Don'tcha know, I've learned that and it's in my memory now! Thanks for teachin' me.",
+                "Oh for cute! I'll remember that for next time. You're helpin' me get smarter!"
+            ];
+
+            setTimeout(() => {
+                messagesDiv.innerHTML += `<div class="penny-msg penny">${responses[Math.floor(Math.random() * responses.length)]}</div>`;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }, 1000);
+
+            input.value = '';
+        }
+
+        document.getElementById('adminPennyInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') adminAskPenny();
+        });
+
+        // Close reactions popup when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.interaction-btn') && !e.target.closest('.reactions-popup')) {
+                document.querySelectorAll('.reactions-popup').forEach(popup => {
+                    popup.classList.remove('show');
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
