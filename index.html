@@ -1226,8 +1226,8 @@
                         <div class="menu-item" onclick="showPage('forums')">💬 Forums</div>
                         <div class="menu-item" onclick="showPage('learning')">📚 Learning Center</div>
                         <div class="menu-item" onclick="showPage('penny')">💙 Penny AI</div>
-                        <div class="menu-item" onclick="showPage('vc')">🎤 VC Room</div>
-                        <div class="menu-item" onclick="showPage('membership')">⭐ Membership</div>
+                        <div class="menu-item" onclick="showPage('vc')">🎤 VC Room <span style="font-size: 11px; color: #999;">(Click Here!)</span></div>
+                        <div class="menu-item" onclick="showPage('membership')">⭐ Membership <span style="font-size: 11px; color: #999;">(Upgrade Here!)</span></div>
                         <div class="menu-item" onclick="showPage('movies')">🎬 Movie Night</div>
                         <div class="menu-item admin-only" onclick="showPage('admin')" style="display: none; border-color: #dc2626; color: #dc2626;">🔒 Admin Panel</div>
                         <div class="menu-item" onclick="logout()" style="border-color: #dc2626; color: #dc2626;">🚪 Logout</div>
@@ -1967,6 +1967,15 @@
                         </div>
                     </div>
 
+                    <!-- Movie Player Section -->
+                    <div class="sidebar-section" id="movie-player-section" style="display: none;">
+                        <h3>🎬 Now Playing</h3>
+                        <div id="movie-player-container" style="background: #000; border-radius: 10px; overflow: hidden; margin: 15px 0;">
+                            <!-- Video player will appear here -->
+                        </div>
+                        <button onclick="stopMovie()" class="post-btn" style="background: #dc2626; margin-top: 10px;">Stop Movie</button>
+                    </div>
+                    
                     <div class="sidebar-section">
                         <h3>Available Platforms</h3>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
@@ -2077,10 +2086,10 @@
                                 <div class="form-group">
                                     <label>Role</label>
                                     <select id="new-admin-role">
+                                        <!-- Owner option only shown for owner -->
                                         <option value="admin">Admin</option>
                                         <option value="staff">Staff</option>
                                     </select>
-                                    <p style="color: #999; font-size: 12px; margin-top: 5px;">⚠️ Only the Owner can assign Owner role</p>
                                 </div>
                                 <button class="auth-button" onclick="addNewAdmin()">Add Admin</button>
                                 
@@ -2315,6 +2324,158 @@
         let screenStream = null;
 
         // Initialize App
+
+        // Follow System
+        function followUser(username) {
+            if (!currentUser) {
+                alert('Please log in to follow users');
+                return;
+            }
+            
+            if (username === currentUser.username) {
+                alert('You cannot follow yourself!');
+                return;
+            }
+            
+            if (!currentUser.following) currentUser.following = [];
+            if (!currentUser.followers) currentUser.followers = [];
+            
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const userToFollow = users.find(u => u.username === username);
+            
+            if (!userToFollow) {
+                alert('User not found');
+                return;
+            }
+            
+            // Check if already following
+            if (currentUser.following.includes(username)) {
+                alert('You are already following ' + username);
+                return;
+            }
+            
+            // Add to current user's following
+            currentUser.following.push(username);
+            
+            // Add to target user's followers
+            if (!userToFollow.followers) userToFollow.followers = [];
+            userToFollow.followers.push(currentUser.username);
+            
+            // Update localStorage
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            const userIndex = users.findIndex(u => u.username === username);
+            if (userIndex !== -1) {
+                users[userIndex] = userToFollow;
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+            
+            // Update current user in users array
+            const currentUserIndex = users.findIndex(u => u.id === currentUser.id);
+            if (currentUserIndex !== -1) {
+                users[currentUserIndex] = currentUser;
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+            
+            updateUI();
+            alert('✅ You are now following ' + username + '!');
+        }
+        
+        function unfollowUser(username) {
+            if (!currentUser) return;
+            
+            if (!currentUser.following) currentUser.following = [];
+            
+            // Remove from current user's following
+            currentUser.following = currentUser.following.filter(u => u !== username);
+            
+            // Remove from target user's followers
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const userToUnfollow = users.find(u => u.username === username);
+            
+            if (userToUnfollow && userToUnfollow.followers) {
+                userToUnfollow.followers = userToUnfollow.followers.filter(u => u !== currentUser.username);
+                
+                const userIndex = users.findIndex(u => u.username === username);
+                if (userIndex !== -1) {
+                    users[userIndex] = userToUnfollow;
+                    localStorage.setItem('users', JSON.stringify(users));
+                }
+            }
+            
+            // Update localStorage
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            const currentUserIndex = users.findIndex(u => u.id === currentUser.id);
+            if (currentUserIndex !== -1) {
+                users[currentUserIndex] = currentUser;
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+            
+            updateUI();
+            alert('You unfollowed ' + username);
+        }
+        
+        function viewUserProfile(username) {
+            if (username === currentUser.username) {
+                showPage('profile');
+                return;
+            }
+            
+            // Get user data
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.username === username);
+            
+            if (!user) {
+                alert('User not found');
+                return;
+            }
+            
+            // Create modal with user profile
+            const isFollowing = currentUser.following && currentUser.following.includes(username);
+            
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px;';
+            
+            modal.innerHTML = `
+                <div style="background: #1a1a1a; border: 2px solid #6b46c1; border-radius: 20px; padding: 30px; max-width: 500px; width: 100%; position: relative;">
+                    <button onclick="this.parentElement.parentElement.remove()" style="position: absolute; top: 15px; right: 15px; background: #dc2626; border: none; color: white; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 18px;">✕</button>
+                    
+                    <div style="text-align: center;">
+                        <img src="${user.avatar}" style="width: 120px; height: 120px; border-radius: 50%; border: 3px solid #6b46c1; margin-bottom: 15px;">
+                        <h2 style="color: #fff; margin-bottom: 5px;">${user.name}</h2>
+                        <p style="color: #999; margin-bottom: 10px;">@${user.username}</p>
+                        
+                        <div style="display: flex; gap: 20px; justify-content: center; margin: 15px 0;">
+                            <div><strong style="color: #6b46c1;">${user.posts || 0}</strong> <span style="color: #999;">Posts</span></div>
+                            <div><strong style="color: #6b46c1;">${(user.followers || []).length}</strong> <span style="color: #999;">Followers</span></div>
+                            <div><strong style="color: #6b46c1;">${(user.following || []).length}</strong> <span style="color: #999;">Following</span></div>
+                        </div>
+                        
+                        ${user.badges && user.badges.length > 0 ? `
+                            <div style="margin: 15px 0;">
+                                ${user.badges.map(badge => `<span class="badge ${badge}">${badge}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        ${user.bio ? `<p style="color: #ccc; margin: 15px 0;">${user.bio}</p>` : ''}
+                        
+                        <button onclick="viewUserProfile('${username}'); ${isFollowing ? 'unfollowUser' : 'followUser'}('${username}'); this.parentElement.parentElement.parentElement.remove();" 
+                                style="background: ${isFollowing ? '#dc2626' : '#6b46c1'}; border: none; color: white; padding: 12px 30px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 16px; margin-top: 10px;">
+                            ${isFollowing ? '✓ Following' : '+ Follow'}
+                        </button>
+                        
+                        <button onclick="openMessaging('${username}'); this.parentElement.parentElement.parentElement.remove();" 
+                                style="background: transparent; border: 2px solid #6b46c1; color: #6b46c1; padding: 12px 30px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 16px; margin-top: 10px; margin-left: 10px;">
+                            💬 Message
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
         function init() {
             const storedUser = localStorage.getItem('currentUser');
             if (storedUser) {
@@ -2500,6 +2661,8 @@
                 username,
                 email,
                 password,
+                followers: [],
+                following: [],
                 role,
                 tier,
                 badges,
@@ -2598,9 +2761,46 @@
                         type: file.type.startsWith('image') ? 'image' : file.type.startsWith('video') ? 'video' : 'audio',
                         url: e.target.result
                     };
+                    
+                    // Show preview
+                    const textarea = document.getElementById('post-textarea');
+                    const preview = document.createElement('div');
+                    preview.id = 'media-preview';
+                    preview.style.cssText = 'margin: 10px 0; padding: 10px; background: rgba(107, 70, 193, 0.1); border-radius: 10px; position: relative;';
+                    
+                    if (mediaUpload.type === 'image') {
+                        preview.innerHTML = `
+                            <img src="${e.target.result}" style="max-width: 200px; max-height: 200px; border-radius: 8px;">
+                            <button onclick="clearMediaUpload()" style="position: absolute; top: 5px; right: 5px; background: #dc2626; border: none; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer;">✕ Remove</button>
+                        `;
+                    } else if (mediaUpload.type === 'video') {
+                        preview.innerHTML = `
+                            <video src="${e.target.result}" style="max-width: 200px; max-height: 200px; border-radius: 8px;" controls></video>
+                            <button onclick="clearMediaUpload()" style="position: absolute; top: 5px; right: 5px; background: #dc2626; border: none; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer;">✕ Remove</button>
+                        `;
+                    } else {
+                        preview.innerHTML = `
+                            <p style="color: #6b46c1;">🎵 Audio file ready to post</p>
+                            <button onclick="clearMediaUpload()" style="background: #dc2626; border: none; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-top: 5px;">✕ Remove</button>
+                        `;
+                    }
+                    
+                    // Remove old preview if exists
+                    const oldPreview = document.getElementById('media-preview');
+                    if (oldPreview) oldPreview.remove();
+                    
+                    textarea.parentElement.insertBefore(preview, textarea.nextSibling);
                 };
                 reader.readAsDataURL(file);
             }
+        }
+        
+        function clearMediaUpload() {
+            mediaUpload = null;
+            const preview = document.getElementById('media-preview');
+            if (preview) preview.remove();
+            document.getElementById('media-input').value = '';
+            document.getElementById('audio-input').value = '';
         }
 
         function createPost() {
@@ -2706,9 +2906,9 @@
             container.innerHTML = displayPosts.map(post => `
                 <div class="post-card">
                     <div class="post-header">
-                        <img class="post-author-avatar" src="${post.authorAvatar}" alt="${post.authorName}">
+                        <img class="post-author-avatar" src="${post.authorAvatar}" alt="${post.authorName}" onclick="viewUserProfile('${post.author}')" style="cursor: pointer;">
                         <div class="post-author-info" style="flex: 1;">
-                            <h4>
+                            <h4 onclick="viewUserProfile('${post.author}')" style="cursor: pointer;">
                                 ${post.authorName}
                                 ${post.authorBadges.map(badge => `<span class="badge ${badge}">${badge}</span>`).join('')}
                             </h4>
@@ -3706,9 +3906,65 @@
             document.querySelectorAll('.profile-tab').forEach(t => t.style.display = 'none');
             document.getElementById(`profile-${tab}-tab`).style.display = 'block';
             
+            // Update tab button styles
+            document.querySelectorAll('.profile-tabs button').forEach(btn => {
+                btn.style.background = 'transparent';
+                btn.style.color = '#999';
+            });
+            event.target.style.background = 'rgba(107, 70, 193, 0.3)';
+            event.target.style.color = '#6b46c1';
+            
             if (tab === 'posts') {
                 renderUserPosts();
+            } else if (tab === 'photos') {
+                renderUserPhotos();
             }
+        }
+        
+        function renderUserPhotos() {
+            const userPosts = posts.filter(p => p.author === currentUser.username && p.media);
+            const container = document.getElementById('user-photos-container');
+            
+            if (userPosts.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 40px; grid-column: 1/-1;">No photos or videos yet.</p>';
+                return;
+            }
+            
+            container.innerHTML = userPosts.map(post => {
+                if (post.media.type === 'image') {
+                    return `
+                        <div style="position: relative; padding-bottom: 100%; overflow: hidden; border-radius: 8px; cursor: pointer;" onclick="viewMedia('${post.id}')">
+                            <img src="${post.media.url}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    `;
+                } else if (post.media.type === 'video') {
+                    return `
+                        <div style="position: relative; padding-bottom: 100%; overflow: hidden; border-radius: 8px; background: #000;">
+                            <video src="${post.media.url}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;"></video>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 40px;">▶️</div>
+                        </div>
+                    `;
+                }
+                return '';
+            }).join('');
+        }
+        
+        function viewMedia(postId) {
+            const post = posts.find(p => p.id == postId);
+            if (!post || !post.media) return;
+            
+            // Create modal to view full size
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; display: flex; align-items: center; justify-content: center;';
+            modal.onclick = () => modal.remove();
+            
+            if (post.media.type === 'image') {
+                modal.innerHTML = `<img src="${post.media.url}" style="max-width: 90%; max-height: 90%; border-radius: 10px;">`;
+            } else {
+                modal.innerHTML = `<video src="${post.media.url}" controls autoplay style="max-width: 90%; max-height: 90%; border-radius: 10px;"></video>`;
+            }
+            
+            document.body.appendChild(modal);
         }
 
         function renderUserPosts() {
@@ -3949,14 +4205,37 @@
             }
             
             const platformInfo = {
-                'amazon': 'Amazon Prime Video Watch Party allows up to 100 people to watch together in sync! An admin will start the session and share the link.',
-                'hulu': 'Hulu Watch Party supports up to 8 people watching together! Perfect for small group movie nights.',
-                'disney': 'Disney+ GroupWatch lets up to 7 people watch together with synchronized playback and reactions!',
-                'plex': 'Plex Watch Together allows you to watch content from our Plex server with other members!',
-                'teleparty': 'Teleparty (browser extension) works with Netflix, Disney+, Hulu, and HBO Max! Install the extension and join the party.'
+                'amazon': 'Amazon Prime Video Watch Party',
+                'hulu': 'Hulu Watch Party',
+                'disney': 'Disney+ GroupWatch',
+                'plex': 'Plex Watch Together',
+                'teleparty': 'Teleparty (Browser Extension)'
             };
             
-            alert(`🎬 ${platform.toUpperCase()} Watch Party\n\n${platformInfo[platform]}\n\nContact an admin to start a session!`);
+            // Show player section
+            document.getElementById('movie-player-section').style.display = 'block';
+            
+            const playerContainer = document.getElementById('movie-player-container');
+            playerContainer.innerHTML = `
+                <div style="padding: 40px; text-align: center; background: rgba(107, 70, 193, 0.1);">
+                    <h3 style="color: #6b46c1; margin-bottom: 15px;">🎬 ${platformInfo[platform]}</h3>
+                    <p style="color: #ccc; margin-bottom: 20px;">To start a movie night:</p>
+                    <ol style="color: #999; text-align: left; max-width: 400px; margin: 0 auto; line-height: 2;">
+                        <li>Contact an admin to start the ${platform} watch party</li>
+                        <li>Admin will create the session and share the link</li>
+                        <li>Click the shared link to join synchronized viewing</li>
+                        <li>Chat with other viewers in real-time!</li>
+                    </ol>
+                    <p style="color: #6b46c1; margin-top: 20px; font-weight: 600;">📧 Contact admins via Messages or Admin Penny</p>
+                </div>
+            `;
+            
+            alert(`🎬 ${platformInfo[platform]}\n\nMovie player section now visible! Contact an admin to start a session.`);
+        }
+        
+        function stopMovie() {
+            document.getElementById('movie-player-section').style.display = 'none';
+            document.getElementById('movie-player-container').innerHTML = '';
         }
 
         // VC Room Functions
@@ -4229,6 +4508,12 @@
             }
             if (document.getElementById('profile-username-display')) {
                 document.getElementById('profile-username-display').textContent = '@' + currentUser.username;
+            }
+            if (document.getElementById('profile-followers-display')) {
+                document.getElementById('profile-followers-display').textContent = (currentUser.followers || []).length;
+            }
+            if (document.getElementById('profile-following-display')) {
+                document.getElementById('profile-following-display').textContent = (currentUser.following || []).length;
             }
             if (document.getElementById('vc-current-user-name')) {
                 document.getElementById('vc-current-user-name').textContent = currentUser.username;
