@@ -1983,6 +1983,61 @@
                     <h2 style="color: #dc2626; margin-bottom: 20px;">🔒 Admin Control Panel</h2>
                     
                     <div class="admin-grid">
+                        <!-- Add/Remove Admins -->
+                        <div class="admin-card">
+                            <h3>👑 Manage Admins</h3>
+                            <div style="margin-top: 15px;">
+                                <h4 style="color: #6b46c1; margin-bottom: 10px; font-size: 16px;">Add New Admin</h4>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" id="new-admin-email" placeholder="admin@example.com">
+                                </div>
+                                <div class="form-group">
+                                    <label>Role</label>
+                                    <select id="new-admin-role">
+                                        <option value="owner">Owner</option>
+                                        <option value="admin">Admin</option>
+                                        <option value="staff">Staff</option>
+                                    </select>
+                                </div>
+                                <button class="auth-button" onclick="addNewAdmin()">Add Admin</button>
+                                
+                                <h4 style="color: #6b46c1; margin: 20px 0 10px 0; font-size: 16px;">Current Admins</h4>
+                                <div id="current-admins-list" style="max-height: 300px; overflow-y: auto;">
+                                    <!-- Admin list will appear here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Manual Badge Assignment -->
+                        <div class="admin-card">
+                            <h3>🏅 Assign Badge Manually</h3>
+                            <p style="color: #999; margin-bottom: 15px; font-size: 14px;">Grant badges to users directly without application</p>
+                            <div class="form-group">
+                                <label>User Email</label>
+                                <input type="email" id="manual-badge-email" placeholder="user@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Badge Type</label>
+                                <select id="manual-badge-type">
+                                    <option value="verified">✓ Verified</option>
+                                    <option value="og">🏆 OG</option>
+                                    <option value="developer">💻 Developer</option>
+                                    <option value="builder">🏗️ Builder</option>
+                                    <option value="scripter">📜 Scripter</option>
+                                    <option value="artist">🎨 Artist</option>
+                                    <option value="3d-modeler">🗿 3D Modeler</option>
+                                    <option value="helper">🤝 Helper</option>
+                                    <option value="mentor">👨‍🏫 Mentor</option>
+                                    <option value="content-creator">📹 Content Creator</option>
+                                    <option value="streamer">📺 Streamer</option>
+                                    <option value="partner">🤝 Partner</option>
+                                    <option value="sponsor">💎 Sponsor</option>
+                                </select>
+                            </div>
+                            <button class="auth-button" onclick="manuallyAssignBadge()">Assign Badge</button>
+                        </div>
+
                         <!-- Streaming Credentials -->
                         <div class="admin-card">
                             <h3>🎬 Streaming Credentials</h3>
@@ -2174,6 +2229,8 @@
         let mediaUpload = null;
         let micOn = false;
         let camOn = false;
+        let localStream = null;
+        let screenStream = null;
 
         // Initialize App
         function init() {
@@ -2909,20 +2966,15 @@
         }
 
         // VC Functions
-        let localStream = null;
-        let screenStream = null;
-        let vcParticipants = [];
-        
         function toggleMic() {
-            if (!localStream) {
-                alert('Please join VC first!');
-                return;
-            }
-            
-            micOn = !micOn;
-            const audioTrack = localStream.getAudioTracks()[0];
-            if (audioTrack) {
-                audioTrack.enabled = micOn;
+            if (localStream) {
+                const audioTrack = localStream.getAudioTracks()[0];
+                if (audioTrack) {
+                    micOn = !micOn;
+                    audioTrack.enabled = micOn;
+                }
+            } else {
+                micOn = !micOn;
             }
             
             const btn = document.getElementById('mic-btn');
@@ -2933,15 +2985,14 @@
         }
 
         function toggleCamera() {
-            if (!localStream) {
-                alert('Please join VC first!');
-                return;
-            }
-            
-            camOn = !camOn;
-            const videoTrack = localStream.getVideoTracks()[0];
-            if (videoTrack) {
-                videoTrack.enabled = camOn;
+            if (localStream) {
+                const videoTrack = localStream.getVideoTracks()[0];
+                if (videoTrack) {
+                    camOn = !camOn;
+                    videoTrack.enabled = camOn;
+                }
+            } else {
+                camOn = !camOn;
             }
             
             const btn = document.getElementById('cam-btn');
@@ -2955,28 +3006,30 @@
             try {
                 screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
                 
-                // Add screen share to video grid
                 const videoGrid = document.getElementById('vc-video-grid');
-                const screenBox = document.createElement('div');
-                screenBox.className = 'video-participant';
-                screenBox.id = 'screen-share-box';
-                screenBox.innerHTML = `
-                    <video id="screen-video" autoplay playsinline style="width: 100%; height: 100%; object-fit: contain;"></video>
-                    <div class="participant-name">${currentUser.username}'s Screen</div>
-                `;
-                videoGrid.appendChild(screenBox);
-                
-                document.getElementById('screen-video').srcObject = screenStream;
-                
-                // Handle screen share stop
-                screenStream.getVideoTracks()[0].addEventListener('ended', () => {
-                    screenBox.remove();
-                    screenStream = null;
-                });
-                
-                alert('Screen sharing started! Others can see your screen.');
+                if (videoGrid) {
+                    const screenBox = document.createElement('div');
+                    screenBox.className = 'video-participant';
+                    screenBox.id = 'screen-share-box';
+                    screenBox.innerHTML = `
+                        <video autoplay playsinline style="width: 100%; height: 100%; object-fit: contain;"></video>
+                        <div class="participant-name">${currentUser.username}'s Screen</div>
+                    `;
+                    videoGrid.appendChild(screenBox);
+                    
+                    screenBox.querySelector('video').srcObject = screenStream;
+                    
+                    screenStream.getVideoTracks()[0].addEventListener('ended', () => {
+                        screenBox.remove();
+                        screenStream = null;
+                    });
+                    
+                    alert('✅ Screen sharing started!');
+                }
             } catch (error) {
-                alert('Screen share cancelled or error: ' + error.message);
+                if (error.name !== 'NotAllowedError') {
+                    alert('Screen share error: ' + error.message);
+                }
             }
         }
 
@@ -3762,104 +3815,147 @@
         let vcParticipants = [];
 
         function toggleVCMic() {
-            vcMicOn = !vcMicOn;
+            if (localStream) {
+                const audioTrack = localStream.getAudioTracks()[0];
+                if (audioTrack) {
+                    vcMicOn = !vcMicOn;
+                    audioTrack.enabled = vcMicOn;
+                }
+            } else {
+                vcMicOn = !vcMicOn;
+            }
+            
             const btn = document.getElementById('vc-mic-btn');
             btn.textContent = vcMicOn ? '🎤 Mic: ON' : '🎤 Mic: OFF';
             btn.style.background = vcMicOn ? 'rgba(16, 185, 129, 0.3)' : 'rgba(107, 70, 193, 0.2)';
             btn.style.borderColor = vcMicOn ? '#10b981' : '#6b46c1';
             btn.style.color = vcMicOn ? '#10b981' : '#6b46c1';
             
-            document.getElementById('vc-user-mic-status').textContent = vcMicOn ? '🎤 Active' : '🎤 Muted';
-            document.getElementById('vc-you-mic').textContent = vcMicOn ? '🎤 Active' : '🎤 Muted';
+            const userMicStatus = document.getElementById('vc-user-mic-status');
+            const youMicStatus = document.getElementById('vc-you-mic');
+            if (userMicStatus) userMicStatus.textContent = vcMicOn ? '🎤 Active' : '🎤 Muted';
+            if (youMicStatus) youMicStatus.textContent = vcMicOn ? '🎤 Active' : '🎤 Muted';
         }
 
         function toggleVCCamera() {
-            vcCamOn = !vcCamOn;
+            if (localStream) {
+                const videoTrack = localStream.getVideoTracks()[0];
+                if (videoTrack) {
+                    vcCamOn = !vcCamOn;
+                    videoTrack.enabled = vcCamOn;
+                }
+            } else {
+                vcCamOn = !vcCamOn;
+            }
+            
             const btn = document.getElementById('vc-cam-btn');
             btn.textContent = vcCamOn ? '📹 Camera: ON' : '📹 Camera: OFF';
             btn.style.background = vcCamOn ? 'rgba(16, 185, 129, 0.3)' : 'rgba(107, 70, 193, 0.2)';
             btn.style.borderColor = vcCamOn ? '#10b981' : '#6b46c1';
             btn.style.color = vcCamOn ? '#10b981' : '#6b46c1';
             
-            document.getElementById('vc-user-cam-status').textContent = vcCamOn ? '📹 Active' : '📹 Off';
-            document.getElementById('vc-you-cam').textContent = vcCamOn ? '📹 Active' : '📹 Off';
+            const userCamStatus = document.getElementById('vc-user-cam-status');
+            const youCamStatus = document.getElementById('vc-you-cam');
+            if (userCamStatus) userCamStatus.textContent = vcCamOn ? '📹 Active' : '📹 Off';
+            if (youCamStatus) youCamStatus.textContent = vcCamOn ? '📹 Active' : '📹 Off';
         }
 
-        function startScreenShare() {
+        async function startScreenShare() {
             if (!vcMicOn && !vcCamOn) {
                 alert('Please enable your microphone or camera first!');
                 return;
             }
-            alert('Screen sharing started! Your screen is now visible to other participants.');
+            
+            try {
+                screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                
+                const videoGrid = document.getElementById('vc-video-grid');
+                if (videoGrid) {
+                    const screenBox = document.createElement('div');
+                    screenBox.className = 'video-participant';
+                    screenBox.id = 'screen-share-box';
+                    screenBox.innerHTML = `
+                        <video autoplay playsinline style="width: 100%; height: 100%; object-fit: contain;"></video>
+                        <div class="participant-name">${currentUser.username}'s Screen</div>
+                    `;
+                    videoGrid.appendChild(screenBox);
+                    screenBox.querySelector('video').srcObject = screenStream;
+                    
+                    screenStream.getVideoTracks()[0].addEventListener('ended', () => {
+                        screenBox.remove();
+                        screenStream = null;
+                    });
+                    
+                    alert('✅ Screen sharing started! Your screen is now visible to other participants.');
+                }
+            } catch (error) {
+                if (error.name !== 'NotAllowedError') {
+                    alert('Screen share error: ' + error.message);
+                }
+            }
         }
 
         async function joinVCRoom() {
             try {
-                // Request camera and microphone access
-                localStream = await navigator.mediaDevices.getUserMedia({ 
-                    video: true, 
-                    audio: true 
-                });
+                localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
                 
-                micOn = true;
-                camOn = true;
+                vcMicOn = true;
+                vcCamOn = true;
                 
                 // Add local video to grid
                 const videoGrid = document.getElementById('vc-video-grid');
-                const videoBox = document.createElement('div');
-                videoBox.className = 'video-participant';
-                videoBox.id = 'local-video-box';
-                videoBox.innerHTML = `
-                    <video id="local-video" autoplay muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
-                    <div class="participant-name">${currentUser.username} (You)</div>
-                `;
-                videoGrid.appendChild(videoBox);
+                if (videoGrid) {
+                    const videoBox = document.createElement('div');
+                    videoBox.className = 'video-participant';
+                    videoBox.id = 'local-video-box';
+                    videoBox.innerHTML = `
+                        <video autoplay muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+                        <div class="participant-name">${currentUser.username} (You)</div>
+                    `;
+                    videoGrid.appendChild(videoBox);
+                    videoBox.querySelector('video').srcObject = localStream;
+                }
                 
-                document.getElementById('local-video').srcObject = localStream;
+                // Update VC button states
+                document.getElementById('vc-mic-btn').textContent = '🎤 Mic: ON';
+                document.getElementById('vc-mic-btn').style.background = 'rgba(16, 185, 129, 0.3)';
+                document.getElementById('vc-mic-btn').style.borderColor = '#10b981';
+                document.getElementById('vc-cam-btn').textContent = '📹 Camera: ON';
+                document.getElementById('vc-cam-btn').style.background = 'rgba(16, 185, 129, 0.3)';
+                document.getElementById('vc-cam-btn').style.borderColor = '#10b981';
                 
-                // Update button states
-                document.getElementById('mic-btn').textContent = '🎤 Microphone: ON';
-                document.getElementById('mic-btn').style.background = 'rgba(16, 185, 129, 0.3)';
-                document.getElementById('mic-btn').style.borderColor = '#10b981';
-                document.getElementById('mic-btn').style.color = '#10b981';
+                // Simulate adding AI participants with voices
+                vcParticipants = [];
                 
-                document.getElementById('cam-btn').textContent = '📹 Camera: ON';
-                document.getElementById('cam-btn').style.background = 'rgba(16, 185, 129, 0.3)';
-                document.getElementById('cam-btn').style.borderColor = '#10b981';
-                document.getElementById('cam-btn').style.color = '#10b981';
-                
-                // Add AI participants with voices
                 setTimeout(() => {
-                    addAIToVC('Penny', "Oh yah! Hey there! Don'tcha know I'm here to help ya!");
+                    speakAI("Oh yah! Hey there! Don'tcha know I'm Penny, your AI manager!");
                     vcParticipants.push({ name: 'Penny', mic: true, cam: false });
                     updateVCParticipants();
                 }, 2000);
                 
                 setTimeout(() => {
-                    addAIToVC('Betty White', "Hello sweetie! It's wonderful to chat with you!");
+                    speakAI("Hello sweetie! It's Betty White, wonderful to chat with you!");
                     vcParticipants.push({ name: 'Betty White', mic: true, cam: true });
                     updateVCParticipants();
                 }, 4000);
                 
                 setTimeout(() => {
-                    addAIToVC('Adam Sandler', "Hey! What's up everyone? This is awesome!");
+                    speakAI("Hey everyone! Adam Sandler here, this is awesome!");
                     vcParticipants.push({ name: 'Adam Sandler', mic: true, cam: false });
                     updateVCParticipants();
                 }, 6000);
                 
                 updateVCParticipants();
-                
                 alert('✅ Joined VC! Your camera and microphone are active.');
                 
             } catch (error) {
-                alert('Error accessing camera/microphone: ' + error.message + '\n\nMake sure you grant permission!');
+                alert('Error accessing camera/microphone: ' + error.message + '\n\nPlease grant permission!');
             }
         }
         
-        function addAIToVC(name, greeting) {
-            // Make AI speak using Web Speech API
+        function speakAI(text) {
             if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(greeting);
+                const utterance = new SpeechSynthesisUtterance(text);
                 utterance.rate = 0.9;
                 utterance.pitch = 1.1;
                 speechSynthesis.speak(utterance);
@@ -3877,19 +3973,26 @@
                 screenStream = null;
             }
             
-            document.getElementById('vc-video-grid').innerHTML = '';
-            vcParticipants = [];
-            updateVCParticipants();
+            const videoGrid = document.getElementById('vc-video-grid');
+            if (videoGrid) {
+                videoGrid.innerHTML = '';
+            }
             
-            micOn = false;
-            camOn = false;
+            vcParticipants = [];
+            vcMicOn = false;
+            vcCamOn = false;
+            updateVCParticipants();
             
             alert('Left VC Room');
         }
 
         function updateVCParticipants() {
             const list = document.getElementById('vc-participants-list');
-            const userCard = list.querySelector('.celebrity-card');
+            if (!list) return;
+            
+            // Remove all AI participant cards (keep only the user card)
+            const aiCards = list.querySelectorAll('.celebrity-card:not(:first-child)');
+            aiCards.forEach(card => card.remove());
             
             // Add AI participants
             vcParticipants.forEach(p => {
@@ -4019,6 +4122,127 @@
             if (document.getElementById('profile-birthday')) {
                 document.getElementById('profile-birthday').value = currentUser.birthday || '';
             }
+        }
+
+        // Admin Panel Functions - Add/Remove Admins
+        function addNewAdmin() {
+            const email = document.getElementById('new-admin-email').value.trim();
+            const role = document.getElementById('new-admin-role').value;
+            
+            if (!email) {
+                alert('Please enter an email address');
+                return;
+            }
+            
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.email === email);
+            
+            if (user) {
+                // Update existing user
+                user.role = role;
+                user.tier = 'platinum';
+                if (!user.badges.includes(role)) {
+                    user.badges.push(role);
+                }
+                localStorage.setItem('users', JSON.stringify(users));
+                
+                // Update if it's current user
+                if (currentUser && currentUser.email === email) {
+                    currentUser = user;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                }
+                
+                alert(`✅ ${email} is now ${role}!`);
+            } else {
+                alert(`❌ User with email ${email} not found. They must sign up first.`);
+            }
+            
+            document.getElementById('new-admin-email').value = '';
+            loadCurrentAdmins();
+        }
+
+        function loadCurrentAdmins() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const admins = users.filter(u => u.role === 'owner' || u.role === 'admin' || u.role === 'staff');
+            
+            const container = document.getElementById('current-admins-list');
+            if (!container) return;
+            
+            if (admins.length === 0) {
+                container.innerHTML = '<p style="color: #999; padding: 10px;">No admins yet</p>';
+                return;
+            }
+            
+            container.innerHTML = admins.map(admin => `
+                <div style="background: rgba(40, 40, 40, 0.6); border-radius: 10px; padding: 15px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <p style="color: #fff; font-weight: 600;">${admin.name || admin.username}</p>
+                        <p style="color: #999; font-size: 14px;">${admin.email}</p>
+                        <span class="badge ${admin.role}">${admin.role}</span>
+                    </div>
+                    <button onclick="removeAdmin('${admin.email}')" style="background: #dc2626; border: none; padding: 8px 16px; border-radius: 8px; color: #fff; cursor: pointer; font-size: 14px;">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        function removeAdmin(email) {
+            if (!confirm(`Are you sure you want to remove ${email} from admins?`)) {
+                return;
+            }
+            
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.email === email);
+            
+            if (user) {
+                user.role = 'user';
+                user.tier = 'free';
+                user.badges = user.badges.filter(b => b !== 'owner' && b !== 'admin' && b !== 'staff');
+                localStorage.setItem('users', JSON.stringify(users));
+                
+                alert(`✅ Removed ${email} from admins`);
+                loadCurrentAdmins();
+            }
+        }
+
+        // Admin Panel Functions - Manual Badge Assignment
+        function manuallyAssignBadge() {
+            const email = document.getElementById('manual-badge-email').value.trim();
+            const badgeType = document.getElementById('manual-badge-type').value;
+            
+            if (!email) {
+                alert('Please enter a user email');
+                return;
+            }
+            
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.email === email);
+            
+            if (!user) {
+                alert(`❌ User with email ${email} not found`);
+                return;
+            }
+            
+            if (!user.badges) {
+                user.badges = [];
+            }
+            
+            if (user.badges.includes(badgeType)) {
+                alert(`User already has the ${badgeType} badge`);
+                return;
+            }
+            
+            user.badges.push(badgeType);
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            // Update if it's current user
+            if (currentUser && currentUser.email === email) {
+                currentUser.badges = user.badges;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                updateUI();
+            }
+            
+            alert(`✅ Assigned ${badgeType} badge to ${user.name || user.username}!`);
+            document.getElementById('manual-badge-email').value = '';
         }
     </script>
 </body>
