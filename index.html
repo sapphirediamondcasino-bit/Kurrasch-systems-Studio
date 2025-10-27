@@ -1627,7 +1627,7 @@ function updateUserInterface() {
     const followingCount = document.getElementById('userFollowingCount');
     if (followingCount) followingCount.textContent = currentUser.following.length;
     
-    const headerTokens = document.getElementById('headerTokensDisplay');
+    const headerTokens = document.getElementById('tokenCount'); // FIXED ID
     if (headerTokens) headerTokens.textContent = currentUser.tokens;
     
     const tokensBalance = document.getElementById('tokensBalanceDisplay');
@@ -1752,7 +1752,7 @@ function updateUserCover(input) {
 // POSTS SYSTEM
 // ===================================
 function publishNewPost() {
-    const textarea = document.getElementById('newPostTextarea');
+    const textarea = document.getElementById('newPostContent'); // FIXED ID
     if (!textarea) return; // Defensive check
     
     const content = textarea.value.trim();
@@ -1784,7 +1784,7 @@ function publishNewPost() {
     updateUserInterface();
     
     // Clear form - with defensive check
-    const clearTextarea = document.getElementById('newPostTextarea');
+    const clearTextarea = document.getElementById('newPostContent'); // FIXED ID
     if (clearTextarea) clearTextarea.value = '';
     clearMediaPreview();
     
@@ -1843,7 +1843,7 @@ function publishNewPost() {
 
 function loadAllPosts() {
     const allPosts = DataStorage.get('posts') || [];
-    const container = document.getElementById('postsDisplayContainer');
+    const container = document.getElementById('postsContainer'); // FIXED ID
     
     // Defensive check - exit if element doesn't exist
     if (!container) return;
@@ -2068,8 +2068,8 @@ function startAICelebrityActivity() {
 // RENDER ALL CELEBRITIES
 // ===================================
 function renderAllCelebrities() {
-    const grid = document.getElementById('celebritiesDisplayGrid');
-    const onlineList = document.getElementById('onlineCelebritiesList');
+    const grid = document.getElementById('celebrityGrid'); // FIXED ID
+    const onlineList = document.getElementById('contactsList'); // FIXED ID
     
     // Defensive checks - only update if elements exist
     if (grid) {
@@ -2114,8 +2114,8 @@ function chatWithCelebrity(celebrityId) {
 // PENNY AI CHAT - SMART MINNESOTA AI
 // ===================================
 function sendPennyMessage() {
-    const input = document.getElementById('pennyMessageInput');
-    const chatContainer = document.getElementById('pennyChatDisplay');
+    const input = document.getElementById('pennyInput'); // FIXED ID
+    const chatContainer = document.getElementById('pennyMessages'); // FIXED ID
     
     // Defensive checks
     if (!input || !chatContainer) return;
