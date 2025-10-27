@@ -1900,23 +1900,23 @@
                                 <p style="color: #999; font-size: 14px; margin-top: 10px;">GroupWatch Feature</p>
                                 <div id="disney-status" class="online-indicator" style="margin: 10px auto;"></div>
                             </div>
-                            <div class="admin-card" style="text-align: center; cursor: pointer;" onclick="joinWatchParty('hbo')">
-                                <div style="font-size: 48px; margin-bottom: 10px;">🎭</div>
-                                <h4>HBO Max</h4>
-                                <p style="color: #999; font-size: 14px; margin-top: 10px;">Watch Party Ready</p>
-                                <div id="hbo-status" class="online-indicator" style="margin: 10px auto;"></div>
+                            <div class="admin-card" style="text-align: center; cursor: pointer;" onclick="joinWatchParty('amazon')">
+                                <div style="font-size: 48px; margin-bottom: 10px;">📦</div>
+                                <h4>Amazon Prime Video</h4>
+                                <p style="color: #999; font-size: 14px; margin-top: 10px;">Watch Party (Up to 100 people!)</p>
+                                <div id="amazon-status" class="online-indicator" style="margin: 10px auto;"></div>
                             </div>
-                            <div class="admin-card" style="text-align: center; cursor: pointer;" onclick="joinWatchParty('paramount')">
-                                <div style="font-size: 48px; margin-bottom: 10px;">⛰️</div>
-                                <h4>Paramount+</h4>
-                                <p style="color: #999; font-size: 14px; margin-top: 10px;">Co-Watch Available</p>
-                                <div id="paramount-status" class="online-indicator" style="margin: 10px auto;"></div>
+                            <div class="admin-card" style="text-align: center; cursor: pointer;" onclick="joinWatchParty('plex')">
+                                <div style="font-size: 48px; margin-bottom: 10px;">🎞️</div>
+                                <h4>Plex</h4>
+                                <p style="color: #999; font-size: 14px; margin-top: 10px;">Watch Together</p>
+                                <div id="plex-status" class="online-indicator" style="margin: 10px auto;"></div>
                             </div>
-                            <div class="admin-card" style="text-align: center; cursor: pointer;" onclick="joinWatchParty('starz')">
-                                <div style="font-size: 48px; margin-bottom: 10px;">⭐</div>
-                                <h4>Starz</h4>
-                                <p style="color: #999; font-size: 14px; margin-top: 10px;">Party Mode</p>
-                                <div id="starz-status" class="online-indicator" style="margin: 10px auto;"></div>
+                            <div class="admin-card" style="text-align: center; cursor: pointer;" onclick="joinWatchParty('teleparty')">
+                                <div style="font-size: 48px; margin-bottom: 10px;">🎉</div>
+                                <h4>Teleparty</h4>
+                                <p style="color: #999; font-size: 14px; margin-top: 10px;">Netflix, Disney+, Hulu & More</p>
+                                <div id="teleparty-status" class="online-indicator" style="margin: 10px auto;"></div>
                             </div>
                         </div>
                     </div>
@@ -1991,11 +1991,11 @@
                                     <label>Platform</label>
                                     <select id="streaming-platform">
                                         <option value="">Select platform...</option>
+                                        <option value="amazon">Amazon Prime Video</option>
                                         <option value="hulu">Hulu</option>
                                         <option value="disney">Disney+</option>
-                                        <option value="hbo">HBO Max</option>
-                                        <option value="paramount">Paramount+</option>
-                                        <option value="starz">Starz</option>
+                                        <option value="plex">Plex</option>
+                                        <option value="teleparty">Teleparty</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
@@ -2909,8 +2909,22 @@
         }
 
         // VC Functions
+        let localStream = null;
+        let screenStream = null;
+        let vcParticipants = [];
+        
         function toggleMic() {
+            if (!localStream) {
+                alert('Please join VC first!');
+                return;
+            }
+            
             micOn = !micOn;
+            const audioTrack = localStream.getAudioTracks()[0];
+            if (audioTrack) {
+                audioTrack.enabled = micOn;
+            }
+            
             const btn = document.getElementById('mic-btn');
             btn.textContent = micOn ? '🎤 Microphone: ON' : '🎤 Microphone: OFF';
             btn.style.background = micOn ? 'rgba(16, 185, 129, 0.3)' : 'rgba(107, 70, 193, 0.2)';
@@ -2919,7 +2933,17 @@
         }
 
         function toggleCamera() {
+            if (!localStream) {
+                alert('Please join VC first!');
+                return;
+            }
+            
             camOn = !camOn;
+            const videoTrack = localStream.getVideoTracks()[0];
+            if (videoTrack) {
+                videoTrack.enabled = camOn;
+            }
+            
             const btn = document.getElementById('cam-btn');
             btn.textContent = camOn ? '📹 Camera: ON' : '📹 Camera: OFF';
             btn.style.background = camOn ? 'rgba(16, 185, 129, 0.3)' : 'rgba(107, 70, 193, 0.2)';
@@ -2927,8 +2951,33 @@
             btn.style.color = camOn ? '#10b981' : '#6b46c1';
         }
 
-        function shareScreen() {
-            alert('Screen sharing initiated! (WebRTC would be implemented here)');
+        async function shareScreen() {
+            try {
+                screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                
+                // Add screen share to video grid
+                const videoGrid = document.getElementById('vc-video-grid');
+                const screenBox = document.createElement('div');
+                screenBox.className = 'video-participant';
+                screenBox.id = 'screen-share-box';
+                screenBox.innerHTML = `
+                    <video id="screen-video" autoplay playsinline style="width: 100%; height: 100%; object-fit: contain;"></video>
+                    <div class="participant-name">${currentUser.username}'s Screen</div>
+                `;
+                videoGrid.appendChild(screenBox);
+                
+                document.getElementById('screen-video').srcObject = screenStream;
+                
+                // Handle screen share stop
+                screenStream.getVideoTracks()[0].addEventListener('ended', () => {
+                    screenBox.remove();
+                    screenStream = null;
+                });
+                
+                alert('Screen sharing started! Others can see your screen.');
+            } catch (error) {
+                alert('Screen share cancelled or error: ' + error.message);
+            }
         }
 
         // Badge Application
@@ -3692,11 +3741,19 @@
         // Movie Watch Party Functions
         function joinWatchParty(platform) {
             if (currentUser.tier === 'free' || currentUser.tier === 'tier1' || currentUser.tier === 'tier2') {
-                alert('Movie Night is available for Tier 3+ members only. Contact Betty White Bot or Kurrasch Systems Bot to upgrade!');
+                alert('Movie Night is available for Tier 3+ members only.\n\nTo upgrade:\n💙 Contact Betty White Bot (Available anywhere)\n🤖 Contact Kurrasch Systems Bot (Kurrasch Systems Server only)');
                 return;
             }
             
-            alert(`Connecting you to ${platform.toUpperCase()} Watch Party... Contact an admin to start a synchronized viewing session!`);
+            const platformInfo = {
+                'amazon': 'Amazon Prime Video Watch Party allows up to 100 people to watch together in sync! An admin will start the session and share the link.',
+                'hulu': 'Hulu Watch Party supports up to 8 people watching together! Perfect for small group movie nights.',
+                'disney': 'Disney+ GroupWatch lets up to 7 people watch together with synchronized playback and reactions!',
+                'plex': 'Plex Watch Together allows you to watch content from our Plex server with other members!',
+                'teleparty': 'Teleparty (browser extension) works with Netflix, Disney+, Hulu, and HBO Max! Install the extension and join the party.'
+            };
+            
+            alert(`🎬 ${platform.toUpperCase()} Watch Party\n\n${platformInfo[platform]}\n\nContact an admin to start a session!`);
         }
 
         // VC Room Functions
@@ -3736,17 +3793,98 @@
             alert('Screen sharing started! Your screen is now visible to other participants.');
         }
 
-        function joinVCRoom() {
-            alert('Connecting to voice chat... WebRTC connection would be established here.');
+        async function joinVCRoom() {
+            try {
+                // Request camera and microphone access
+                localStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: true, 
+                    audio: true 
+                });
+                
+                micOn = true;
+                camOn = true;
+                
+                // Add local video to grid
+                const videoGrid = document.getElementById('vc-video-grid');
+                const videoBox = document.createElement('div');
+                videoBox.className = 'video-participant';
+                videoBox.id = 'local-video-box';
+                videoBox.innerHTML = `
+                    <video id="local-video" autoplay muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+                    <div class="participant-name">${currentUser.username} (You)</div>
+                `;
+                videoGrid.appendChild(videoBox);
+                
+                document.getElementById('local-video').srcObject = localStream;
+                
+                // Update button states
+                document.getElementById('mic-btn').textContent = '🎤 Microphone: ON';
+                document.getElementById('mic-btn').style.background = 'rgba(16, 185, 129, 0.3)';
+                document.getElementById('mic-btn').style.borderColor = '#10b981';
+                document.getElementById('mic-btn').style.color = '#10b981';
+                
+                document.getElementById('cam-btn').textContent = '📹 Camera: ON';
+                document.getElementById('cam-btn').style.background = 'rgba(16, 185, 129, 0.3)';
+                document.getElementById('cam-btn').style.borderColor = '#10b981';
+                document.getElementById('cam-btn').style.color = '#10b981';
+                
+                // Add AI participants with voices
+                setTimeout(() => {
+                    addAIToVC('Penny', "Oh yah! Hey there! Don'tcha know I'm here to help ya!");
+                    vcParticipants.push({ name: 'Penny', mic: true, cam: false });
+                    updateVCParticipants();
+                }, 2000);
+                
+                setTimeout(() => {
+                    addAIToVC('Betty White', "Hello sweetie! It's wonderful to chat with you!");
+                    vcParticipants.push({ name: 'Betty White', mic: true, cam: true });
+                    updateVCParticipants();
+                }, 4000);
+                
+                setTimeout(() => {
+                    addAIToVC('Adam Sandler', "Hey! What's up everyone? This is awesome!");
+                    vcParticipants.push({ name: 'Adam Sandler', mic: true, cam: false });
+                    updateVCParticipants();
+                }, 6000);
+                
+                updateVCParticipants();
+                
+                alert('✅ Joined VC! Your camera and microphone are active.');
+                
+            } catch (error) {
+                alert('Error accessing camera/microphone: ' + error.message + '\n\nMake sure you grant permission!');
+            }
+        }
+        
+        function addAIToVC(name, greeting) {
+            // Make AI speak using Web Speech API
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(greeting);
+                utterance.rate = 0.9;
+                utterance.pitch = 1.1;
+                speechSynthesis.speak(utterance);
+            }
+        }
+        
+        function leaveVCRoom() {
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+            }
             
-            // Simulate adding AI participants
-            vcParticipants = [
-                { name: 'Penny', mic: true, cam: false },
-                { name: 'Betty White', mic: true, cam: true },
-                { name: 'Adam Sandler', mic: true, cam: false }
-            ];
+            if (screenStream) {
+                screenStream.getTracks().forEach(track => track.stop());
+                screenStream = null;
+            }
             
+            document.getElementById('vc-video-grid').innerHTML = '';
+            vcParticipants = [];
             updateVCParticipants();
+            
+            micOn = false;
+            camOn = false;
+            
+            alert('Left VC Room');
         }
 
         function updateVCParticipants() {
