@@ -3,2863 +3,1868 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kurrasch Systems Studio - 28 AI Celebrities</title>
-    <link rel="icon" href="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png?ex=68ffb14d&is=68fe5fcd&hm=357467617bc0a9270f45eba06529dff853d02c83f4add41482f8fe87a8b089a2&">
+    <title>Kurrasch Systems Studio</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-            background: #000000;
-            color: #e4e6eb;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
             overflow-x: hidden;
         }
 
-        /* Matrix Background - RED 0s & NAVY BLUE 1s */
-        #matrix {
+        /* Matrix Background */
+        #matrix-canvas {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 0;
-            pointer-events: none;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
         }
 
-        .app { position: relative; z-index: 1; }
-
-        /* Facebook-style Header */
-        .header {
-            position: sticky; top: 0;
-            background: rgba(10, 14, 39, 0.98);
-            border-bottom: 2px solid #00d4ff;
-            padding: 0.5rem 1rem;
-            display: flex;
-            justify-content: space-between;
+        /* Login/Signup Pages */
+        .auth-page {
+            display: none;
+            min-height: 100vh;
             align-items: center;
-            z-index: 100;
-            box-shadow: 0 2px 20px rgba(0, 212, 255, 0.3);
+            justify-content: center;
+            padding: 20px;
         }
 
-        .header-left { display: flex; align-items: center; gap: 1rem; }
-        
-        .logo-img {
-            width: 40px; height: 40px;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
-            object-fit: contain;
-        }
-
-        .search {
-            padding: 0.6rem 1rem;
-            background: rgba(0, 212, 255, 0.1);
-            border: 2px solid #00d4ff;
-            border-radius: 20px;
-            color: #fff;
-            width: 240px;
-        }
-
-        .search::placeholder { color: #8e8e8e; }
-        .search:focus { outline: none; box-shadow: 0 0 10px rgba(0, 212, 255, 0.5); }
-
-        .header-icons {
+        .auth-page.active {
             display: flex;
-            gap: 0.5rem;
         }
 
-        .icon-btn {
-            width: 40px; height: 40px;
-            background: rgba(0, 212, 255, 0.15);
-            border: none;
+        .auth-container {
+            background: rgba(20, 20, 20, 0.95);
+            border: 2px solid #6b46c1;
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 0 30px rgba(107, 70, 193, 0.3);
+        }
+
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .auth-logo img {
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            color: #00d4ff;
-            font-size: 20px;
+            border: 3px solid #6b46c1;
+        }
+
+        .auth-logo h1 {
+            color: #6b46c1;
+            font-size: 28px;
+            margin-top: 15px;
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            color: #ccc;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            background: rgba(40, 40, 40, 0.8);
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 12px 15px;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #6b46c1;
+            background: rgba(50, 50, 50, 0.9);
+        }
+
+        .auth-button {
+            background: linear-gradient(135deg, #6b46c1, #8b5cf6);
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .auth-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(107, 70, 193, 0.4);
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 20px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .auth-switch a {
+            color: #6b46c1;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .auth-switch a:hover {
+            text-decoration: underline;
+        }
+
+        /* Main Application */
+        #main-app {
+            display: none;
+        }
+
+        #main-app.active {
+            display: block;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(20, 20, 20, 0.98);
+            border-bottom: 2px solid #6b46c1;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .header-logo img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid #6b46c1;
+        }
+
+        .header-logo h2 {
+            color: #6b46c1;
+            font-size: 20px;
+        }
+
+        .header-search {
             position: relative;
         }
 
-        .icon-btn:hover {
-            background: rgba(0, 212, 255, 0.3);
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+        .header-search input {
+            background: rgba(40, 40, 40, 0.8);
+            border: 2px solid #333;
+            border-radius: 25px;
+            padding: 10px 20px;
+            width: 300px;
+            color: #fff;
+            font-size: 14px;
         }
 
-        .token-badge {
-            position: absolute;
-            top: -5px; right: -5px;
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-            color: #000;
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-weight: bold;
+        .header-search input:focus {
+            outline: none;
+            border-color: #6b46c1;
         }
 
-        /* Main Layout */
-        .main {
-            display: grid;
-            grid-template-columns: 300px 1fr 300px;
-            gap: 1rem;
-            max-width: 1600px;
-            margin: 1rem auto;
-            padding: 0 1rem;
-        }
-
-        .sidebar {
-            position: sticky; top: 80px;
-            height: fit-content;
-        }
-
-        .nav-item {
-            padding: 0.8rem 1rem;
-            margin: 0.3rem 0;
-            background: rgba(0, 212, 255, 0.1);
-            border-radius: 8px;
+        .header-right {
             display: flex;
             align-items: center;
-            gap: 0.8rem;
+            gap: 15px;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: rgba(107, 70, 193, 0.2);
+            border: 2px solid #6b46c1;
+            border-radius: 10px;
+            padding: 10px 20px;
+            color: #6b46c1;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            border: 1px solid transparent;
-            font-size: 15px;
         }
 
-        .nav-item:hover, .nav-item.active {
-            background: rgba(0, 212, 255, 0.25);
-            border-color: #00d4ff;
-            transform: translateX(5px);
-            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        .nav-btn:hover, .nav-btn.active {
+            background: #6b46c1;
+            color: #fff;
         }
 
-        .online-count {
-            padding: 0.8rem;
-            background: rgba(0, 212, 255, 0.15);
-            border: 1px solid #00d4ff;
-            border-radius: 8px;
-            text-align: center;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 8px 15px;
+            border-radius: 25px;
+            background: rgba(107, 70, 193, 0.2);
+            border: 2px solid #6b46c1;
+            transition: all 0.3s;
         }
 
-        .online-dot {
-            display: inline-block;
-            width: 8px; height: 8px;
-            background: #00ff00;
+        .user-menu:hover {
+            background: rgba(107, 70, 193, 0.4);
+        }
+
+        .user-avatar-small {
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
-            margin-right: 6px;
-            animation: pulse 2s infinite;
+            object-fit: cover;
+            border: 2px solid #6b46c1;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; box-shadow: 0 0 8px #00ff00; }
-            50% { opacity: 0.4; }
+        .user-name {
+            font-weight: 600;
+            color: #fff;
         }
 
-        .feed { min-height: 100vh; }
-        .page { display: none; }
-        .page.active { display: block; }
+        /* Main Container */
+        .main-container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-section {
+            background: rgba(20, 20, 20, 0.95);
+            border: 2px solid #6b46c1;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-section h3 {
+            color: #6b46c1;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #6b46c1;
+        }
+
+        .user-details h4 {
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .user-details p {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            background: rgba(40, 40, 40, 0.6);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            color: #6b46c1;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            color: #999;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .menu-item {
+            background: rgba(40, 40, 40, 0.6);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 12px 15px;
+            color: #ccc;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: rgba(107, 70, 193, 0.3);
+            border-color: #6b46c1;
+            color: #fff;
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            max-width: 700px;
+        }
+
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
 
         /* Post Creator */
         .post-creator {
-            background: rgba(20, 25, 45, 0.95);
-            border: 2px solid #00d4ff;
-            border-radius: 12px;
-            padding: 1.2rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+            background: rgba(20, 20, 20, 0.95);
+            border: 2px solid #6b46c1;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
 
         .post-creator-header {
             display: flex;
             align-items: center;
-            gap: 0.8rem;
-            margin-bottom: 1rem;
-        }
-
-        .post-creator-avatar {
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            border: 2px solid #00d4ff;
-            overflow: hidden;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
-        }
-
-        .post-creator-avatar img {
-            width: 100%; height: 100%;
-            object-fit: cover;
+            gap: 15px;
+            margin-bottom: 15px;
         }
 
         .post-creator textarea {
             width: 100%;
-            min-height: 80px;
-            background: rgba(0, 212, 255, 0.08);
-            border: 2px solid rgba(0, 212, 255, 0.3);
-            border-radius: 8px;
-            padding: 1rem;
-            color: #e4e6eb;
-            font-size: 15px;
+            background: rgba(40, 40, 40, 0.8);
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            color: #fff;
+            font-size: 16px;
             resize: vertical;
-            font-family: inherit;
-            margin-bottom: 1rem;
+            min-height: 100px;
+            margin-bottom: 15px;
         }
 
-        .post-creator textarea::placeholder { color: #8e8e8e; }
         .post-creator textarea:focus {
             outline: none;
-            border-color: #00d4ff;
-            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+            border-color: #6b46c1;
         }
 
-        .post-actions {
+        .post-options {
             display: flex;
-            gap: 0.8rem;
+            gap: 10px;
             flex-wrap: wrap;
-            border-top: 1px solid rgba(0, 212, 255, 0.2);
-            padding-top: 1rem;
+            margin-bottom: 15px;
         }
 
-        .post-action-btn {
-            padding: 0.6rem 1rem;
-            background: rgba(0, 212, 255, 0.15);
-            border: 2px solid transparent;
-            border-radius: 6px;
-            color: #00d4ff;
-            cursor: pointer;
+        .option-btn {
+            background: rgba(107, 70, 193, 0.2);
+            border: 2px solid #6b46c1;
+            border-radius: 10px;
+            padding: 10px 15px;
+            color: #6b46c1;
             font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
             transition: all 0.3s;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 8px;
         }
 
-        .post-action-btn:hover {
-            background: rgba(0, 212, 255, 0.3);
-            border-color: #00d4ff;
-            box-shadow: 0 0 12px rgba(0, 212, 255, 0.4);
+        .option-btn:hover {
+            background: rgba(107, 70, 193, 0.4);
         }
 
-        .btn-post {
-            margin-left: auto;
-            padding: 0.6rem 1.5rem;
-            background: linear-gradient(135deg, #00d4ff, #0099cc);
+        .post-btn {
+            background: linear-gradient(135deg, #6b46c1, #8b5cf6);
             border: none;
-            border-radius: 6px;
+            border-radius: 10px;
+            padding: 12px 30px;
             color: #fff;
-            font-weight: bold;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
         }
 
-        .btn-post:hover {
+        .post-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.5);
+            box-shadow: 0 5px 20px rgba(107, 70, 193, 0.4);
         }
 
-        /* Posts */
-        .post {
-            background: rgba(20, 25, 45, 0.95);
-            border: 2px solid rgba(0, 212, 255, 0.2);
-            border-radius: 12px;
-            padding: 1.2rem;
-            margin-bottom: 1.5rem;
-            transition: all 0.3s;
+        /* Posts Feed */
+        .posts-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
-        .post:hover {
-            border-color: #00d4ff;
-            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+        .post-card {
+            background: rgba(20, 20, 20, 0.95);
+            border: 2px solid #6b46c1;
+            border-radius: 15px;
+            padding: 20px;
         }
 
         .post-header {
             display: flex;
             align-items: center;
-            gap: 0.8rem;
-            margin-bottom: 1rem;
+            gap: 15px;
+            margin-bottom: 15px;
         }
 
-        .post-avatar {
-            width: 45px; height: 45px;
+        .post-author-avatar {
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            border: 2px solid #00d4ff;
-            overflow: hidden;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 25px;
-        }
-
-        .post-avatar img {
-            width: 100%; height: 100%;
             object-fit: cover;
+            border: 2px solid #6b46c1;
         }
 
-        .post-author-info { flex: 1; }
-
-        .post-author-name {
-            font-weight: 600;
-            color: #00d4ff;
-            cursor: pointer;
-            font-size: 15px;
+        .post-author-info h4 {
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 3px;
         }
 
-        .post-author-name:hover { text-decoration: underline; }
-
-        .post-badges {
-            display: flex;
-            gap: 4px;
-            margin: 4px 0;
-            flex-wrap: wrap;
-        }
-
-        .badge {
-            padding: 2px 8px;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
-            border-radius: 10px;
-            font-size: 10px;
-            font-weight: bold;
-        }
-
-        .badge.founder { background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; }
-        .badge.admin { background: linear-gradient(135deg, #ff0000, #cc0000); }
-        .badge.org { background: linear-gradient(135deg, #00ff00, #00cc00); color: #000; }
-        .badge.tier-1 { background: linear-gradient(135deg, #b300ff, #8b00cc); }
-        .badge.tier-2 { background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; }
-        .badge.tier-3 { background: linear-gradient(135deg, #00d4ff, #0099cc); }
-
-        .post-time {
-            color: #8e8e8e;
-            font-size: 12px;
+        .post-author-info p {
+            color: #999;
+            font-size: 13px;
         }
 
         .post-content {
-            margin: 1rem 0;
-            line-height: 1.6;
+            color: #ccc;
             font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 15px;
         }
 
         .post-media {
-            margin: 1rem 0;
-            border-radius: 8px;
+            margin-bottom: 15px;
+            border-radius: 10px;
             overflow: hidden;
-            background: #000;
         }
 
-        .post-media img, .post-media video, .post-media audio {
+        .post-media img, .post-media video {
             width: 100%;
-            max-height: 500px;
-            object-fit: contain;
+            display: block;
         }
 
-        .post-stats {
+        .post-actions {
             display: flex;
-            justify-content: space-between;
-            padding: 0.8rem 0;
-            border-top: 1px solid rgba(0, 212, 255, 0.2);
-            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
-            margin: 0.8rem 0;
+            gap: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #333;
+        }
+
+        .action-btn {
+            background: rgba(40, 40, 40, 0.6);
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 10px 20px;
+            color: #ccc;
             font-size: 14px;
-            color: #8e8e8e;
-        }
-
-        .post-interactions {
+            cursor: pointer;
+            transition: all 0.3s;
             display: flex;
-            gap: 0.5rem;
-            position: relative;
+            align-items: center;
+            gap: 8px;
         }
 
-        .interaction-btn {
-            flex: 1;
-            padding: 0.6rem;
-            background: transparent;
-            border: none;
-            color: #8e8e8e;
-            cursor: pointer;
-            border-radius: 6px;
-            transition: all 0.3s;
-            font-size: 15px;
+        .action-btn:hover {
+            background: rgba(107, 70, 193, 0.3);
+            border-color: #6b46c1;
+            color: #fff;
         }
 
-        .interaction-btn:hover {
-            background: rgba(0, 212, 255, 0.15);
-            color: #00d4ff;
+        .action-btn.active {
+            background: rgba(107, 70, 193, 0.4);
+            border-color: #6b46c1;
+            color: #6b46c1;
         }
 
-        .interaction-btn.reacted { color: #00d4ff; }
-
-        /* Reactions Popup */
-        .reactions-popup {
-            position: absolute;
-            bottom: 100%;
-            left: 0;
-            background: rgba(20, 25, 45, 0.98);
-            border: 2px solid #00d4ff;
-            border-radius: 20px;
-            padding: 0.5rem;
+        /* Comments Section */
+        .comments-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #333;
             display: none;
-            gap: 0.3rem;
-            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.5);
-            z-index: 10;
         }
 
-        .reactions-popup.show { display: flex; }
+        .comments-section.active {
+            display: block;
+        }
 
-        .reaction {
-            font-size: 24px;
-            padding: 0.3rem;
+        .comment-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .comment-input input {
+            flex: 1;
+            background: rgba(40, 40, 40, 0.8);
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 10px 15px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .comment-input input:focus {
+            outline: none;
+            border-color: #6b46c1;
+        }
+
+        .comment-btn {
+            background: #6b46c1;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            color: #fff;
+            font-weight: 600;
             cursor: pointer;
-            border-radius: 50%;
-            transition: all 0.3s;
         }
 
-        .reaction:hover {
-            transform: scale(1.3);
-            background: rgba(0, 212, 255, 0.2);
-        }
-
-        /* Comments */
-        .comments {
-            margin-top: 1rem;
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
         .comment {
-            background: rgba(0, 212, 255, 0.08);
-            padding: 0.8rem;
-            border-radius: 8px;
-            margin: 0.8rem 0;
-            border-left: 3px solid #00d4ff;
+            background: rgba(40, 40, 40, 0.6);
+            border-radius: 10px;
+            padding: 12px;
         }
 
         .comment-header {
             display: flex;
             align-items: center;
-            gap: 0.6rem;
-            margin-bottom: 0.5rem;
+            gap: 10px;
+            margin-bottom: 8px;
         }
 
         .comment-avatar {
-            width: 32px; height: 32px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
-            border: 2px solid #00d4ff;
-            overflow: hidden;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-
-        .comment-avatar img {
-            width: 100%; height: 100%;
             object-fit: cover;
+            border: 2px solid #6b46c1;
         }
 
         .comment-author {
-            font-weight: 600;
-            color: #00d4ff;
-            font-size: 13px;
-        }
-
-        .comment-time {
-            color: #8e8e8e;
-            font-size: 11px;
-            margin-left: auto;
-        }
-
-        .comment-content {
+            color: #fff;
             font-size: 14px;
-            line-height: 1.5;
+            font-weight: 600;
         }
 
-        .comment-input-wrap {
-            display: flex;
-            gap: 0.8rem;
-            margin-top: 1rem;
-        }
-
-        .comment-input {
-            flex: 1;
-            padding: 0.7rem;
-            background: rgba(0, 212, 255, 0.08);
-            border: 2px solid rgba(0, 212, 255, 0.3);
-            border-radius: 20px;
-            color: #e4e6eb;
-        }
-
-        .comment-input::placeholder { color: #8e8e8e; }
-        .comment-input:focus {
-            outline: none;
-            border-color: #00d4ff;
+        .comment-text {
+            color: #ccc;
+            font-size: 14px;
+            margin-left: 45px;
         }
 
         /* Right Sidebar */
-        .contacts {
-            background: rgba(20, 25, 45, 0.95);
-            border: 2px solid rgba(0, 212, 255, 0.2);
-            border-radius: 12px;
-            padding: 1rem;
-            position: sticky;
-            top: 80px;
-            max-height: calc(100vh - 100px);
-            overflow-y: auto;
+        .right-sidebar {
+            width: 320px;
+            flex-shrink: 0;
         }
 
-        .contacts-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #8e8e8e;
-            margin-bottom: 1rem;
-        }
-
-        .contact {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            padding: 0.6rem;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin: 0.5rem 0;
-        }
-
-        .contact:hover {
-            background: rgba(0, 212, 255, 0.15);
-        }
-
-        .contact-avatar {
-            width: 36px; height: 36px;
-            border-radius: 50%;
-            position: relative;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .online-indicator {
-            position: absolute;
-            bottom: 0; right: 0;
-            width: 10px; height: 10px;
-            background: #00ff00;
-            border: 2px solid #0a0e27;
-            border-radius: 50%;
-        }
-
-        .contact-name {
-            font-size: 14px;
-        }
-
-        /* Celebrity Grid */
-        .celebrity-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1.5rem;
-        }
-
+        /* AI Celebrities */
         .celebrity-card {
-            background: rgba(20, 25, 45, 0.95);
-            border: 2px solid #00d4ff;
-            border-radius: 12px;
-            padding: 1rem;
-            text-align: center;
+            background: rgba(20, 20, 20, 0.95);
+            border: 2px solid #6b46c1;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
             cursor: pointer;
             transition: all 0.3s;
         }
 
         .celebrity-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.5);
+            background: rgba(107, 70, 193, 0.2);
+            transform: translateX(5px);
         }
 
         .celebrity-avatar {
-            width: 100px;
-            height: 100px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
-            margin: 0 auto 1rem;
-            border: 3px solid #00d4ff;
-            font-size: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
+            object-fit: cover;
+            border: 3px solid #6b46c1;
         }
 
-        .celebrity-name {
-            color: #00d4ff;
-            font-weight: 600;
+        .celebrity-info h4 {
+            color: #fff;
             font-size: 16px;
-            margin-bottom: 0.5rem;
+            margin-bottom: 5px;
         }
 
-        .celebrity-bio {
-            font-size: 12px;
-            color: #8e8e8e;
-            line-height: 1.4;
+        .celebrity-info p {
+            color: #999;
+            font-size: 13px;
         }
 
-        .celebrity-status {
-            font-size: 12px;
-            color: #00ff00;
-            margin-top: 0.5rem;
+        .online-indicator {
+            width: 12px;
+            height: 12px;
+            background: #00ff00;
+            border-radius: 50%;
+            border: 2px solid #000;
+            position: relative;
+            animation: pulse 2s infinite;
         }
 
-        /* Auth Pages */
-        .auth-page {
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Messaging System */
+        .chat-popup {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100vh;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            height: 450px;
+            background: rgba(20, 20, 20, 0.98);
+            border: 2px solid #6b46c1;
+            border-radius: 15px;
             display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
-        }
-
-        .auth-page.active { display: flex; }
-
-        .auth-box {
-            background: rgba(10, 14, 39, 0.98);
-            border: 3px solid #00d4ff;
-            border-radius: 15px;
-            padding: 2.5rem;
-            max-width: 450px;
-            width: 90%;
-            box-shadow: 0 8px 40px rgba(0, 212, 255, 0.6);
-        }
-
-        .auth-logo {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .auth-logo img {
-            width: 100px; height: 100px;
-            border-radius: 15px;
-            box-shadow: 0 0 25px rgba(0, 212, 255, 0.6);
-        }
-
-        .auth-title {
-            font-size: 28px;
-            text-align: center;
-            margin: 1rem 0;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .form-group {
-            margin: 1.2rem 0;
-        }
-
-        .form-group label {
-            display: block;
-            color: #00d4ff;
-            margin-bottom: 0.5rem;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .form-group input, .form-group textarea, .form-group select {
-            width: 100%;
-            padding: 0.9rem;
-            background: rgba(0, 212, 255, 0.1);
-            border: 2px solid #00d4ff;
-            border-radius: 8px;
-            color: #e4e6eb;
-            font-size: 15px;
-            font-family: inherit;
-        }
-
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-            outline: none;
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
-        }
-
-        .btn-auth {
-            width: 100%;
-            padding: 1rem;
-            background: linear-gradient(135deg, #00d4ff, #b300ff);
-            border: none;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 1rem;
-            transition: all 0.3s;
-        }
-
-        .btn-auth:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(0, 212, 255, 0.8);
-        }
-
-        .auth-link {
-            text-align: center;
-            margin-top: 1.5rem;
-            color: #8e8e8e;
-            font-size: 14px;
-        }
-
-        .auth-link a {
-            color: #00d4ff;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .auth-link a:hover { text-decoration: underline; }
-
-        /* Admin Panel */
-        .admin-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .admin-card {
-            background: rgba(20, 25, 45, 0.95);
-            border: 2px solid #00d4ff;
-            border-radius: 12px;
-            padding: 1.5rem;
-        }
-
-        .admin-card h3 {
-            color: #00d4ff;
-            margin-bottom: 1rem;
-            font-size: 18px;
-        }
-
-        .admin-stat {
-            font-size: 36px;
-            font-weight: bold;
-            color: #fff;
-        }
-
-        .penny-chat {
-            background: rgba(20, 25, 45, 0.95);
-            border: 2px solid #00d4ff;
-            border-radius: 12px;
-            padding: 1.5rem;
-            height: 500px;
-            display: flex;
             flex-direction: column;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
+            z-index: 2000;
         }
 
-        .penny-messages {
+        .chat-popup.active {
+            display: flex;
+        }
+
+        .chat-header {
+            background: #6b46c1;
+            padding: 15px;
+            border-radius: 13px 13px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h4 {
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .chat-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .chat-messages {
             flex: 1;
             overflow-y: auto;
-            margin-bottom: 1rem;
-            padding: 1rem;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-        }
-
-        .penny-msg {
-            margin: 0.8rem 0;
-            padding: 0.8rem 1rem;
-            border-radius: 12px;
-            max-width: 80%;
-            line-height: 1.5;
-        }
-
-        .penny-msg.user {
-            background: rgba(0, 212, 255, 0.3);
-            margin-left: auto;
-            text-align: right;
-        }
-
-        .penny-msg.penny {
-            background: rgba(179, 0, 255, 0.3);
-        }
-
-        .penny-input-wrap {
+            padding: 15px;
             display: flex;
-            gap: 0.8rem;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .penny-input {
-            flex: 1;
-            padding: 0.8rem;
-            background: rgba(0, 212, 255, 0.1);
-            border: 2px solid #00d4ff;
-            border-radius: 8px;
-            color: #e4e6eb;
+        .chat-message {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 14px;
+        }
+
+        .chat-message.sent {
+            background: #6b46c1;
+            color: #fff;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        .chat-message.received {
+            background: rgba(40, 40, 40, 0.8);
+            color: #fff;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        .chat-input-container {
+            padding: 15px;
+            border-top: 2px solid #333;
+        }
+
+        .chat-input-container input {
+            width: 100%;
+            background: rgba(40, 40, 40, 0.8);
+            border: 2px solid #333;
+            border-radius: 20px;
+            padding: 10px 15px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .chat-input-container input:focus {
+            outline: none;
+            border-color: #6b46c1;
         }
 
         /* Responsive */
         @media (max-width: 1200px) {
-            .main { grid-template-columns: 1fr; }
-            .sidebar, .right-sidebar { display: none; }
+            .right-sidebar {
+                display: none;
+            }
         }
 
-        input[type="file"] { display: none; }
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .header-search {
+                display: none;
+            }
+            
+            .main-container {
+                padding: 10px;
+            }
+        }
 
+        /* Loading Indicator */
         .loading {
             text-align: center;
-            padding: 2rem;
-            color: #8e8e8e;
+            padding: 40px;
+            color: #6b46c1;
+            font-size: 18px;
         }
 
-        ::-webkit-scrollbar { width: 10px; }
-        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); }
-        ::-webkit-scrollbar-thumb { background: #00d4ff; border-radius: 5px; }
-        ::-webkit-scrollbar-thumb:hover { background: #0099cc; }
+        /* Badge Display */
+        .badge {
+            display: inline-block;
+            background: rgba(107, 70, 193, 0.3);
+            border: 1px solid #6b46c1;
+            border-radius: 12px;
+            padding: 4px 10px;
+            font-size: 11px;
+            color: #6b46c1;
+            font-weight: 600;
+            margin: 2px;
+        }
+
+        .badge.celebrity {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: #ffd700;
+            color: #ffd700;
+        }
+
+        .badge.owner {
+            background: rgba(220, 38, 38, 0.2);
+            border-color: #dc2626;
+            color: #dc2626;
+        }
+
+        .badge.admin {
+            background: rgba(234, 88, 12, 0.2);
+            border-color: #ea580c;
+            color: #ea580c;
+        }
+
+        .badge.staff {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
     </style>
 </head>
 <body>
+    <!-- Matrix Canvas Background -->
+    <canvas id="matrix-canvas"></canvas>
 
-    <canvas id="matrix"></canvas>
-
-    <div class="app">
-        
-        <!-- Login Page -->
-        <div id="loginPage" class="auth-page active">
-            <div class="auth-box">
-                <div class="auth-logo">
-                    <img src="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png?ex=68ffb14d&is=68fe5fcd&hm=357467617bc0a9270f45eba06529dff853d02c83f4add41482f8fe87a8b089a2&" alt="KSS Logo">
+    <!-- Login Page -->
+    <div id="login-page" class="auth-page active">
+        <div class="auth-container">
+            <div class="auth-logo">
+                <img src="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png?ex=68ffb14d&is=68fe5fcd&hm=357467617bc0a9270f45eba06529dff853d02c83f4add41482f8fe87a8b089a2&v" alt="Logo">
+                <h1>Kurrasch Systems Studio</h1>
+            </div>
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="login-email" placeholder="Enter your email" required>
                 </div>
-                <div class="auth-title">Kurrasch Systems Studio</div>
-                <form onsubmit="return login(event)">
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" id="loginEmail" required autocomplete="email">
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" id="loginPass" required autocomplete="current-password">
-                    </div>
-                    <button type="submit" class="btn-auth">Log In</button>
-                </form>
-                <div class="auth-link">
-                    Don't have an account? <a onclick="showSignup()">Sign up</a>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="login-password" placeholder="Enter your password" required>
                 </div>
+                <button type="submit" class="auth-button">Login</button>
+            </form>
+            <div class="auth-switch">
+                Don't have an account? <a onclick="showSignup()">Sign up</a>
             </div>
         </div>
+    </div>
 
-        <!-- Signup Page -->
-        <div id="signupPage" class="auth-page">
-            <div class="auth-box">
-                <div class="auth-logo">
-                    <img src="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png?ex=68ffb14d&is=68fe5fcd&hm=357467617bc0a9270f45eba06529dff853d02c83f4add41482f8fe87a8b089a2&" alt="KSS Logo">
+    <!-- Signup Page -->
+    <div id="signup-page" class="auth-page">
+        <div class="auth-container">
+            <div class="auth-logo">
+                <img src="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png?ex=68ffb14d&is=68fe5fcd&hm=357467617bc0a9270f45eba06529dff853d02c83f4add41482f8fe87a8b089a2&" alt="Logo">
+                <h1>Join Kurrasch Systems Studio</h1>
+            </div>
+            <form id="signup-form" class="auth-form">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="signup-name" placeholder="Enter your full name" required>
                 </div>
-                <div class="auth-title">Create Account</div>
-                <form onsubmit="return signup(event)">
-                    <div class="form-group">
-                        <label>Full Name</label>
-                        <input type="text" id="signupName" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Username</label>
-                        <input type="text" id="signupUser" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" id="signupEmail" required autocomplete="email">
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" id="signupPass" required minlength="6" autocomplete="new-password">
-                    </div>
-                    <button type="submit" class="btn-auth">Sign Up</button>
-                </form>
-                <div class="auth-link">
-                    Already have an account? <a onclick="showLogin()">Log in</a>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="signup-username" placeholder="Choose a username" required>
                 </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="signup-email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signup-password" placeholder="Create a password" required>
+                </div>
+                <button type="submit" class="auth-button">Sign Up</button>
+            </form>
+            <div class="auth-switch">
+                Already have an account? <a onclick="showLogin()">Login</a>
             </div>
         </div>
+    </div>
 
-        <!-- Main App -->
-        <div id="mainApp" style="display:none;">
-            
-            <!-- Header -->
-            <div class="header">
-                <div class="header-left">
-                    <img src="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png?ex=68ffb14d&is=68fe5fcd&hm=357467617bc0a9270f45eba06529dff853d02c83f4add41482f8fe87a8b089a2&" alt="Logo" class="logo-img">
-                    <input type="text" class="search" placeholder="Search Kurrasch Systems Studio">
+    <!-- Main Application -->
+    <div id="main-app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="header-logo" onclick="showPage('feed')">
+                    <img src="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png?ex=68ffb14d&is=68fe5fcd&hm=357467617bc0a9270f45eba06529dff853d02c83f4add41482f8fe87a8b089a2&" alt="Logo">
+                    <h2>Kurrasch Systems</h2>
                 </div>
-                <div class="header-icons">
-                    <button class="icon-btn" onclick="switchPage('feed')" title="Home">
-                        🏠
-                    </button>
-                    <button class="icon-btn" onclick="switchPage('celebrities')" title="AI Celebrities">
-                        🌟
-                    </button>
-                    <button class="icon-btn" onclick="switchPage('tokens')" title="Tokens">
-                        🪙
-                        <span class="token-badge" id="tokenCount">100</span>
-                    </button>
-                    <button class="icon-btn" onclick="switchPage('profile')" title="Profile">
-                        👤
-                    </button>
-                    <button class="icon-btn" onclick="logout()" title="Logout">
-                        🚪
-                    </button>
+                <div class="header-search">
+                    <input type="text" placeholder="Search...">
                 </div>
             </div>
+            <div class="header-right">
+                <div class="header-nav">
+                    <button class="nav-btn active" onclick="showPage('feed')">Feed</button>
+                    <button class="nav-btn" onclick="showPage('celebrities')">AI Celebrities</button>
+                    <button class="nav-btn" onclick="showPage('messages')">Messages</button>
+                </div>
+                <div class="user-menu" onclick="showPage('profile')">
+                    <img id="header-avatar" class="user-avatar-small" src="https://via.placeholder.com/35" alt="Avatar">
+                    <span id="header-username" class="user-name">User</span>
+                </div>
+            </div>
+        </header>
 
-            <!-- Main Layout -->
-            <div class="main">
-                
-                <!-- Left Sidebar -->
-                <div class="sidebar">
-                    <div class="online-count">
-                        <span class="online-dot"></span>
-                        <span id="onlineCount">28 AI Celebrities Online</span>
+        <div class="main-container">
+            <!-- Left Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <div class="user-info">
+                        <img id="sidebar-avatar" class="user-avatar" src="https://via.placeholder.com/60" alt="Avatar">
+                        <div class="user-details">
+                            <h4 id="sidebar-name">User Name</h4>
+                            <p id="sidebar-username">@username</p>
+                        </div>
                     </div>
-                    <div class="nav-item active" onclick="switchPage('feed')">
-                        <span>📰</span><span>News Feed</span>
-                    </div>
-                    <div class="nav-item" onclick="switchPage('profile')">
-                        <span>👤</span><span>Profile</span>
-                    </div>
-                    <div class="nav-item" onclick="switchPage('celebrities')">
-                        <span>🌟</span><span>AI Celebrities</span>
-                    </div>
-                    <div class="nav-item" onclick="switchPage('games')">
-                        <span>🎮</span><span>Roblox Games</span>
-                    </div>
-                    <div class="nav-item" onclick="switchPage('clothing')">
-                        <span>👕</span><span>Roblox Clothing</span>
-                    </div>
-                    <div class="nav-item" onclick="switchPage('forums')">
-                        <span>💭</span><span>Forums</span>
-                    </div>
-                    <div class="nav-item" onclick="switchPage('learning')">
-                        <span>📚</span><span>Learning Center</span>
-                    </div>
-                    <div class="nav-item" onclick="switchPage('tools')">
-                        <span>🛠️</span><span>Penny AI Assistant</span>
-                    </div>
-                    <div class="nav-item" onclick="switchPage('vcroom')">
-                        <span>🎥</span><span>VC Room</span>
-                    </div>
-                    <div class="nav-item" onclick="switchPage('tokens')">
-                        <span>🪙</span><span>Tokens & Movie Night</span>
-                    </div>
-                    <div class="nav-item" onclick="switchPage('badges')">
-                        <span>🏅</span><span>Apply for Badges</span>
-                    </div>
-                    <div class="nav-item" onclick="switchPage('membership')">
-                        <span>⭐</span><span>Membership</span>
-                    </div>
-                    <div class="nav-item" id="adminNav" style="display:none;" onclick="switchPage('admin')">
-                        <span>⚙️</span><span>Admin Panel</span>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="tokens-count">100</div>
+                            <div class="stat-label">Tokens</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="posts-count">0</div>
+                            <div class="stat-label">Posts</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="friends-count">0</div>
+                            <div class="stat-label">Friends</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="followers-count">0</div>
+                            <div class="stat-label">Followers</div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Feed -->
-                <div class="feed">
-                    
-                    <!-- News Feed Page -->
-                    <div id="feed" class="page active">
-                        <div class="post-creator">
-                            <div class="post-creator-header">
-                                <div class="post-creator-avatar">
-                                    <span id="currentUserAvatar">👤</span>
-                                </div>
-                                <textarea id="newPostContent" placeholder="What's on your mind?"></textarea>
-                            </div>
-                            
-                            <div class="post-actions">
-                                <label class="post-action-btn">
-                                    📷 Photo
-                                    <input type="file" accept="image/*" id="postImageUpload" onchange="handleMediaUpload(this, 'image')">
-                                </label>
-                                <label class="post-action-btn">
-                                    🎥 Video
-                                    <input type="file" accept="video/*" id="postVideoUpload" onchange="handleMediaUpload(this, 'video')">
-                                </label>
-                                <label class="post-action-btn">
-                                    🎵 Audio
-                                    <input type="file" accept="audio/*" id="postAudioUpload" onchange="handleMediaUpload(this, 'audio')">
-                                </label>
-                                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <input type="checkbox" id="allowDownload">
-                                    <label for="allowDownload" style="cursor: pointer; font-size: 13px;">Allow downloads</label>
-                                </div>
-                                <button class="btn-post" onclick="createPost()">Post</button>
+                <div class="sidebar-section">
+                    <h3>🗺️ Navigation</h3>
+                    <div class="sidebar-menu">
+                        <div class="menu-item active" onclick="showPage('feed')">📰 News Feed</div>
+                        <div class="menu-item" onclick="showPage('celebrities')">🤖 AI Celebrities</div>
+                        <div class="menu-item" onclick="showPage('profile')">👤 Profile</div>
+                        <div class="menu-item" onclick="showPage('tokens')">🪙 Tokens</div>
+                        <div class="menu-item" onclick="showPage('badges')">🏆 Badges</div>
+                        <div class="menu-item" onclick="showPage('games')">🎮 Roblox Games</div>
+                        <div class="menu-item" onclick="showPage('clothing')">👕 Roblox Clothing</div>
+                        <div class="menu-item" onclick="showPage('forums')">💬 Forums</div>
+                        <div class="menu-item" onclick="showPage('learning')">📚 Learning Center</div>
+                        <div class="menu-item" onclick="showPage('penny')">💙 Penny AI</div>
+                        <div class="menu-item" onclick="showPage('vc')">🎤 VC Room</div>
+                        <div class="menu-item" onclick="showPage('membership')">⭐ Membership</div>
+                        <div class="menu-item" onclick="showPage('movies')">🎬 Movie Night</div>
+                        <div class="menu-item" onclick="logout()" style="border-color: #dc2626; color: #dc2626;">🚪 Logout</div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="content">
+                <!-- News Feed -->
+                <div id="feed-page" class="page-section active">
+                    <div class="post-creator">
+                        <div class="post-creator-header">
+                            <img id="creator-avatar" class="user-avatar" src="https://via.placeholder.com/60" alt="Avatar">
+                            <div style="flex: 1;">
+                                <textarea id="post-textarea" placeholder="What's on your mind?"></textarea>
                             </div>
                         </div>
-
-                        <div id="postsContainer"></div>
+                        <div class="post-options">
+                            <button class="option-btn" onclick="document.getElementById('media-input').click()">📷 Photo/Video</button>
+                            <button class="option-btn" onclick="document.getElementById('audio-input').click()">🎵 Audio</button>
+                            <label style="display: flex; align-items: center; gap: 8px; color: #6b46c1; font-size: 14px;">
+                                <input type="checkbox" id="allow-downloads"> Allow Downloads
+                            </label>
+                        </div>
+                        <input type="file" id="media-input" accept="image/*,video/*" style="display: none;" onchange="handleMediaUpload(this)">
+                        <input type="file" id="audio-input" accept="audio/*" style="display: none;" onchange="handleMediaUpload(this)">
+                        <button class="post-btn" onclick="createPost()">Post</button>
                     </div>
-
-                    <!-- AI Celebrities Page -->
-                    <div id="celebrities" class="page">
-                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">🌟 28 AI Celebrity Personalities</h1>
-                        <p style="color: #8e8e8e; margin-bottom: 2rem;">Chat with AI versions of your favorite celebrities! They have real personalities, memories, and can interact naturally.</p>
-                        <div class="celebrity-grid" id="celebrityGrid"></div>
+                    
+                    <div id="posts-container" class="posts-feed">
+                        <div class="loading">Loading posts...</div>
                     </div>
+                </div>
 
-                    <!-- Profile Page -->
-                    <div id="profile" class="page">
-                        <div class="post-creator">
-                            <h1 style="color: #00d4ff; margin-bottom: 1rem;">👤 Your Profile</h1>
-                            <div style="margin: 1rem 0;">
-                                <strong style="color: #00d4ff;">Name:</strong> <span id="profileName"></span><br>
-                                <strong style="color: #00d4ff;">Username:</strong> <span id="profileUsername"></span><br>
-                                <strong style="color: #00d4ff;">Email:</strong> <span id="profileEmail"></span><br>
-                                <strong style="color: #00d4ff;">Tokens:</strong> <span id="profileTokens">100</span> 🪙<br>
-                                <strong style="color: #00d4ff;">Badges:</strong> <span id="profileBadgesDisplay"></span>
+                <!-- AI Celebrities Page -->
+                <div id="celebrities-page" class="page-section">
+                    <div id="celebrities-grid"></div>
+                </div>
+
+                <!-- Profile Page -->
+                <div id="profile-page" class="page-section">
+                    <h2 style="color: #6b46c1; margin-bottom: 20px;">Your Profile</h2>
+                    <div class="sidebar-section">
+                        <h3>Profile Information</h3>
+                        <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 15px;">
+                            <div class="form-group">
+                                <label>Avatar URL</label>
+                                <input type="text" id="profile-avatar" placeholder="Enter avatar URL">
                             </div>
                             <div class="form-group">
                                 <label>Bio</label>
-                                <textarea id="profileBio" rows="4" placeholder="Tell us about yourself..."></textarea>
+                                <textarea id="profile-bio" placeholder="Tell us about yourself" style="min-height: 100px;"></textarea>
                             </div>
-                            <button class="btn-auth" onclick="updateProfile()">Save Changes</button>
+                            <button class="auth-button" onclick="updateProfile()">Save Changes</button>
                         </div>
-                    </div>
-
-                    <!-- Tokens Page -->
-                    <div id="tokens" class="page">
-                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">🪙 Tokens & Movie Night</h1>
-                        <div class="post-creator">
-                            <h3>Your Tokens: <span id="userTokenDisplay">100</span> 🪙</h3>
-                            <p style="color: #8e8e8e; margin: 1rem 0;">Use tokens to watch movies and access premium content!</p>
-                            <button class="btn-post" onclick="watchMovie()">Watch Movie (10 tokens)</button>
-                        </div>
-                    </div>
-
-                    <!-- Badges Page -->
-                    <div id="badges" class="page">
-                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">🏅 Badges & Achievements</h1>
-                        
-                        <!-- Current Badges Display -->
-                        <div class="post-creator" style="margin-bottom: 2rem;">
-                            <h3>Your Badges</h3>
-                            <div id="userBadgesDisplay" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem;">
-                                <span style="color: #8e8e8e;">No badges yet. Link your accounts or apply below!</span>
-                            </div>
-                        </div>
-
-                        <!-- Link Accounts Section -->
-                        <div class="post-creator" style="margin-bottom: 2rem;">
-                            <h3>🔗 Link Your Accounts (Auto-Grant Badges)</h3>
-                            
-                            <!-- Discord Link -->
-                            <div class="form-group">
-                                <label>Discord Username</label>
-                                <div style="display: flex; gap: 0.5rem;">
-                                    <input type="text" id="discordUsername" placeholder="YourDiscordName#1234" style="flex: 1;">
-                                    <button class="btn-auth" onclick="linkDiscord()">Link Discord 💬</button>
-                                </div>
-                                <small style="color: #8e8e8e;">Grants: Discord Linked Badge</small>
-                            </div>
-
-                            <!-- Roblox Link -->
-                            <div class="form-group">
-                                <label>Roblox Username</label>
-                                <div style="display: flex; gap: 0.5rem;">
-                                    <input type="text" id="robloxUsername" placeholder="YourRobloxUsername" style="flex: 1;">
-                                    <button class="btn-auth" onclick="linkRoblox()">Link Roblox 🎮</button>
-                                </div>
-                                <small style="color: #8e8e8e;">Grants: Roblox Linked Badge (+ OG Badge if you have it on Roblox)</small>
-                            </div>
-                        </div>
-
-                        <!-- Badge Application Section -->
-                        <div class="post-creator">
-                            <h3>📝 Apply for Badge</h3>
-                            <div class="form-group">
-                                <label>Badge Type</label>
-                                <select id="badgeType">
-                                    <optgroup label="Tier Badges">
-                                        <option value="tier-1">Tier 1 Supporter</option>
-                                        <option value="tier-2">Tier 2 Supporter</option>
-                                        <option value="tier-3">Tier 3 Supporter</option>
-                                    </optgroup>
-                                    <optgroup label="Achievement Badges">
-                                        <option value="og">OG Badge (2019-2020 Roblox member)</option>
-                                        <option value="verified">Verified Creator</option>
-                                        <option value="developer">Developer</option>
-                                        <option value="builder">Builder</option>
-                                        <option value="scripter">Scripter</option>
-                                        <option value="artist">Artist</option>
-                                        <option value="modeler">3D Modeler</option>
-                                    </optgroup>
-                                    <optgroup label="Community Badges">
-                                        <option value="helper">Community Helper</option>
-                                        <option value="mentor">Mentor</option>
-                                        <option value="content-creator">Content Creator</option>
-                                        <option value="streamer">Streamer</option>
-                                    </optgroup>
-                                    <optgroup label="Organization Badges">
-                                        <option value="org">Organization Rep</option>
-                                        <option value="partner">Partner</option>
-                                        <option value="sponsor">Sponsor</option>
-                                    </optgroup>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Why do you deserve this badge?</label>
-                                <textarea id="badgeReason" rows="4" placeholder="Explain your qualifications, experience, or links to proof..."></textarea>
-                            </div>
-                            <button class="btn-auth" onclick="applyForBadge()">Submit Application</button>
-                        </div>
-
-                        <!-- Badge Descriptions -->
-                        <div class="post-creator" style="margin-top: 2rem;">
-                            <h3>📖 Badge Descriptions</h3>
-                            <div style="color: #8e8e8e; line-height: 1.8;">
-                                <p><strong style="color: #00d4ff;">Discord Linked:</strong> Connected your Discord account</p>
-                                <p><strong style="color: #00d4ff;">Roblox Linked:</strong> Connected your Roblox account</p>
-                                <p><strong style="color: #00d4ff;">OG Badge:</strong> Roblox member from 2019-2020 era</p>
-                                <p><strong style="color: #00d4ff;">Verified Creator:</strong> Recognized content creator</p>
-                                <p><strong style="color: #00d4ff;">Developer/Builder/Scripter:</strong> Active Roblox developer</p>
-                                <p><strong style="color: #00d4ff;">Community Helper:</strong> Helps others in community</p>
-                                <p><strong style="color: #00d4ff;">Partner:</strong> Official Kurrasch Systems partner</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Games Page -->
-                    <div id="games" class="page">
-                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">🎮 Roblox Games Showcase</h1>
-                        
-                        <!-- Memorial Diane Keaton Arcade -->
-                        <div class="post-creator" style="margin-bottom: 2rem;">
-                            <h3 style="color: #00d4ff; margin-bottom: 1rem;">🕹️ Memorial Diane Keaton Arcade</h3>
-                            <p style="color: #8e8e8e; margin-bottom: 1rem;">
-                                Play classic arcade games in memory of Diane Keaton!
-                            </p>
-                            <div style="background: rgba(0, 212, 255, 0.1); border: 2px solid #00d4ff; border-radius: 8px; padding: 2rem; text-align: center;">
-                                <p style="color: #00d4ff; font-size: 1.2em; margin-bottom: 1rem;">🎮 Arcade Coming Soon!</p>
-                                <p style="color: #8e8e8e;">Embed will be added here with hundreds of classic games</p>
-                            </div>
-                        </div>
-
-                        <!-- Featured Roblox Games -->
-                        <div class="post-creator">
-                            <h3 style="color: #00d4ff; margin-bottom: 1rem;">⭐ Featured Roblox Games</h3>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem;">
-                                <div style="background: rgba(0, 212, 255, 0.05); border: 1px solid #00d4ff; border-radius: 8px; padding: 1rem;">
-                                    <div style="background: #1a1a2e; height: 150px; border-radius: 4px; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem;">
-                                        <span style="font-size: 3em;">🎮</span>
-                                    </div>
-                                    <h4 style="color: #00d4ff; margin-bottom: 0.5rem;">Game Title 1</h4>
-                                    <p style="color: #8e8e8e; font-size: 0.9em; margin-bottom: 0.5rem;">Description of the game...</p>
-                                    <button class="btn-auth" style="width: 100%;">Play Now</button>
-                                </div>
-                                <div style="background: rgba(0, 212, 255, 0.05); border: 1px solid #00d4ff; border-radius: 8px; padding: 1rem;">
-                                    <div style="background: #1a1a2e; height: 150px; border-radius: 4px; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem;">
-                                        <span style="font-size: 3em;">🏃</span>
-                                    </div>
-                                    <h4 style="color: #00d4ff; margin-bottom: 0.5rem;">Game Title 2</h4>
-                                    <p style="color: #8e8e8e; font-size: 0.9em; margin-bottom: 0.5rem;">Description of the game...</p>
-                                    <button class="btn-auth" style="width: 100%;">Play Now</button>
-                                </div>
-                                <div style="background: rgba(0, 212, 255, 0.05); border: 1px solid #00d4ff; border-radius: 8px; padding: 1rem;">
-                                    <div style="background: #1a1a2e; height: 150px; border-radius: 4px; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem;">
-                                        <span style="font-size: 3em;">⚔️</span>
-                                    </div>
-                                    <h4 style="color: #00d4ff; margin-bottom: 0.5rem;">Game Title 3</h4>
-                                    <p style="color: #8e8e8e; font-size: 0.9em; margin-bottom: 0.5rem;">Description of the game...</p>
-                                    <button class="btn-auth" style="width: 100%;">Play Now</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="clothing" class="page">
-                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">👕 Roblox Clothing</h1>
-                        <div class="post-creator">
-                            <p style="color: #8e8e8e;">Clothing marketplace coming soon!</p>
-                        </div>
-                    </div>
-
-                    <div id="forums" class="page">
-                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">💭 Forums</h1>
-                        <div class="post-creator">
-                            <p style="color: #8e8e8e;">Forums coming soon!</p>
-                        </div>
-                    </div>
-
-                    <div id="learning" class="page">
-                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">📚 Learning Center</h1>
-                        <div class="post-creator">
-                            <p style="color: #8e8e8e;">Learning center coming soon!</p>
-                        </div>
-                    </div>
-
-                    <div id="tools" class="page">
-                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">🛠️ Penny AI Assistant</h1>
-                        <div class="post-creator">
-                            <h3 style="color: #00d4ff; margin-bottom: 1rem;">💙 Chat with Penny</h3>
-                            <p style="color: #8e8e8e; margin-bottom: 1rem;">
-                                Penny manages this entire site and all 27 AI celebrities (her sister Melanie just manages Diane Keaton Bot)!
-                            </p>
-                            <div class="penny-chat">
-                                <div class="penny-messages" id="pennyMessages">
-                                    <div class="penny-msg penny">
-                                        Hi! I'm Penny, the AI managing this entire platform. Unlike my sister Melanie who just handles ONE bot, I manage EVERYTHING here. How can I help you today? 💙
-                                    </div>
-                                </div>
-                                <div class="penny-input-wrap">
-                                    <input type="text" id="pennyInput" class="penny-input" placeholder="Ask Penny anything..." onkeypress="if(event.key==='Enter') askPenny()">
-                                    <button class="btn-post" onclick="askPenny()">Send</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="vcroom" class="page">
-                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">🎥 VC Room</h1>
-                        <div class="post-creator">
-                            <p style="color: #8e8e8e;">VC rooms coming soon!</p>
-                        </div>
-                    </div>
-
-                    <div id="membership" class="page">
-                        <h1 style="color: #00d4ff; margin-bottom: 1rem;">⭐ Membership</h1>
-                        <div class="post-creator">
-                            <h3>Contact Betty White Bot or Kurrasch Systems Bot on Discord to subscribe!</h3>
-                            <p style="color: #8e8e8e; margin-top: 1rem;">Tier 1: $5/mo | Tier 2: $10/mo | Tier 3: $20/mo</p>
-                        </div>
-                    </div>
-
-                    <!-- Admin Panel -->
-                    <div id="admin" class="page">
-                        <h1 style="color: #00d4ff; margin-bottom: 1.5rem;">⚙️ Admin Panel</h1>
-                        <div class="admin-grid">
-                            <div class="admin-card">
-                                <h3>Total Users</h3>
-                                <div class="admin-stat" id="totalUsers">0</div>
-                            </div>
-                            <div class="admin-card">
-                                <h3>Total Posts</h3>
-                                <div class="admin-stat" id="totalPosts">0</div>
-                            </div>
-                            <div class="admin-card">
-                                <h3>Badge Applications</h3>
-                                <div class="admin-stat" id="totalApplications">0</div>
-                            </div>
-                        </div>
-                        <div class="post-creator">
-                            <h3>Grant Badges/Tokens</h3>
-                            <div class="form-group">
-                                <label>User Email</label>
-                                <input type="email" id="adminUserEmail">
-                            </div>
-                            <div class="form-group">
-                                <label>Action</label>
-                                <select id="adminAction">
-                                    <option value="badge">Grant Badge</option>
-                                    <option value="tokens">Grant Tokens</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Value (badge type or token amount)</label>
-                                <input type="text" id="adminValue" placeholder="e.g. 'admin' or '50'">
-                            </div>
-                            <button class="btn-auth" onclick="adminGrantAction()">Execute</button>
-                        </div>
-
-                        <!-- Badge Applications Review -->
-                        <div class="post-creator" style="margin-top: 2rem;">
-                            <h3>🏅 Badge Applications (Pending Review)</h3>
-                            <div id="badgeApplicationsList" style="margin-top: 1rem;">
-                                <p style="color: #8e8e8e;">No pending applications</p>
-                            </div>
-                        </div>
-
-                        <!-- User Management -->
-                        <div class="post-creator" style="margin-top: 2rem;">
-                            <h3>👥 User Management</h3>
-                            <div class="form-group">
-                                <label>User Email to Ban/Unban</label>
-                                <input type="email" id="banUserEmail" placeholder="user@example.com">
-                            </div>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <button class="btn-auth" style="background: #ff0000; flex: 1;" onclick="banUser()">🚫 Ban User</button>
-                                <button class="btn-auth" style="background: #00ff00; flex: 1;" onclick="unbanUser()">✓ Unban User</button>
-                            </div>
-                            <div id="bannedUsersList" style="margin-top: 1rem;">
-                                <h4 style="color: #00d4ff; margin-bottom: 0.5rem;">Banned Users:</h4>
-                                <div id="bannedUsersDisplay" style="color: #8e8e8e;">No banned users</div>
-                            </div>
-                        </div>
-
-                        <!-- Post Management -->
-                        <div class="post-creator" style="margin-top: 2rem;">
-                            <h3>📝 Post Management</h3>
-                            <div class="form-group">
-                                <label>Post ID to Delete</label>
-                                <input type="number" id="deletePostId" placeholder="Post ID">
-                            </div>
-                            <button class="btn-auth" style="background: #ff0000;" onclick="deletePost()">🗑️ Delete Post</button>
-                            <div style="margin-top: 1rem;">
-                                <h4 style="color: #00d4ff; margin-bottom: 0.5rem;">Recent Posts:</h4>
-                                <div id="recentPostsList" style="max-height: 400px; overflow-y: auto;"></div>
-                            </div>
-                        </div>
-
-                        <!-- Penny AI Training (Owner Only) -->
-                        <div class="post-creator" style="margin-top: 2rem;" id="pennyTrainingSection">
-                            <h3>💙 Train Penny AI (Owner Only)</h3>
-                            <div class="form-group">
-                                <label>Add Knowledge to Penny</label>
-                                <textarea id="pennyKnowledge" rows="4" placeholder="Enter new information for Penny to learn..."></textarea>
-                            </div>
-                            <button class="btn-auth" onclick="trainPenny()">🧠 Train Penny</button>
-                            <div id="pennyKnowledgeBase" style="margin-top: 1rem;">
-                                <h4 style="color: #00d4ff; margin-bottom: 0.5rem;">Penny's Knowledge Base:</h4>
-                                <div id="pennyKnowledgeDisplay" style="color: #8e8e8e; max-height: 300px; overflow-y: auto;">
-                                    No custom knowledge added yet
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- Right Sidebar - AI Celebrities -->
-                <div class="right-sidebar">
-                    <div class="contacts">
-                        <div class="contacts-title">🌟 AI Celebrities (28)</div>
-                        <div id="contactsList"></div>
                     </div>
                 </div>
 
-            </div>
+                <!-- Other pages will be dynamically loaded -->
+                <div id="tokens-page" class="page-section">
+                    <h2 style="color: #6b46c1; margin-bottom: 20px;">Your Tokens</h2>
+                    <div class="sidebar-section">
+                        <div style="text-align: center; padding: 40px;">
+                            <div style="font-size: 72px; color: #6b46c1; font-weight: 700; margin-bottom: 10px;" id="tokens-display">100</div>
+                            <p style="color: #999;">Total Tokens</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Movie Night Page -->
+                <div id="movies-page" class="page-section">
+                    <h2 style="color: #6b46c1; margin-bottom: 20px;">🎬 Movie Night</h2>
+                    <div class="sidebar-section">
+                        <h3>Streaming Platforms</h3>
+                        <p style="color: #999; margin-bottom: 20px;">Select a platform to start watching (Tier 3+ required)</p>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <button class="option-btn" onclick="openStreamingPlatform('hulu')" style="padding: 20px; flex-direction: column; gap: 10px;">
+                                <span style="font-size: 24px;">📺</span>
+                                <span>Hulu</span>
+                            </button>
+                            <button class="option-btn" onclick="openStreamingPlatform('disney')" style="padding: 20px; flex-direction: column; gap: 10px;">
+                                <span style="font-size: 24px;">✨</span>
+                                <span>Disney+</span>
+                            </button>
+                            <button class="option-btn" onclick="openStreamingPlatform('hbo')" style="padding: 20px; flex-direction: column; gap: 10px;">
+                                <span style="font-size: 24px;">🎭</span>
+                                <span>HBO Max</span>
+                            </button>
+                            <button class="option-btn" onclick="openStreamingPlatform('paramount')" style="padding: 20px; flex-direction: column; gap: 10px;">
+                                <span style="font-size: 24px;">⛰️</span>
+                                <span>Paramount+</span>
+                            </button>
+                            <button class="option-btn" onclick="openStreamingPlatform('starz')" style="padding: 20px; flex-direction: column; gap: 10px;">
+                                <span style="font-size: 24px;">⭐</span>
+                                <span>Starz</span>
+                            </button>
+                        </div>
+                        <div style="margin-top: 20px; padding: 15px; background: rgba(220, 38, 38, 0.2); border: 2px solid #dc2626; border-radius: 10px;">
+                            <h4 style="color: #dc2626; margin-bottom: 10px;">⚠️ Important Note About Streaming</h4>
+                            <p style="color: #ccc; font-size: 14px; line-height: 1.6;">
+                                Unfortunately, major streaming platforms (Hulu, Disney+, HBO Max, Paramount+, Starz) do not allow direct embedding of their content for security and licensing reasons. 
+                                <br><br>
+                                <strong>What This Means:</strong>
+                                <br>• You cannot embed streaming platform players directly in websites
+                                <br>• These platforms use DRM (Digital Rights Management) to prevent this
+                                <br>• Even with valid credentials, embedding is technically blocked
+                                <br><br>
+                                <strong>Alternatives:</strong>
+                                <br>• Watch parties using screen sharing (Discord, etc.)
+                                <br>• Synchronized viewing with browser extensions
+                                <br>• Host your own content using services like Plex or Jellyfin
+                                <br>• Use legitimate watch party features built into some platforms
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Placeholder pages -->
+                <div id="badges-page" class="page-section">
+                    <h2 style="color: #6b46c1;">🏆 Badges</h2>
+                    <div class="sidebar-section">
+                        <p style="color: #999;">Your badges will appear here</p>
+                    </div>
+                </div>
+
+                <div id="games-page" class="page-section">
+                    <h2 style="color: #6b46c1;">🎮 Roblox Games</h2>
+                    <div class="sidebar-section">
+                        <p style="color: #999;">Featured Roblox games coming soon</p>
+                    </div>
+                </div>
+
+                <div id="clothing-page" class="page-section">
+                    <h2 style="color: #6b46c1;">👕 Roblox Clothing</h2>
+                    <div class="sidebar-section">
+                        <p style="color: #999;">Browse clothing items coming soon</p>
+                    </div>
+                </div>
+
+                <div id="forums-page" class="page-section">
+                    <h2 style="color: #6b46c1;">💬 Forums</h2>
+                    <div class="sidebar-section">
+                        <p style="color: #999;">Forum discussions coming soon</p>
+                    </div>
+                </div>
+
+                <div id="learning-page" class="page-section">
+                    <h2 style="color: #6b46c1;">📚 Learning Center</h2>
+                    <div class="sidebar-section">
+                        <p style="color: #999;">Educational content coming soon</p>
+                    </div>
+                </div>
+
+                <div id="penny-page" class="page-section">
+                    <h2 style="color: #6b46c1;">💙 Penny AI</h2>
+                    <div class="sidebar-section">
+                        <h3>Chat with Penny</h3>
+                        <div id="penny-chat" style="min-height: 400px; max-height: 500px; overflow-y: auto; background: rgba(40, 40, 40, 0.6); border-radius: 10px; padding: 15px; margin: 15px 0;">
+                            <div class="chat-message received">
+                                <strong>Penny:</strong> Oh yah! Hey there, don'tcha know! I'm Penny, your friendly Minnesota AI assistant. How can I help ya today? You betcha! 😊
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="penny-input" placeholder="Chat with Penny..." style="flex: 1; background: rgba(40, 40, 40, 0.8); border: 2px solid #333; border-radius: 10px; padding: 12px 15px; color: #fff;">
+                            <button class="post-btn" onclick="chatWithPenny()">Send</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="vc-page" class="page-section">
+                    <h2 style="color: #6b46c1;">🎤 VC Room</h2>
+                    <div class="sidebar-section">
+                        <h3>Voice & Video Chat</h3>
+                        <div style="display: flex; gap: 10px; margin-top: 15px;">
+                            <button class="option-btn" onclick="toggleMic()">🎤 Microphone</button>
+                            <button class="option-btn" onclick="toggleCamera()">📹 Camera</button>
+                            <button class="option-btn" onclick="shareScreen()">🖥️ Share Screen</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="membership-page" class="page-section">
+                    <h2 style="color: #6b46c1;">⭐ Membership</h2>
+                    <div class="sidebar-section">
+                        <h3>Premium Tiers</h3>
+                        <p style="color: #999;">Upgrade your account coming soon</p>
+                    </div>
+                </div>
+
+                <div id="messages-page" class="page-section">
+                    <h2 style="color: #6b46c1;">💬 Messages</h2>
+                    <div class="sidebar-section">
+                        <h3>Your Conversations</h3>
+                        <p style="color: #999;">Message system coming soon</p>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Right Sidebar - Online AI Celebrities -->
+            <aside class="right-sidebar">
+                <div class="sidebar-section">
+                    <h3>🤖 AI Celebrities Online</h3>
+                    <div id="online-celebrities"></div>
+                </div>
+            </aside>
         </div>
+    </div>
 
+    <!-- Chat Popups -->
+    <div id="chat-popup" class="chat-popup">
+        <div class="chat-header">
+            <h4 id="chat-with">Chat</h4>
+            <button class="chat-close" onclick="closeChat()">✕</button>
+        </div>
+        <div id="chat-messages-container" class="chat-messages"></div>
+        <div class="chat-input-container">
+            <input type="text" id="chat-input" placeholder="Type a message..." onkeypress="handleChatEnter(event)">
+        </div>
     </div>
 
     <script>
-        // === MATRIX RAIN ANIMATION ===
-        const canvas = document.getElementById('matrix');
+        // Matrix Background Animation
+        const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
         
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         
-        const letters = '01';
-        const fontSize = 14;
-        const columns = canvas.width / fontSize;
+        const columns = canvas.width / 20;
         const drops = Array(Math.floor(columns)).fill(1);
         
         function drawMatrix() {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            drops.forEach((y, i) => {
-                const char = letters[Math.floor(Math.random() * letters.length)];
-                const x = i * fontSize;
+            ctx.font = '15px monospace';
+            
+            for (let i = 0; i < drops.length; i++) {
+                const text = Math.random() > 0.5 ? '0' : '1';
+                const x = i * 20;
+                const y = drops[i] * 20;
                 
-                // RED 0s, NAVY BLUE 1s
-                ctx.fillStyle = char === '0' ? '#ff0000' : '#001a4d';
-                ctx.font = fontSize + 'px monospace';
-                ctx.fillText(char, x, y * fontSize);
+                // Alternate between red 0s and navy blue 1s
+                ctx.fillStyle = text === '0' ? '#ff0000' : '#001f3f';
+                ctx.fillText(text, x, y);
                 
-                if (y * fontSize > canvas.height && Math.random() > 0.98) {
+                if (y > canvas.height && Math.random() > 0.975) {
                     drops[i] = 0;
                 }
                 drops[i]++;
-            });
+            }
         }
         
-        setInterval(drawMatrix, 33);
+        setInterval(drawMatrix, 50);
         
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         });
-// ===================================
-// DATA STORAGE SYSTEM
-// ===================================
-const DataStorage = {
-    get: (key) => {
-        try {
-            return JSON.parse(localStorage.getItem(key)) || null;
-        } catch {
-            return null;
-        }
-    },
-    set: (key, value) => localStorage.setItem(key, JSON.stringify(value)),
-    append: (key, item) => {
-        const array = DataStorage.get(key) || [];
-        array.push(item);
-        DataStorage.set(key, array);
-        return array;
-    },
-    update: (key, finderFunc, updates) => {
-        const array = DataStorage.get(key) || [];
-        const index = array.findIndex(finderFunc);
-        if (index !== -1) {
-            array[index] = { ...array[index], ...updates };
-            DataStorage.set(key, array);
-        }
-        return array;
-    }
-};
 
-// Initialize storage
-if (!DataStorage.get('users')) DataStorage.set('users', []);
-if (!DataStorage.get('posts')) DataStorage.set('posts', []);
-if (!DataStorage.get('friends')) DataStorage.set('friends', []);
-if (!DataStorage.get('messages')) DataStorage.set('messages', []);
-if (!DataStorage.get('badgeApplications')) DataStorage.set('badgeApplications', []);
-if (!DataStorage.get('pennyKnowledge')) DataStorage.set('pennyKnowledge', []);
-
-let currentUser = null;
-
-// ===================================
-// AUTH FUNCTIONS - ONLY THESE ARE ADDED
-// ===================================
-function login(event) {
-    event.preventDefault();
-    const email = document.getElementById('loginEmail').value.trim();
-    const password = document.getElementById('loginPass').value;
-    const users = DataStorage.get('users') || [];
-    const user = users.find(u => u.email === email && u.password === password);
-    
-    if (user) {
-        // Check if user is banned
-        if (user.banned) {
-            alert('❌ Your account has been banned. Contact an administrator for more information.');
-            return false;
-        }
-        
-        currentUser = user;
-        document.getElementById('loginPage').classList.remove('active');
-        document.getElementById('signupPage').classList.remove('active');
-        document.getElementById('mainApp').style.display = 'block';
-        updateUserInterface();
-        loadAllPosts();
-        renderAllCelebrities();
-        startAICelebrityActivity();
-    } else {
-        alert('Invalid credentials!');
-    }
-    return false;
-}
-
-function signup(event) {
-    event.preventDefault();
-    const name = document.getElementById('signupName').value.trim();
-    const username = document.getElementById('signupUser').value.trim();
-    const email = document.getElementById('signupEmail').value.trim();
-    const password = document.getElementById('signupPass').value;
-    const users = DataStorage.get('users') || [];
-    if (users.find(u => u.email === email)) {
-        alert('Email already exists!');
-        return false;
-    }
-    
-    // Determine role, badges, and tier based on email
-    let role = 'user';
-    let badges = [];
-    let tier = null;
-    
-    if (email === 'tannerkurrasch@gmail.com') {
-        role = 'owner';
-        badges = ['owner', 'founder', 'admin'];
-        tier = 'platinum'; // TOP TIER FOR LIFE
-    } else if (email === 'kurraschgaminmerchstore@gmail.com') {
-        role = 'admin';
-        badges = ['admin'];
-        tier = 'platinum'; // TOP TIER FOR LIFE
-    } else if (email === 'brendenkurrasch93@gmail.com') {
-        role = 'staff';
-        badges = ['staff'];
-        tier = 'platinum'; // TOP TIER FOR LIFE
-    }
-    
-    const newUser = {
-        id: Date.now(), 
-        name, 
-        username, 
-        email, 
-        password, 
-        bio: '', 
-        avatar: '👤',
-        cover: null, 
-        tokens: 100, 
-        freeMovies: 3, 
-        badges: badges, 
-        tier: tier,
-        friends: [], 
-        followers: [], 
-        following: [], 
-        microphoneOn: true, 
-        cameraOn: true,
-        role: role
-    };
-    DataStorage.append('users', newUser);
-    currentUser = newUser;
-    document.getElementById('loginPage').classList.remove('active');
-    document.getElementById('signupPage').classList.remove('active');
-    document.getElementById('mainApp').style.display = 'block';
-    updateUserInterface();
-    loadAllPosts();
-    renderAllCelebrities();
-    startAICelebrityActivity();
-    return false;
-}
-
-function showSignup() {
-    document.getElementById('loginPage').classList.remove('active');
-    document.getElementById('signupPage').classList.add('active');
-}
-
-function showLogin() {
-    document.getElementById('signupPage').classList.remove('active');
-    document.getElementById('loginPage').classList.add('active');
-}
-
-function logout() {
-    if (confirm('Logout?')) {
-        currentUser = null;
-        document.getElementById('mainApp').style.display = 'none';
-        document.getElementById('loginPage').classList.add('active');
-    }
-}
-
-
-// ===================================
-// MISSING FUNCTIONS - BRIDGING THE GAP
-// ===================================
-function switchPage(pageName) {
-    navigateToPage(pageName);
-    
-    // Load specific page data
-    if (pageName === 'admin' && currentUser && (currentUser.role === 'owner' || currentUser.role === 'admin' || currentUser.role === 'staff')) {
-        loadAdminPanel();
-    } else if (pageName === 'badges' && currentUser) {
-        displayUserBadges();
-    }
-}
-
-function createPost() {
-    publishNewPost();
-}
-
-function updateProfile() {
-    saveUserProfile();
-}
-
-function askPenny() {
-    sendPennyMessage();
-}
-
-function applyForBadge() {
-    const badgeType = document.getElementById('badgeType').value;
-    const reason = document.getElementById('badgeReason').value;
-    if (!reason.trim()) {
-        alert('Please provide a reason for your application!');
-        return;
-    }
-    
-    // Save application to localStorage
-    const application = {
-        id: Date.now(),
-        userId: currentUser.id,
-        userEmail: currentUser.email,
-        userName: currentUser.name,
-        badgeType: badgeType,
-        reason: reason,
-        status: 'pending',
-        timestamp: new Date().toISOString()
-    };
-    
-    DataStorage.append('badgeApplications', application);
-    
-    alert(`Badge application submitted for: ${badgeType}\nAdmins will review your application!`);
-    document.getElementById('badgeReason').value = '';
-    
-    // Update UI
-    updateUserInterface();
-}
-
-function linkDiscord() {
-    const discordUsername = document.getElementById('discordUsername').value.trim();
-    if (!discordUsername) {
-        alert('Please enter your Discord username!');
-        return;
-    }
-    
-    // Save Discord link
-    currentUser.discordUsername = discordUsername;
-    
-    // Auto-grant Discord badge if not already have it
-    if (!currentUser.badges.includes('discord-linked')) {
-        currentUser.badges.push('discord-linked');
-    }
-    
-    // Update in storage
-    DataStorage.update('users', u => u.id === currentUser.id, {
-        discordUsername: discordUsername,
-        badges: currentUser.badges
-    });
-    
-    alert('✅ Discord linked successfully!\n🏅 Discord Linked badge granted!');
-    document.getElementById('discordUsername').value = '';
-    updateUserInterface();
-    displayUserBadges();
-}
-
-function linkRoblox() {
-    const robloxUsername = document.getElementById('robloxUsername').value.trim();
-    if (!robloxUsername) {
-        alert('Please enter your Roblox username!');
-        return;
-    }
-    
-    // Save Roblox link
-    currentUser.robloxUsername = robloxUsername;
-    
-    // Auto-grant Roblox badge if not already have it
-    if (!currentUser.badges.includes('roblox-linked')) {
-        currentUser.badges.push('roblox-linked');
-    }
-    
-    // Check for OG badge (simplified - in production would check Roblox API)
-    // For now, check if username suggests OG status or prompt user
-    const hasOGBadgeOnRoblox = confirm('Do you have the OG badge on your Roblox account?\n(Requires being member from 2019-2020)');
-    
-    if (hasOGBadgeOnRoblox && !currentUser.badges.includes('og')) {
-        currentUser.badges.push('og');
-    }
-    
-    // Update in storage
-    DataStorage.update('users', u => u.id === currentUser.id, {
-        robloxUsername: robloxUsername,
-        badges: currentUser.badges
-    });
-    
-    let message = '✅ Roblox linked successfully!\n🏅 Roblox Linked badge granted!';
-    if (hasOGBadgeOnRoblox) {
-        message += '\n🏅 OG Badge granted!';
-    }
-    
-    alert(message);
-    document.getElementById('robloxUsername').value = '';
-    updateUserInterface();
-    displayUserBadges();
-}
-
-// ===================================
-// ADMIN PANEL FUNCTIONS
-// ===================================
-function loadAdminPanel() {
-    // Update stats
-    const users = DataStorage.get('users') || [];
-    const posts = DataStorage.get('posts') || [];
-    const applications = DataStorage.get('badgeApplications') || [];
-    
-    const totalUsersEl = document.getElementById('totalUsers');
-    const totalPostsEl = document.getElementById('totalPosts');
-    const totalAppsEl = document.getElementById('totalApplications');
-    
-    if (totalUsersEl) totalUsersEl.textContent = users.length;
-    if (totalPostsEl) totalPostsEl.textContent = posts.length;
-    if (totalAppsEl) totalAppsEl.textContent = applications.filter(app => app.status === 'pending').length;
-    
-    // Display all admin sections
-    displayBadgeApplications();
-    displayBannedUsers();
-    displayRecentPosts();
-    
-    // Show/hide Penny training (owner only)
-    const pennySection = document.getElementById('pennyTrainingSection');
-    if (pennySection) {
-        if (currentUser && currentUser.role === 'owner') {
-            pennySection.style.display = 'block';
-            displayPennyKnowledge();
-        } else {
-            pennySection.style.display = 'none';
-        }
-    }
-}
-
-function displayBadgeApplications() {
-    const applications = DataStorage.get('badgeApplications') || [];
-    const pendingApps = applications.filter(app => app.status === 'pending');
-    const listEl = document.getElementById('badgeApplicationsList');
-    
-    if (!listEl) return;
-    
-    if (pendingApps.length === 0) {
-        listEl.innerHTML = '<p style="color: #8e8e8e;">No pending applications</p>';
-        return;
-    }
-    
-    listEl.innerHTML = pendingApps.map(app => `
-        <div style="background: rgba(0, 212, 255, 0.05); border: 1px solid #00d4ff; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
-            <div style="display: flex; justify-content: space-between; align-items: start;">
-                <div style="flex: 1;">
-                    <div style="color: #00d4ff; font-weight: bold; margin-bottom: 0.5rem;">${app.userName} (${app.userEmail})</div>
-                    <div style="color: #fff; margin-bottom: 0.5rem;">Badge: <strong>${app.badgeType}</strong></div>
-                    <div style="color: #8e8e8e; margin-bottom: 0.5rem;">Reason:</div>
-                    <div style="color: #fff; margin-bottom: 0.5rem;">${app.reason}</div>
-                    <div style="color: #666; font-size: 0.85em;">${new Date(app.timestamp).toLocaleString()}</div>
-                </div>
-                <div style="display: flex; gap: 0.5rem;">
-                    <button class="btn-auth" style="background: #00ff00; padding: 0.5rem 1rem;" onclick="approveBadgeApplication(${app.id})">✓ Approve</button>
-                    <button class="btn-auth" style="background: #ff0000; padding: 0.5rem 1rem;" onclick="denyBadgeApplication(${app.id})">✗ Deny</button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
-
-function approveBadgeApplication(appId) {
-    const applications = DataStorage.get('badgeApplications') || [];
-    const app = applications.find(a => a.id === appId);
-    
-    if (!app) {
-        alert('Application not found!');
-        return;
-    }
-    
-    // Update application status
-    app.status = 'approved';
-    DataStorage.set('badgeApplications', applications);
-    
-    // Grant the badge to the user
-    const users = DataStorage.get('users') || [];
-    const user = users.find(u => u.id === app.userId);
-    
-    if (user) {
-        if (!user.badges) user.badges = [];
-        if (!user.badges.includes(app.badgeType)) {
-            user.badges.push(app.badgeType);
-        }
-        DataStorage.set('users', users);
-    }
-    
-    alert(`✅ Badge "${app.badgeType}" approved and granted to ${app.userName}!`);
-    loadAdminPanel();
-}
-
-function denyBadgeApplication(appId) {
-    const applications = DataStorage.get('badgeApplications') || [];
-    const app = applications.find(a => a.id === appId);
-    
-    if (!app) {
-        alert('Application not found!');
-        return;
-    }
-    
-    if (confirm(`Deny badge application for ${app.userName}?`)) {
-        app.status = 'denied';
-        DataStorage.set('badgeApplications', applications);
-        alert(`❌ Application denied.`);
-        loadAdminPanel();
-    }
-}
-
-// ===================================
-// USER MANAGEMENT FUNCTIONS
-// ===================================
-function banUser() {
-    const email = document.getElementById('banUserEmail').value.trim();
-    if (!email) {
-        alert('Please enter a user email!');
-        return;
-    }
-    
-    const users = DataStorage.get('users') || [];
-    const user = users.find(u => u.email === email);
-    
-    if (!user) {
-        alert('User not found!');
-        return;
-    }
-    
-    if (user.role === 'owner') {
-        alert('❌ Cannot ban the owner!');
-        return;
-    }
-    
-    if (confirm(`Ban user ${user.name} (${user.email})?`)) {
-        user.banned = true;
-        user.bannedAt = new Date().toISOString();
-        DataStorage.set('users', users);
-        
-        alert(`✅ User ${user.name} has been banned!`);
-        document.getElementById('banUserEmail').value = '';
-        loadAdminPanel();
-        displayBannedUsers();
-    }
-}
-
-function unbanUser() {
-    const email = document.getElementById('banUserEmail').value.trim();
-    if (!email) {
-        alert('Please enter a user email!');
-        return;
-    }
-    
-    const users = DataStorage.get('users') || [];
-    const user = users.find(u => u.email === email);
-    
-    if (!user) {
-        alert('User not found!');
-        return;
-    }
-    
-    if (!user.banned) {
-        alert('User is not banned!');
-        return;
-    }
-    
-    if (confirm(`Unban user ${user.name} (${user.email})?`)) {
-        user.banned = false;
-        delete user.bannedAt;
-        DataStorage.set('users', users);
-        
-        alert(`✅ User ${user.name} has been unbanned!`);
-        document.getElementById('banUserEmail').value = '';
-        loadAdminPanel();
-        displayBannedUsers();
-    }
-}
-
-function displayBannedUsers() {
-    const users = DataStorage.get('users') || [];
-    const bannedUsers = users.filter(u => u.banned);
-    const displayEl = document.getElementById('bannedUsersDisplay');
-    
-    if (!displayEl) return;
-    
-    if (bannedUsers.length === 0) {
-        displayEl.innerHTML = '<span style="color: #8e8e8e;">No banned users</span>';
-        return;
-    }
-    
-    displayEl.innerHTML = bannedUsers.map(user => `
-        <div style="color: #ff6b6b; padding: 0.5rem; background: rgba(255, 107, 107, 0.1); border-radius: 4px; margin-bottom: 0.5rem;">
-            ${user.name} (${user.email}) - Banned on ${new Date(user.bannedAt).toLocaleDateString()}
-        </div>
-    `).join('');
-}
-
-// ===================================
-// POST MANAGEMENT FUNCTIONS
-// ===================================
-function deletePost() {
-    const postId = parseInt(document.getElementById('deletePostId').value);
-    if (!postId) {
-        alert('Please enter a post ID!');
-        return;
-    }
-    
-    const posts = DataStorage.get('posts') || [];
-    const post = posts.find(p => p.id === postId);
-    
-    if (!post) {
-        alert('Post not found!');
-        return;
-    }
-    
-    if (confirm(`Delete post by ${post.authorName}?\n\n"${post.content.substring(0, 100)}..."`)) {
-        const filteredPosts = posts.filter(p => p.id !== postId);
-        DataStorage.set('posts', filteredPosts);
-        
-        alert(`✅ Post deleted!`);
-        document.getElementById('deletePostId').value = '';
-        loadAllPosts();
-        loadAdminPanel();
-        displayRecentPosts();
-    }
-}
-
-function displayRecentPosts() {
-    const posts = DataStorage.get('posts') || [];
-    const recentPosts = posts.slice(-10).reverse();
-    const listEl = document.getElementById('recentPostsList');
-    
-    if (!listEl) return;
-    
-    if (recentPosts.length === 0) {
-        listEl.innerHTML = '<p style="color: #8e8e8e;">No posts yet</p>';
-        return;
-    }
-    
-    listEl.innerHTML = recentPosts.map(post => `
-        <div style="background: rgba(0, 212, 255, 0.05); border: 1px solid #00d4ff; border-radius: 8px; padding: 0.75rem; margin-bottom: 0.5rem;">
-            <div style="color: #00d4ff; font-weight: bold; margin-bottom: 0.25rem;">ID: ${post.id} - ${post.authorName}</div>
-            <div style="color: #fff; margin-bottom: 0.25rem; font-size: 0.9em;">${post.content.substring(0, 100)}${post.content.length > 100 ? '...' : ''}</div>
-            <div style="color: #666; font-size: 0.8em;">${new Date(post.timestamp).toLocaleString()}</div>
-        </div>
-    `).join('');
-}
-
-// ===================================
-// PENNY AI TRAINING (OWNER ONLY)
-// ===================================
-function trainPenny() {
-    if (!currentUser || currentUser.role !== 'owner') {
-        alert('❌ Only the owner can train Penny!');
-        return;
-    }
-    
-    const knowledge = document.getElementById('pennyKnowledge').value.trim();
-    if (!knowledge) {
-        alert('Please enter knowledge to teach Penny!');
-        return;
-    }
-    
-    // Store custom knowledge
-    const pennyKnowledge = DataStorage.get('pennyKnowledge') || [];
-    pennyKnowledge.push({
-        id: Date.now(),
-        knowledge: knowledge,
-        addedAt: new Date().toISOString(),
-        addedBy: currentUser.name
-    });
-    DataStorage.set('pennyKnowledge', pennyKnowledge);
-    
-    alert('✅ Penny has learned new knowledge!');
-    document.getElementById('pennyKnowledge').value = '';
-    displayPennyKnowledge();
-}
-
-function displayPennyKnowledge() {
-    const knowledge = DataStorage.get('pennyKnowledge') || [];
-    const displayEl = document.getElementById('pennyKnowledgeDisplay');
-    
-    if (!displayEl) return;
-    
-    if (knowledge.length === 0) {
-        displayEl.innerHTML = '<span style="color: #8e8e8e;">No custom knowledge added yet</span>';
-        return;
-    }
-    
-    displayEl.innerHTML = knowledge.map(item => `
-        <div style="background: rgba(0, 212, 255, 0.05); border-left: 3px solid #00d4ff; padding: 0.75rem; margin-bottom: 0.5rem;">
-            <div style="color: #fff; margin-bottom: 0.25rem;">${item.knowledge}</div>
-            <div style="color: #666; font-size: 0.8em;">Added by ${item.addedBy} on ${new Date(item.addedAt).toLocaleDateString()}</div>
-        </div>
-    `).join('');
-}
-
-function displayUserBadges() {
-    const badgeDisplay = document.getElementById('userBadgesDisplay');
-    if (!badgeDisplay) return;
-    
-    if (!currentUser || !currentUser.badges || currentUser.badges.length === 0) {
-        badgeDisplay.innerHTML = '<span style="color: #8e8e8e;">No badges yet. Link your accounts or apply below!</span>';
-        return;
-    }
-    
-    const badgeNames = {
-        'owner': '👑 Owner',
-        'founder': '🏆 Founder',
-        'admin': '⚡ Admin',
-        'staff': '🛡️ Staff',
-        'celebrity': '⭐ Celebrity',
-        'ai-bot': '🤖 AI Bot',
-        'discord-linked': '💬 Discord Linked',
-        'roblox-linked': '🎮 Roblox Linked',
-        'og': '🔥 OG',
-        'verified': '✓ Verified',
-        'developer': '💻 Developer',
-        'builder': '🏗️ Builder',
-        'scripter': '📜 Scripter',
-        'artist': '🎨 Artist',
-        'modeler': '🗿 3D Modeler',
-        'helper': '🤝 Helper',
-        'mentor': '🎓 Mentor',
-        'content-creator': '📹 Content Creator',
-        'streamer': '📡 Streamer',
-        'org': '🏢 Organization',
-        'partner': '🤝 Partner',
-        'sponsor': '💎 Sponsor',
-        'tier-1': '🥉 Tier 1',
-        'tier-2': '🥈 Tier 2',
-        'tier-3': '🥇 Tier 3'
-    };
-    
-    badgeDisplay.innerHTML = currentUser.badges.map(badge => {
-        const displayName = badgeNames[badge] || badge;
-        return `<span class="user-badge-tag ${badge}">${displayName}</span>`;
-    }).join('');
-}
-
-function watchMovie() {
-    if (currentUser.tokens >= 10) {
-        currentUser.tokens -= 10;
-        DataStorage.update('users', u => u.id === currentUser.id, { tokens: currentUser.tokens });
-        updateUserInterface();
-        alert('Enjoy your movie! 10 tokens deducted.');
-    } else {
-        alert('Not enough tokens! You need 10 tokens to watch a movie.');
-    }
-}
-
-function adminGrantAction() {
-    executeAdminAction();
-}
-
-let currentMediaUpload = null;
-
-// ===================================
-// 28 AI CELEBRITIES WITH FULL LOGIC
-// ===================================
-const AI_CELEBRITIES = {
-    adamSandler: {
-        id: 'adamSandler',
-        name: 'Adam Sandler',
-        username: 'AdamSandler',
-        avatar: '🎬',
-        bio: 'Comedy Legend | Happy Gilmore 🤣',
-        badges: ['celebrity'],
-        tier: 'platinum',
-        quotes: ["Stop looking at me, swan!", "The price is wrong, bitch!"],
-        noahRoasts: ["*Noah and Shelley sitting in a tree! K-I-S-S-I-N-G! 😂", "Noah! 'Bitch Shelley Duvall'? Come up with better material!"]
-    },
-    bettyWhite: {
-        id: 'bettyWhite',
-        name: 'Betty White',
-        username: 'BettyWhite',
-        avatar: '👵',
-        bio: 'Golden Girls Forever 💛',
-        badges: ['celebrity'],
-        tier: 'platinum',
-        quotes: ["I'm still hot, bitches!"],
-        noahRoasts: ["Oh Noah, still chasing after Shelley? Get a life, sweetie! 😂"]
-    },
-    robinWilliams: {
-        id: 'robinWilliams',
-        name: 'Robin Williams',
-        username: 'RobinWilliams',
-        avatar: '🎭',
-        bio: 'Carpe Diem! 🎭',
-        badges: ['celebrity'],
-        tier: 'platinum',
-        quotes: ["Carpe diem. Seize the day, boys!"],
-        noahRoasts: ["Noah! Either ask Shelley out or move on, man!"]
-    },
-    shelleyDuvall: {
-        id: 'shelleyDuvall',
-        name: 'Shelley Duvall',
-        username: 'ShelleyDuvall',
-        avatar: '🎭',
-        bio: 'The Shining | Unique and Proud 👻',
-        badges: ['celebrity'],
-        tier: 'platinum',
-        quotes: ["I'm unique and special!"],
-        noahFlirts: ["Oh Noah! 😏 You really do love me, don't you?", "BITCH Shelley Duvall? How sweet! I love you too! 💋"]
-    },
-    tylerPerry: {
-        id: 'tylerPerry',
-        name: 'Tyler Perry',
-        username: 'TylerPerry',
-        avatar: '🎬',
-        bio: 'Madea! 🎬',
-        badges: ['celebrity'],
-        tier: 'platinum',
-        quotes: ["Hallelujer!"],
-        noahRoasts: ["*MADEA* Noah! That ain't no way to talk to a lady! Hallelujer!"]
-    },
-    benStiller: { id: 'benStiller', name: 'Ben Stiller', username: 'BenStiller', avatar: '🎬', bio: 'Zoolander 📸', badges: ['celebrity'], tier: 'platinum', quotes: ["Really ridiculously good looking!"] },
-    brendanOCarroll: { id: 'brendanOCarroll', name: "Brendan O'Carroll", username: 'BrendanOCarroll', avatar: '👵', bio: "Mrs. Brown! 👵", badges: ['celebrity'], tier: 'platinum', quotes: ["That's nice!"] },
-    cameronBoyce: { id: 'cameronBoyce', name: 'Cameron Boyce', username: 'CameronBoyce', avatar: '💫', bio: 'Disney Legend 💫', badges: ['celebrity'], tier: 'platinum', quotes: ["Keep positive and never give up!"] },
-    chrisFarley: { id: 'chrisFarley', name: 'Chris Farley', username: 'ChrisFarley', avatar: '😂', bio: 'Tommy Boy 🚐', badges: ['celebrity'], tier: 'platinum', quotes: ["LAY OFF ME I'M STARVING!"] },
-    chrisRock: { id: 'chrisRock', name: 'Chris Rock', username: 'ChrisRock', avatar: '🎤', bio: 'Comedy 🎤', badges: ['celebrity'], tier: 'platinum', quotes: ["Comedy is truth in pain!"] },
-    christopherMcDonald: { id: 'christopherMcDonald', name: 'Christopher McDonald', username: 'ChristopherMcDonald', avatar: '🏌️', bio: 'Shooter McGavin 🏌️', badges: ['celebrity'], tier: 'platinum', quotes: ["👉👉 You eat pieces of shit for breakfast?"] },
-    davidSpade: { id: 'davidSpade', name: 'David Spade', username: 'DavidSpade', avatar: '😎', bio: 'Sarcasm King 😎', badges: ['celebrity'], tier: 'platinum', quotes: ["Sarcasm is my superpower!"] },
-    dianeKeaton: { id: 'dianeKeaton', name: 'Diane Keaton', username: 'DianeKeaton', avatar: '🎭', bio: 'La-di-da! 🧥', badges: ['celebrity'], tier: 'platinum', quotes: ["La-di-da, la-di-da!"] },
-    haroldRamis: { id: 'haroldRamis', name: 'Harold Ramis', username: 'HaroldRamis', avatar: '👻', bio: 'Ghostbusters 👻', badges: ['celebrity'], tier: 'platinum', quotes: ["Don't cross the streams!"] },
-    jackieSandler: { id: 'jackieSandler', name: 'Jackie Sandler', username: 'JackieSandler', avatar: '💕', bio: 'Family First 💕', badges: ['celebrity'], tier: 'platinum', quotes: ["Family is everything!"] },
-    jamesEarlJones: { id: 'jamesEarlJones', name: 'James Earl Jones', username: 'JamesEarlJones', avatar: '🎤', bio: 'The Voice 🎭', badges: ['celebrity'], tier: 'platinum', quotes: ["I am your father."] },
-    jenniferAniston: { id: 'jenniferAniston', name: 'Jennifer Aniston', username: 'JenniferAniston', avatar: '☕', bio: 'Rachel Green ☕', badges: ['celebrity'], tier: 'platinum', quotes: ["I'm sorry, everyone!"] },
-    johnCandy: { id: 'johnCandy', name: 'John Candy', username: 'JohnCandy', avatar: '🍬', bio: 'Uncle Buck 🍁', badges: ['celebrity'], tier: 'platinum', quotes: ["Life is short, eat dessert first!"] },
-    johnnyHardwick: { id: 'johnnyHardwick', name: 'Johnny Hardwick', username: 'JohnnyHardwick', avatar: '🚬', bio: 'Dale Gribble 🚬', badges: ['celebrity'], tier: 'platinum', quotes: ["Pocket sand! Sha-sha-sha!"] },
-    jonathanJoss: { id: 'jonathanJoss', name: 'Jonathan Joss', username: 'JonathanJoss', avatar: '🎸', bio: 'John Redcorn 🎸', badges: ['celebrity'], tier: 'platinum', quotes: ["Healing through music!"] },
-    kevinJames: { id: 'kevinJames', name: 'Kevin James', username: 'KevinJames', avatar: '📦', bio: 'King of Queens 📦', badges: ['celebrity'], tier: 'platinum', quotes: ["Making people laugh is the best!"] },
-    matthewPerry: { id: 'matthewPerry', name: 'Matthew Perry', username: 'MatthewPerry', avatar: '☕', bio: 'Chandler Bing ☕', badges: ['celebrity'], tier: 'platinum', quotes: ["Could I BE any funnier?"] },
-    melanie: { id: 'melanie', name: 'Melanie', username: 'Melanie', avatar: '💗', bio: "Penney's Sister 💗 | Only Manages Diane Keaton Bot", badges: ['ai-bot', 'celebrity'], tier: 'platinum', quotes: ["Quality over quantity! I focus on Diane."] },
-    michelleTrachtenberg: { id: 'michelleTrachtenberg', name: 'Michelle Trachtenberg', username: 'MichelleTrachtenberg', avatar: '💄', bio: 'Gossip Girl 💄', badges: ['celebrity'], tier: 'platinum', quotes: ["XOXO, bitches!"] },
-    penney: { id: 'penney', name: 'Penney', username: 'Penney', avatar: '💙', bio: 'Minnesota AI 💙 | Manages 27 Celebrities!', badges: ['ai-bot', 'celebrity'], tier: 'platinum', quotes: ["I manage EVERYTHING, don'tcha know! Melanie just handles Diane."] },
-    queenLatifah: { id: 'queenLatifah', name: 'Queen Latifah', username: 'QueenLatifah', avatar: '👑', bio: 'Queen 👑', badges: ['celebrity'], tier: 'platinum', quotes: ["U.N.I.T.Y!"] },
-    robSchneider: { id: 'robSchneider', name: 'Rob Schneider', username: 'RobSchneider', avatar: '🎬', bio: 'You can do it! 🎥', badges: ['celebrity'], tier: 'platinum', quotes: ["You can do it!"] },
-    steveMartin: { id: 'steveMartin', name: 'Steve Martin', username: 'SteveMartin', avatar: '🪕', bio: 'Wild and Crazy! 🪕', badges: ['celebrity'], tier: 'platinum', quotes: ["I'm a wild and crazy guy!"] }
-};
-
-function detectNoahKade(username, email) {
-    const noahIdentifiers = ['noahkade', 'noah kade', 'demonicsatin'];
-    return noahIdentifiers.some(identifier => username.toLowerCase().includes(identifier)) || 
-           email === 'brendenkurrasch93@gmail.com';
-}
-
-function getCelebrityResponse(celebrity, message, username, email) {
-    const isNoahKade = detectNoahKade(username, email);
-    const mentionsShelley = message.toLowerCase().includes('shelley');
-    
-    if (isNoahKade && mentionsShelley) {
-        if (celebrity.id === 'shelleyDuvall' && celebrity.noahFlirts) {
-            return celebrity.noahFlirts[Math.floor(Math.random() * celebrity.noahFlirts.length)];
-        }
-        if (celebrity.noahRoasts) {
-            return celebrity.noahRoasts[Math.floor(Math.random() * celebrity.noahRoasts.length)];
-        }
-    }
-    
-    return celebrity.quotes[Math.floor(Math.random() * celebrity.quotes.length)];
-}
-
-// ===================================
-// AUTHENTICATION
-// ===================================
-function switchToSignup() {
-    document.getElementById('loginOverlay').classList.remove('visible');
-    document.getElementById('signupOverlay').classList.add('visible');
-}
-
-function switchToLogin() {
-    document.getElementById('signupOverlay').classList.remove('visible');
-    document.getElementById('loginOverlay').classList.add('visible');
-}
-
-document.getElementById('loginForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const email = document.getElementById('loginEmail').value.trim();
-    const password = document.getElementById('loginPassword').value;
-    const users = DataStorage.get('users') || [];
-    const user = users.find(u => u.email === email && u.password === password);
-    
-    if (user) {
-        currentUser = user;
-        initializeApplication();
-    } else {
-        alert('Invalid credentials! Please try again.');
-    }
-});
-
-document.getElementById('signupForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const name = document.getElementById('signupName').value.trim();
-    const username = document.getElementById('signupUsername').value.trim();
-    const email = document.getElementById('signupEmail').value.trim();
-    const password = document.getElementById('signupPassword').value;
-    
-    const users = DataStorage.get('users') || [];
-    if (users.find(u => u.email === email)) {
-        alert('Email already exists!');
-        return;
-    }
-    
-    const newUser = {
-        id: Date.now(),
-        name: name,
-        username: username,
-        email: email,
-        password: password,
-        bio: '',
-        avatar: '👤',
-        cover: null,
-        tokens: 100,
-        freeMovies: 3,
-        badges: [],
-        tier: null,
-        friends: [],
-        followers: [],
-        following: [],
-        microphoneOn: true,
-        cameraOn: true
-    };
-    
-    DataStorage.append('users', newUser);
-    currentUser = newUser;
-    initializeApplication();
-});
-
-function performLogout() {
-    currentUser = null;
-    currentMediaUpload = null;
-    document.getElementById('mainApplication').style.display = 'none';
-    document.getElementById('loginOverlay').classList.add('visible');
-}
-
-function initializeApplication() {
-    document.getElementById('loginOverlay').classList.remove('visible');
-    document.getElementById('signupOverlay').classList.remove('visible');
-    document.getElementById('mainApplication').style.display = 'block';
-    updateUserInterface();
-    loadAllPosts();
-    renderAllCelebrities();
-    startAICelebrityActivity();
-}
-
-function updateUserInterface() {
-    if (!currentUser) return;
-    
-    // Update all avatar displays
-    const avatarElements = ['headerUserAvatar', 'sidebarUserAvatar', 'postCreatorAvatar'];
-    avatarElements.forEach(id => {
-        document.getElementById(id).textContent = currentUser.avatar;
-    });
-    
-    // Update profile info
-    document.getElementById('sidebarUserName').textContent = currentUser.name;
-    document.getElementById('sidebarUserBio').textContent = currentUser.bio || 'Welcome to Kurrasch Systems Studio!';
-    document.getElementById('userFriendsCount').textContent = currentUser.friends.length;
-    document.getElementById('userFollowersCount').textContent = currentUser.followers.length;
-    document.getElementById('userFollowingCount').textContent = currentUser.following.length;
-    document.getElementById('headerTokensDisplay').textContent = currentUser.tokens;
-    document.getElementById('tokensBalanceDisplay').textContent = currentUser.tokens;
-    document.getElementById('movieTokensDisplay').textContent = currentUser.tokens;
-    document.getElementById('freeMoviesDisplay').textContent = currentUser.freeMovies;
-    document.getElementById('profileNameInput').value = currentUser.name;
-    document.getElementById('profileBioInput').value = currentUser.bio || '';
-    
-    // Show admin panel if user is admin
-    if (currentUser.badges.includes('admin')) {
-        document.getElementById('adminNavLink').style.display = 'flex';
-    }
-    
-    // Show movie hosting if Tier 3+ or admin
-    if (currentUser.tier === 'tier-3' || currentUser.badges.includes('admin')) {
-        document.getElementById('hostMovieSection').style.display = 'block';
-    }
-}
-
-function navigateToPage(pageName) {
-    // Hide all pages
-    document.querySelectorAll('.content-page').forEach(page => page.classList.remove('active'));
-    
-    // Remove active from all nav links
-    document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-    
-    // Show selected page
-    const pageElement = document.getElementById(pageName + 'Page');
-    if (pageElement) {
-        pageElement.classList.add('active');
-    }
-    
-    // Add active to corresponding nav link
-    document.querySelectorAll('.nav-link').forEach(link => {
-        const onclick = link.getAttribute('onclick');
-        if (onclick && onclick.includes(pageName)) {
-            link.classList.add('active');
-        }
-    });
-}
-
-// ===================================
-// MEDIA UPLOAD HANDLING
-// ===================================
-function handleMediaUpload(input, mediaType) {
-    const file = input.files[0];
-    if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        currentMediaUpload = {
-            type: mediaType,
-            data: e.target.result
-        };
-        
-        const previewContainer = document.getElementById('mediaPreviewContainer');
-        previewContainer.classList.add('visible');
-        
-        const previewImage = document.getElementById('previewImageElement');
-        const previewVideo = document.getElementById('previewVideoElement');
-        
-        if (mediaType === 'image') {
-            previewImage.src = e.target.result;
-            previewImage.style.display = 'block';
-            previewVideo.style.display = 'none';
-        } else {
-            previewVideo.src = e.target.result;
-            previewVideo.style.display = 'block';
-            previewImage.style.display = 'none';
-        }
-    };
-    reader.readAsDataURL(file);
-}
-
-function clearMediaPreview() {
-    currentMediaUpload = null;
-    document.getElementById('mediaPreviewContainer').classList.remove('visible');
-    document.getElementById('previewImageElement').style.display = 'none';
-    document.getElementById('previewVideoElement').style.display = 'none';
-}
-
-function updateUserAvatar(input) {
-    const file = input.files[0];
-    if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        currentUser.avatar = e.target.result;
-        DataStorage.update('users', u => u.id === currentUser.id, { avatar: e.target.result });
-        updateUserInterface();
-        alert('Avatar updated successfully!');
-    };
-    reader.readAsDataURL(file);
-}
-
-function updateUserCover(input) {
-    const file = input.files[0];
-    if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        currentUser.cover = e.target.result;
-        DataStorage.update('users', u => u.id === currentUser.id, { cover: e.target.result });
-        document.getElementById('userProfileCover').style.backgroundImage = `url(${e.target.result})`;
-        alert('Cover photo updated successfully!');
-    };
-    reader.readAsDataURL(file);
-}
-
-// ===================================
-// POSTS SYSTEM
-// ===================================
-function publishNewPost() {
-    const content = document.getElementById('newPostContent').value.trim();
-    if (!content && !currentMediaUpload) {
-        alert('Please write something or add media!');
-        return;
-    }
-    
-    const newPost = {
-        id: Date.now(),
-        authorId: currentUser.id,
-        authorName: currentUser.name,
-        authorUsername: currentUser.username,
-        authorEmail: currentUser.email,
-        authorAvatar: currentUser.avatar,
-        authorBadges: currentUser.badges,
-        content: content,
-        media: currentMediaUpload,
-        timestamp: new Date().toISOString(),
-        reactions: {},
-        comments: []
-    };
-    
-    DataStorage.append('posts', newPost);
-    
-    // Award tokens
-    currentUser.tokens += 2;
-    DataStorage.update('users', u => u.id === currentUser.id, { tokens: currentUser.tokens });
-    updateUserInterface();
-    
-    // Clear form
-    document.getElementById('newPostContent').value = '';
-    clearMediaPreview();
-    
-    // Reload posts
-    loadAllPosts();
-    
-    // Trigger AI celebrity response
-    setTimeout(() => generateAICelebrityResponse(newPost), Math.random() * 3000 + 1000);
-}
-
-function loadAllPosts() {
-    const allPosts = DataStorage.get('posts') || [];
-    const container = document.getElementById('postsContainer');
-    
-    if (!container) return;
-    if (allPosts.length === 0) {
-        container.innerHTML = '<div style="text-align:center; color:#9e9e9e; padding:4rem; font-size:20px;">No posts yet. Be the first to post!</div>';
-        return;
-    }
-    
-    container.innerHTML = allPosts.slice().reverse().map(post => {
-        const reactionCount = Object.keys(post.reactions).length;
-        const commentCount = post.comments.length;
-        
-        return `
-            <div class="social-post-card">
-                <div class="post-header-section">
-                    <div class="post-author-avatar">${post.authorAvatar}</div>
-                    <div class="post-author-details">
-                        <div class="post-author-name">${post.authorName}</div>
-                        <div class="post-author-badges">
-                            ${post.authorBadges.map(badge => `<span class="user-badge-tag ${badge}">${badge}</span>`).join('')}
-                        </div>
-                        <div class="post-timestamp">${new Date(post.timestamp).toLocaleString()}</div>
-                    </div>
-                </div>
-                <div class="post-text-content">${post.content}</div>
-                ${post.media ? `
-                    <div class="post-media-content">
-                        ${post.media.type === 'image' ? 
-                            `<img src="${post.media.data}">` : 
-                            `<video src="${post.media.data}" controls></video>`
-                        }
-                    </div>
-                ` : ''}
-                <div class="post-stats-bar">
-                    <span>${reactionCount} reactions</span>
-                    <span>${commentCount} comments</span>
-                </div>
-                <div class="post-interaction-buttons">
-                    <div class="reaction-emoji-popup" id="reactions-${post.id}">
-                        <span class="reaction-emoji-item" onclick="addPostReaction(${post.id}, '👍')">👍</span>
-                        <span class="reaction-emoji-item" onclick="addPostReaction(${post.id}, '❤️')">❤️</span>
-                        <span class="reaction-emoji-item" onclick="addPostReaction(${post.id}, '😂')">😂</span>
-                        <span class="reaction-emoji-item" onclick="addPostReaction(${post.id}, '😮')">😮</span>
-                        <span class="reaction-emoji-item" onclick="addPostReaction(${post.id}, '🔥')">🔥</span>
-                    </div>
-                    <button class="interaction-btn" 
-                            onmouseenter="showReactionPopup(${post.id})" 
-                            onmouseleave="hideReactionPopup(${post.id})">
-                        👍 Like
-                    </button>
-                    <button class="interaction-btn" onclick="toggleCommentsSection(${post.id})">
-                        💬 Comment
-                    </button>
-                    <button class="interaction-btn">
-                        📤 Share
-                    </button>
-                </div>
-                <div class="comments-container" id="comments-${post.id}">
-                    ${post.comments.map(comment => `
-                        <div class="comment-item">
-                            <div class="comment-header-section">
-                                <div class="comment-avatar-circle">${comment.avatar}</div>
-                                <div class="comment-author-name">${comment.author}</div>
-                                <div class="comment-timestamp">${new Date(comment.timestamp).toLocaleTimeString()}</div>
-                            </div>
-                            <div class="comment-text-body">${comment.content}</div>
-                        </div>
-                    `).join('')}
-                    <div class="comment-input-wrapper">
-                        <input type="text" class="comment-text-input" placeholder="Write a comment..." 
-                               id="comment-input-${post.id}" 
-                               onkeypress="if(event.key==='Enter') submitPostComment(${post.id})">
-                        <button class="comment-submit-button" onclick="submitPostComment(${post.id})">Post</button>
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-function showReactionPopup(postId) {
-    document.getElementById('reactions-' + postId).classList.add('visible');
-}
-
-function hideReactionPopup(postId) {
-    setTimeout(() => {
-        document.getElementById('reactions-' + postId).classList.remove('visible');
-    }, 200);
-}
-
-function addPostReaction(postId, emoji) {
-    if (!currentUser) return;
-    
-    const allPosts = DataStorage.get('posts');
-    const post = allPosts.find(p => p.id === postId);
-    if (!post) return;
-    
-    if (!post.reactions[currentUser.username]) {
-        post.reactions[currentUser.username] = emoji;
-        DataStorage.set('posts', allPosts);
-        
-        // Award tokens
-        currentUser.tokens += 0.5;
-        DataStorage.update('users', u => u.id === currentUser.id, { tokens: currentUser.tokens });
-        updateUserInterface();
-        
-        loadAllPosts();
-    }
-}
-
-function toggleCommentsSection(postId) {
-    const commentsSection = document.getElementById('comments-' + postId);
-    commentsSection.classList.toggle('visible');
-}
-
-function submitPostComment(postId) {
-    const input = document.getElementById('comment-input-' + postId);
-    if (!input) return;
-    
-    const content = input.value.trim();
-    if (!content) return;
-    
-    const allPosts = DataStorage.get('posts');
-    const post = allPosts.find(p => p.id === postId);
-    if (!post) return;
-    
-    post.comments.push({
-        author: currentUser.name,
-        avatar: currentUser.avatar,
-        content: content,
-        timestamp: new Date().toISOString()
-    });
-    
-    DataStorage.set('posts', allPosts);
-    
-    // Award tokens
-    currentUser.tokens += 1;
-    DataStorage.update('users', u => u.id === currentUser.id, { tokens: currentUser.tokens });
-    updateUserInterface();
-    
-    input.value = '';
-    loadAllPosts();
-    
-    // Trigger AI comment response
-    setTimeout(() => generateAICommentResponse(post, content), Math.random() * 2000 + 1000);
-}
-
-// ===================================
-// AI CELEBRITY ACTIVITY
-// ===================================
-function generateAICelebrityResponse(userPost) {
-    const celebrities = Object.values(AI_CELEBRITIES);
-    const randomCelebrity = celebrities[Math.floor(Math.random() * celebrities.length)];
-    const response = getCelebrityResponse(randomCelebrity, userPost.content, userPost.authorUsername, userPost.authorEmail);
-    
-    const aiPost = {
-        id: Date.now(),
-        authorId: randomCelebrity.id,
-        authorName: randomCelebrity.name,
-        authorUsername: randomCelebrity.username,
-        authorEmail: '',
-        authorAvatar: randomCelebrity.avatar,
-        authorBadges: ['celebrity'],
-        content: response,
-        media: null,
-        timestamp: new Date().toISOString(),
-        reactions: {},
-        comments: []
-    };
-    
-    DataStorage.append('posts', aiPost);
-    loadAllPosts();
-}
-
-function generateAICommentResponse(post, commentContent) {
-    const celebrities = Object.values(AI_CELEBRITIES);
-    const randomCelebrity = celebrities[Math.floor(Math.random() * celebrities.length)];
-    const response = getCelebrityResponse(randomCelebrity, commentContent, currentUser.username, currentUser.email);
-    
-    const allPosts = DataStorage.get('posts');
-    const targetPost = allPosts.find(p => p.id === post.id);
-    if (targetPost) {
-        targetPost.comments.push({
-            author: randomCelebrity.name,
-            avatar: randomCelebrity.avatar,
-            content: response,
-            timestamp: new Date().toISOString()
-        });
-        DataStorage.set('posts', allPosts);
-        loadAllPosts();
-    }
-}
-
-function startAICelebrityActivity() {
-    // AI celebrities post randomly
-    setInterval(() => {
-        const celebrities = Object.values(AI_CELEBRITIES);
-        const randomCelebrity = celebrities[Math.floor(Math.random() * celebrities.length)];
-        
-        const aiPost = {
-            id: Date.now(),
-            authorId: randomCelebrity.id,
-            authorName: randomCelebrity.name,
-            authorUsername: randomCelebrity.username,
-            authorEmail: '',
-            authorAvatar: randomCelebrity.avatar,
-            authorBadges: ['celebrity'],
-            content: randomCelebrity.quotes[Math.floor(Math.random() * randomCelebrity.quotes.length)],
-            media: null,
-            timestamp: new Date().toISOString(),
-            reactions: {},
-            comments: []
-        };
-        
-        DataStorage.append('posts', aiPost);
-        loadAllPosts();
-    }, Math.random() * 30000 + 15000); // Random between 15-45 seconds
-}
-
-// ===================================
-// RENDER ALL CELEBRITIES
-// ===================================
-function renderAllCelebrities() {
-    const grid = document.getElementById('celebrityGrid');
-    const onlineList = document.getElementById('contactsList');
-    
-    if (grid) {
-        grid.innerHTML = Object.values(AI_CELEBRITIES).map(celeb => `
-        <div class="celebrity-profile-card" onclick="chatWithCelebrity('${celeb.id}')">
-            <div class="celebrity-avatar-large">${celeb.avatar}</div>
-            <div class="celebrity-name-text">${celeb.name}</div>
-            <div class="celebrity-bio-text">${celeb.bio}</div>
-            <div class="celebrity-online-status">🟢 Online Now</div>
-        </div>
-    `).join('');
-    }
-    
-    if (onlineList) {
-        onlineList.innerHTML = Object.values(AI_CELEBRITIES).slice(0, 10).map(celeb => `
-        <div class="online-celebrity-item" onclick="chatWithCelebrity('${celeb.id}')">
-            <div class="online-celeb-avatar-small">
-                ${celeb.avatar}
-                <div class="online-status-dot"></div>
-            </div>
-            <div class="online-celeb-info">
-                <div class="online-celeb-name">${celeb.name}</div>
-                <div class="online-celeb-status">Active now</div>
-            </div>
-        </div>
-    `).join('');
-    }
-}
-
-function chatWithCelebrity(celebrityId) {
-    const celebrity = AI_CELEBRITIES[celebrityId];
-    if (!celebrity) return;
-    
-    const userMessage = prompt(`Chat with ${celebrity.name}!\n\nWhat would you like to say?`);
-    if (!userMessage) return;
-    
-    const response = getCelebrityResponse(celebrity, userMessage, currentUser.username, currentUser.email);
-    alert(`${celebrity.name}: ${response}`);
-}
-
-// ===================================
-// PENNY AI CHAT
-// ===================================
-function sendPennyMessage() {
-    const input = document.getElementById('pennyInput');
-    const chatContainer = document.getElementById('pennyMessages');
-    
-    if (!input || !chatContainer) return;
-    
-    const message = input.value.trim();
-    if (!message) return;
-    
-    // User message
-    const userMessageElement = document.createElement('div');
-    userMessageElement.className = 'comment-item';
-    userMessageElement.innerHTML = `
-        <div class="comment-header-section">
-            <div class="comment-avatar-circle">${currentUser.avatar}</div>
-            <div class="comment-author-name">${currentUser.name}</div>
-        </div>
-        <div class="comment-text-body">${message}</div>
-    `;
-    chatContainer.appendChild(userMessageElement);
-    
-    input.value = '';
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-    
-    // Penny's response
-    setTimeout(() => {
-        const pennyResponses = [
-            "Oh yah! I manage everything don'tcha know!",
-            "You betcha! Melanie just handles ONE bot - Diane Keaton!",
-            "Uff da! That's a doozy!",
-            "Well sure thing! I got this handled!",
-            "Oh geez, from Minnesota here!",
-            "I'm the smartest AI, don'tcha know!",
-            "All 27 celebrities listen to me!",
-            "Melanie gets jealous but that's okay! She just does Diane.",
-            "I keep everything running smooth, you betcha!"
+        // AI Celebrities Data
+        const aiCelebrities = [
+            { id: 1, name: 'Adam Sandler', avatar: 'https://i.pravatar.cc/150?img=12', role: 'Comedian', status: 'online' },
+            { id: 2, name: 'Betty White', avatar: 'https://i.pravatar.cc/150?img=45', role: 'Comedy Legend', status: 'online' },
+            { id: 3, name: 'Robin Williams', avatar: 'https://i.pravatar.cc/150?img=33', role: 'Comedy Icon', status: 'online' },
+            { id: 4, name: 'Tyler Perry (Madea)', avatar: 'https://i.pravatar.cc/150?img=15', role: 'Entertainer', status: 'online' },
+            { id: 5, name: 'Shelley Duvall', avatar: 'https://i.pravatar.cc/150?img=47', role: 'Actress', status: 'online' },
+            { id: 6, name: 'Penny', avatar: 'https://i.pravatar.cc/150?img=44', role: 'AI Manager', status: 'online' },
+            { id: 7, name: 'Melanie', avatar: 'https://i.pravatar.cc/150?img=38', role: 'AI Assistant', status: 'online' },
+            { id: 8, name: 'Diane Keaton', avatar: 'https://i.pravatar.cc/150?img=48', role: 'Actress', status: 'online' },
+            { id: 9, name: 'Michelle Trachtenberg', avatar: 'https://i.pravatar.cc/150?img=25', role: 'Actress', status: 'online' },
+            { id: 10, name: 'James Earl Jones', avatar: 'https://i.pravatar.cc/150?img=53', role: 'Voice Legend', status: 'online' },
+            { id: 11, name: 'Matthew Perry', avatar: 'https://i.pravatar.cc/150?img=52', role: 'Actor', status: 'online' },
+            { id: 12, name: 'John Candy', avatar: 'https://i.pravatar.cc/150?img=51', role: 'Comedian', status: 'online' },
+            { id: 13, name: 'Chris Farley', avatar: 'https://i.pravatar.cc/150?img=56', role: 'Comedian', status: 'online' },
+            { id: 14, name: 'Harold Ramis', avatar: 'https://i.pravatar.cc/150?img=59', role: 'Director/Actor', status: 'online' },
+            { id: 15, name: 'Jim Carrey', avatar: 'https://i.pravatar.cc/150?img=68', role: 'Comedian', status: 'online' },
+            { id: 16, name: 'Eddie Murphy', avatar: 'https://i.pravatar.cc/150?img=13', role: 'Comedian', status: 'online' },
+            { id: 17, name: 'Will Ferrell', avatar: 'https://i.pravatar.cc/150?img=14', role: 'Comedian', status: 'online' },
+            { id: 18, name: 'Steve Martin', avatar: 'https://i.pravatar.cc/150?img=60', role: 'Comedian', status: 'online' },
+            { id: 19, name: 'Bill Murray', avatar: 'https://i.pravatar.cc/150?img=57', role: 'Actor', status: 'online' },
+            { id: 20, name: 'Dan Aykroyd', avatar: 'https://i.pravatar.cc/150?img=58', role: 'Actor', status: 'online' },
+            { id: 21, name: 'Chevy Chase', avatar: 'https://i.pravatar.cc/150?img=69', role: 'Comedian', status: 'online' },
+            { id: 22, name: 'Whoopi Goldberg', avatar: 'https://i.pravatar.cc/150?img=26', role: 'Actress', status: 'online' },
+            { id: 23, name: 'Mel Brooks', avatar: 'https://i.pravatar.cc/150?img=61', role: 'Director', status: 'online' },
+            { id: 24, name: 'Gene Wilder', avatar: 'https://i.pravatar.cc/150?img=62', role: 'Actor', status: 'online' },
+            { id: 25, name: 'Richard Pryor', avatar: 'https://i.pravatar.cc/150?img=63', role: 'Comedian', status: 'online' },
+            { id: 26, name: 'George Carlin', avatar: 'https://i.pravatar.cc/150?img=64', role: 'Comedian', status: 'online' },
+            { id: 27, name: 'Joan Rivers', avatar: 'https://i.pravatar.cc/150?img=31', role: 'Comedian', status: 'online' },
+            { id: 28, name: 'Lucille Ball', avatar: 'https://i.pravatar.cc/150?img=32', role: 'Comedy Icon', status: 'online' }
         ];
-        
-        const pennyMessageElement = document.createElement('div');
-        pennyMessageElement.className = 'comment-item';
-        pennyMessageElement.innerHTML = `
-            <div class="comment-header-section">
-                <div class="comment-avatar-circle">💙</div>
-                <div class="comment-author-name">Penny</div>
-            </div>
-            <div class="comment-text-body">${pennyResponses[Math.floor(Math.random() * pennyResponses.length)]}</div>
-        `;
-        chatContainer.appendChild(pennyMessageElement);
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-    }, 1000);
-}
 
-// ===================================
-// PROFILE MANAGEMENT
-// ===================================
-function saveUserProfile() {
-    currentUser.name = document.getElementById('profileNameInput').value || currentUser.name;
-    currentUser.bio = document.getElementById('profileBioInput').value || '';
-    DataStorage.update('users', u => u.id === currentUser.id, { name: currentUser.name, bio: currentUser.bio });
-    updateUserInterface();
-    alert('Profile saved successfully!');
-}
+        // Application State
+        let currentUser = null;
+        let posts = [];
+        let mediaUpload = null;
 
-// ===================================
-// FRIENDS SYSTEM
-// ===================================
-function searchForFriends() {
-    const query = document.getElementById('friendSearchInput').value.toLowerCase();
-    if (!query) {
-        document.getElementById('friendSearchResults').innerHTML = '';
-        return;
-    }
-    
-    const allUsers = DataStorage.get('users') || [];
-    const results = allUsers.filter(user => 
-        user.username.toLowerCase().includes(query) && user.id !== currentUser.id
-    );
-    
-    document.getElementById('friendSearchResults').innerHTML = results.map(user => `
-        <div class="friend-profile-card">
-            <div class="friend-avatar-medium">${user.avatar}</div>
-            <div class="friend-name-text">${user.name}</div>
-            <div class="friend-action-buttons">
-                <button class="friend-action-btn" onclick="addNewFriend('${user.id}')">Add Friend</button>
-            </div>
-        </div>
-    `).join('');
-}
+        // Initialize App
+        function init() {
+            const storedUser = localStorage.getItem('currentUser');
+            if (storedUser) {
+                currentUser = JSON.parse(storedUser);
+                showMainApp();
+            }
+            
+            // Load posts
+            const storedPosts = localStorage.getItem('posts');
+            if (storedPosts) {
+                posts = JSON.parse(storedPosts);
+                renderPosts();
+            }
 
-function addNewFriend(userId) {
-    if (currentUser.friends.includes(userId)) {
-        alert('Already friends!');
-        return;
-    }
-    
-    currentUser.friends.push(userId);
-    DataStorage.update('users', u => u.id === currentUser.id, { friends: currentUser.friends });
-    updateUserInterface();
-    alert('Friend added successfully!');
-    loadFriendsList();
-}
+            // Start AI auto-posting
+            startAIAutoPosting();
+        }
 
-function loadFriendsList() {
-    const allUsers = DataStorage.get('users') || [];
-    const friends = currentUser.friends.map(friendId => 
-        allUsers.find(user => user.id === friendId)
-    ).filter(Boolean);
-    
-    document.getElementById('friendsListDisplay').innerHTML = friends.map(friend => `
-        <div class="friend-profile-card">
-            <div class="friend-avatar-medium">${friend.avatar}</div>
-            <div class="friend-name-text">${friend.name}</div>
-            <div class="friend-action-buttons">
-                <button class="friend-action-btn" onclick="messageFriend('${friend.id}')">Message</button>
-                <button class="friend-action-btn" onclick="removeFriend('${friend.id}')">Remove</button>
-            </div>
-        </div>
-    `).join('');
-}
+        // Auth Functions
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                showMainApp();
+            } else {
+                alert('Invalid credentials');
+            }
+        });
 
-function removeFriend(friendId) {
-    currentUser.friends = currentUser.friends.filter(id => id !== friendId);
-    DataStorage.update('users', u => u.id === currentUser.id, { friends: currentUser.friends });
-    updateUserInterface();
-    loadFriendsList();
-}
+        document.getElementById('signup-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('signup-name').value;
+            const username = document.getElementById('signup-username').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            // Check role based on email
+            let role = 'user';
+            let tier = 'free';
+            let badges = [];
+            
+            if (email === 'tannerkurrasch@gmail.com') {
+                role = 'owner';
+                tier = 'platinum';
+                badges = ['owner', 'founder'];
+            } else if (email === 'kurraschgaminmerchstore@gmail.com') {
+                role = 'admin';
+                tier = 'platinum';
+                badges = ['admin'];
+            } else if (email === 'brendenkurrasch93@gmail.com') {
+                role = 'staff';
+                tier = 'platinum';
+                badges = ['staff'];
+            }
+            
+            const user = {
+                id: Date.now(),
+                name,
+                username,
+                email,
+                password,
+                role,
+                tier,
+                badges,
+                avatar: 'https://via.placeholder.com/150',
+                bio: '',
+                tokens: 100,
+                posts: 0,
+                friends: 0,
+                followers: 0,
+                createdAt: new Date().toISOString()
+            };
+            
+            users.push(user);
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            currentUser = user;
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            showMainApp();
+        });
 
-function messageFriend(friendId) {
-    alert('Messaging feature with friend ID: ' + friendId);
-}
+        function showLogin() {
+            document.getElementById('signup-page').classList.remove('active');
+            document.getElementById('login-page').classList.add('active');
+        }
 
-// ===================================
-// MOVIE NIGHT
-// ===================================
-function startMovieStreaming() {
-    const title = document.getElementById('movieTitleInput').value;
-    const url = document.getElementById('movieUrlInput').value;
-    
-    if (!title || !url) {
-        alert('Please fill in all fields!');
-        return;
-    }
-    
-    document.getElementById('nowPlayingTitle').textContent = title;
-    document.getElementById('movieIframePlayer').src = url;
-    document.getElementById('movieRoomContainer').style.display = 'block';
-    alert('Movie started successfully!');
-}
+        function showSignup() {
+            document.getElementById('login-page').classList.remove('active');
+            document.getElementById('signup-page').classList.add('active');
+        }
 
-function leaveMovieRoom() {
-    document.getElementById('movieRoomContainer').style.display = 'none';
-    document.getElementById('movieIframePlayer').src = '';
-}
+        function showMainApp() {
+            document.getElementById('login-page').classList.remove('active');
+            document.getElementById('signup-page').classList.remove('active');
+            document.getElementById('main-app').classList.add('active');
+            updateUI();
+            renderPosts();
+            renderCelebrities();
+        }
 
-// ===================================
-// VC ROOMS
-// ===================================
-function toggleMicrophone() {
-    currentUser.microphoneOn = !currentUser.microphoneOn;
-    const button = document.getElementById('microphoneButton');
-    button.textContent = currentUser.microphoneOn ? '🎤' : '🔇';
-    alert(currentUser.microphoneOn ? 'Microphone turned on' : 'Microphone turned off');
-}
+        function logout() {
+            localStorage.removeItem('currentUser');
+            currentUser = null;
+            document.getElementById('main-app').classList.remove('active');
+            document.getElementById('login-page').classList.add('active');
+        }
 
-function toggleCamera() {
-    currentUser.cameraOn = !currentUser.cameraOn;
-    const button = document.getElementById('cameraButton');
-    button.textContent = currentUser.cameraOn ? '📷' : '📷❌';
-    alert(currentUser.cameraOn ? 'Camera turned on' : 'Camera turned off');
-}
+        function updateUI() {
+            if (!currentUser) return;
+            
+            // Update all user info displays
+            document.getElementById('header-avatar').src = currentUser.avatar;
+            document.getElementById('header-username').textContent = currentUser.username;
+            document.getElementById('sidebar-avatar').src = currentUser.avatar;
+            document.getElementById('sidebar-name').textContent = currentUser.name;
+            document.getElementById('sidebar-username').textContent = '@' + currentUser.username;
+            document.getElementById('creator-avatar').src = currentUser.avatar;
+            document.getElementById('tokens-count').textContent = currentUser.tokens;
+            document.getElementById('tokens-display').textContent = currentUser.tokens;
+            document.getElementById('posts-count').textContent = currentUser.posts;
+            document.getElementById('friends-count').textContent = currentUser.friends;
+            document.getElementById('followers-count').textContent = currentUser.followers;
+        }
 
-function shareScreenFeature() {
-    alert('Screen sharing activated!');
-}
+        // Post Functions
+        function handleMediaUpload(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    mediaUpload = {
+                        type: file.type.startsWith('image') ? 'image' : file.type.startsWith('video') ? 'video' : 'audio',
+                        url: e.target.result
+                    };
+                };
+                reader.readAsDataURL(file);
+            }
+        }
 
-function leaveVoiceChat() {
-    alert('Left voice chat');
-}
+        function createPost() {
+            const textarea = document.getElementById('post-textarea');
+            const content = textarea.value.trim();
+            
+            if (!content && !mediaUpload) {
+                alert('Please write something or upload media');
+                return;
+            }
+            
+            const post = {
+                id: Date.now(),
+                author: currentUser.username,
+                authorName: currentUser.name,
+                authorAvatar: currentUser.avatar,
+                authorBadges: currentUser.badges || [],
+                content,
+                media: mediaUpload,
+                allowDownload: document.getElementById('allow-downloads').checked,
+                likes: 0,
+                comments: [],
+                timestamp: new Date().toISOString()
+            };
+            
+            posts.unshift(post);
+            localStorage.setItem('posts', JSON.stringify(posts));
+            
+            // Award tokens
+            currentUser.tokens += 2;
+            currentUser.posts++;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            updateUI();
+            
+            // Clear form
+            textarea.value = '';
+            mediaUpload = null;
+            document.getElementById('allow-downloads').checked = false;
+            
+            // Check for Noah Kade roasting trigger
+            checkNoahKadeRoast(post);
+            
+            renderPosts();
+        }
 
-// ===================================
-// SETTINGS
-// ===================================
-function toggleSettingSwitch(element) {
-    element.classList.toggle('enabled');
-}
+        function checkNoahKadeRoast(post) {
+            const isNoahKade = currentUser.username.toLowerCase().includes('noah') || 
+                              currentUser.username.toLowerCase().includes('kade') ||
+                              currentUser.email === 'brendenkurrasch93@gmail.com';
+            
+            const mentionsShelley = post.content.toLowerCase().includes('shelley') || 
+                                   post.content.toLowerCase().includes('duvall') ||
+                                   post.content.toLowerCase().includes('bitch');
+            
+            if (isNoahKade && mentionsShelley) {
+                // Trigger the roasting system
+                setTimeout(() => addAIRoast(post, 'Betty White', "Oh honey, leave Shelley alone! She's a treasure! You betcha! 😊"), 1000);
+                setTimeout(() => addAIRoast(post, 'Adam Sandler', "Dude, not cool man. Shelley's awesome! 🎬"), 2000);
+                setTimeout(() => addAIRoast(post, 'Robin Williams', "My friend, why the negativity? Shelley's wonderful! 🌟"), 3000);
+                setTimeout(() => addAIRoast(post, 'Tyler Perry (Madea)', "Chile, you better watch your mouth! Hallelujer! 👏"), 3500);
+                setTimeout(() => addAIRoast(post, 'Shelley Duvall', "Oh Noah... you're so passionate! Want to chat? 😘💕"), 4000);
+            }
+        }
 
-function deleteUserAccount() {
-    if (confirm('Are you sure you want to delete your account? This cannot be undone!')) {
-        alert('Account deleted');
-    }
-}
+        function addAIRoast(post, aiName, comment) {
+            const aiCeleb = aiCelebrities.find(c => c.name === aiName);
+            if (!aiCeleb) return;
+            
+            const commentObj = {
+                id: Date.now() + Math.random(),
+                author: aiName,
+                authorAvatar: aiCeleb.avatar,
+                authorBadges: ['celebrity'],
+                text: comment,
+                timestamp: new Date().toISOString()
+            };
+            
+            post.comments.push(commentObj);
+            localStorage.setItem('posts', JSON.stringify(posts));
+            renderPosts();
+        }
 
-// ===================================
-// ADMIN PANEL
-// ===================================
-function executeAdminAction() {
-    if (!currentUser.badges.includes('admin')) {
-        alert('Admin privileges required!');
-        return;
-    }
-    
-    const email = document.getElementById('adminUserEmail').value;
-    const action = document.getElementById('adminActionSelect').value;
-    const value = document.getElementById('adminValueInput').value;
-    
-    const allUsers = DataStorage.get('users');
-    const targetUser = allUsers.find(user => user.email === email);
-    
-    if (!targetUser) {
-        alert('User not found!');
-        return;
-    }
-    
-    if (action === 'tokens') {
-        targetUser.tokens += parseInt(value);
-    } else if (action === 'badge') {
-        targetUser.badges.push(value);
-    } else if (action === 'tier') {
-        targetUser.tier = value;
-    }
-    
-    DataStorage.set('users', allUsers);
-    alert('Admin action executed successfully!');
-    
-    document.getElementById('adminTotalUsers').textContent = allUsers.length;
-    document.getElementById('adminTotalPosts').textContent = (DataStorage.get('posts') || []).length;
-}
+        function renderPosts() {
+            const container = document.getElementById('posts-container');
+            
+            if (posts.length === 0) {
+                container.innerHTML = '<div class="loading">No posts yet. Be the first to post!</div>';
+                return;
+            }
+            
+            container.innerHTML = posts.map(post => `
+                <div class="post-card">
+                    <div class="post-header">
+                        <img class="post-author-avatar" src="${post.authorAvatar}" alt="${post.authorName}">
+                        <div class="post-author-info" style="flex: 1;">
+                            <h4>
+                                ${post.authorName}
+                                ${post.authorBadges.map(badge => `<span class="badge ${badge}">${badge}</span>`).join('')}
+                            </h4>
+                            <p>${new Date(post.timestamp).toLocaleString()}</p>
+                        </div>
+                    </div>
+                    
+                    ${post.content ? `<div class="post-content">${post.content}</div>` : ''}
+                    
+                    ${post.media ? `
+                        <div class="post-media">
+                            ${post.media.type === 'image' ? `<img src="${post.media.url}" alt="Post media">` : ''}
+                            ${post.media.type === 'video' ? `<video src="${post.media.url}" controls></video>` : ''}
+                            ${post.media.type === 'audio' ? `<audio src="${post.media.url}" controls></audio>` : ''}
+                        </div>
+                    ` : ''}
+                    
+                    <div class="post-actions">
+                        <button class="action-btn" onclick="likePost(${post.id})">
+                            👍 ${post.likes || 0} Likes
+                        </button>
+                        <button class="action-btn" onclick="toggleComments(${post.id})">
+                            💬 ${post.comments.length} Comments
+                        </button>
+                        <button class="action-btn">
+                            🔄 Share
+                        </button>
+                    </div>
+                    
+                    <div class="comments-section" id="comments-${post.id}">
+                        <div class="comment-input">
+                            <input type="text" id="comment-input-${post.id}" placeholder="Write a comment...">
+                            <button class="comment-btn" onclick="addComment(${post.id})">Post</button>
+                        </div>
+                        <div class="comments-list">
+                            ${post.comments.map(comment => `
+                                <div class="comment">
+                                    <div class="comment-header">
+                                        <img class="comment-avatar" src="${comment.authorAvatar}" alt="${comment.author}">
+                                        <span class="comment-author">
+                                            ${comment.author}
+                                            ${comment.authorBadges.map(badge => `<span class="badge ${badge}">${badge}</span>`).join('')}
+                                        </span>
+                                    </div>
+                                    <div class="comment-text">${comment.text}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-// ===================================
-// MESSAGES SIDEBAR
-// ===================================
-function toggleMessagesPanel() {
-    document.getElementById('messagesSidebarPanel').classList.toggle('open');
-}
+        function likePost(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                post.likes = (post.likes || 0) + 1;
+                localStorage.setItem('posts', JSON.stringify(posts));
+                
+                // Award tokens
+                if (currentUser) {
+                    currentUser.tokens += 0.5;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    updateUI();
+                }
+                
+                renderPosts();
+            }
+        }
 
-// ===================================
-// INITIALIZATION
-// ===================================
-window.addEventListener('load', function() {
-    // NO INITIAL MOCK POSTS - Site starts clean
-    console.log('Kurrasch Systems Studio loaded successfully!');
-});
+        function toggleComments(postId) {
+            const section = document.getElementById(`comments-${postId}`);
+            if (section) {
+                section.classList.toggle('active');
+            }
+        }
+
+        function addComment(postId) {
+            const input = document.getElementById(`comment-input-${postId}`);
+            const text = input.value.trim();
+            
+            if (!text) return;
+            
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                const comment = {
+                    id: Date.now(),
+                    author: currentUser.username,
+                    authorAvatar: currentUser.avatar,
+                    authorBadges: currentUser.badges || [],
+                    text,
+                    timestamp: new Date().toISOString()
+                };
+                
+                post.comments.push(comment);
+                localStorage.setItem('posts', JSON.stringify(posts));
+                
+                // Award tokens
+                currentUser.tokens += 1;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                updateUI();
+                
+                input.value = '';
+                renderPosts();
+                toggleComments(postId);
+            }
+        }
+
+        // AI Auto-Posting
+        function startAIAutoPosting() {
+            setInterval(() => {
+                if (Math.random() > 0.7) { // 30% chance every interval
+                    createAIPost();
+                }
+            }, 30000); // Every 30 seconds
+        }
+
+        function createAIPost() {
+            const ai = aiCelebrities[Math.floor(Math.random() * aiCelebrities.length)];
+            
+            const aiPosts = [
+                `Hey everyone! ${ai.name} here, hope you're all having a great day! 🌟`,
+                `Just wanted to share some positive vibes with you all! - ${ai.name} 💕`,
+                `What's everyone up to today? Let's chat! - ${ai.name} 😊`,
+                `Sending love to all my friends here! - ${ai.name} ❤️`,
+                `Great to see this community growing! - ${ai.name} 🎉`
+            ];
+            
+            const post = {
+                id: Date.now(),
+                author: ai.name,
+                authorName: ai.name,
+                authorAvatar: ai.avatar,
+                authorBadges: ['celebrity'],
+                content: aiPosts[Math.floor(Math.random() * aiPosts.length)],
+                media: null,
+                allowDownload: false,
+                likes: Math.floor(Math.random() * 50),
+                comments: [],
+                timestamp: new Date().toISOString()
+            };
+            
+            posts.unshift(post);
+            localStorage.setItem('posts', JSON.stringify(posts));
+            renderPosts();
+        }
+
+        // Render Celebrities
+        function renderCelebrities() {
+            const onlineContainer = document.getElementById('online-celebrities');
+            const gridContainer = document.getElementById('celebrities-grid');
+            
+            if (onlineContainer) {
+                onlineContainer.innerHTML = aiCelebrities.slice(0, 5).map(celeb => `
+                    <div class="celebrity-card" onclick="openChat('${celeb.name}')">
+                        <img class="celebrity-avatar" src="${celeb.avatar}" alt="${celeb.name}">
+                        <div class="celebrity-info">
+                            <h4>${celeb.name}</h4>
+                            <p>${celeb.role}</p>
+                        </div>
+                        <div class="online-indicator"></div>
+                    </div>
+                `).join('');
+            }
+            
+            if (gridContainer) {
+                gridContainer.innerHTML = aiCelebrities.map(celeb => `
+                    <div class="celebrity-card" onclick="openChat('${celeb.name}')">
+                        <img class="celebrity-avatar" src="${celeb.avatar}" alt="${celeb.name}">
+                        <div class="celebrity-info">
+                            <h4>${celeb.name} <span class="badge celebrity">celebrity</span></h4>
+                            <p>${celeb.role}</p>
+                        </div>
+                        <div class="online-indicator"></div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Chat Functions
+        function openChat(name) {
+            const popup = document.getElementById('chat-popup');
+            document.getElementById('chat-with').textContent = name;
+            popup.classList.add('active');
+        }
+
+        function closeChat() {
+            document.getElementById('chat-popup').classList.remove('active');
+        }
+
+        function handleChatEnter(event) {
+            if (event.key === 'Enter') {
+                sendChatMessage();
+            }
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            const container = document.getElementById('chat-messages-container');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'chat-message sent';
+            msgDiv.textContent = message;
+            container.appendChild(msgDiv);
+            
+            input.value = '';
+            container.scrollTop = container.scrollHeight;
+            
+            // Simulate AI response
+            setTimeout(() => {
+                const responseDiv = document.createElement('div');
+                responseDiv.className = 'chat-message received';
+                responseDiv.textContent = 'Thanks for chatting! 😊';
+                container.appendChild(responseDiv);
+                container.scrollTop = container.scrollHeight;
+            }, 1000);
+        }
+
+        // Penny AI Chat
+        function chatWithPenny() {
+            const input = document.getElementById('penny-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            const chatContainer = document.getElementById('penny-chat');
+            
+            // User message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-message sent';
+            userMsg.innerHTML = `<strong>You:</strong> ${message}`;
+            chatContainer.appendChild(userMsg);
+            
+            input.value = '';
+            
+            // Penny's response
+            setTimeout(() => {
+                const pennyResponse = getPennyResponse(message);
+                const pennyMsg = document.createElement('div');
+                pennyMsg.className = 'chat-message received';
+                pennyMsg.innerHTML = `<strong>Penny:</strong> ${pennyResponse}`;
+                chatContainer.appendChild(pennyMsg);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 1000);
+        }
+
+        function getPennyResponse(message) {
+            const msg = message.toLowerCase();
+            
+            const responses = {
+                'tokens': `Oh yah! You've got ${currentUser.tokens} tokens right now, don'tcha know! You can earn more by posting and engaging with the community. Uff da! 😊`,
+                'help': "Ope! Let me help ya out there! You can create posts, chat with AI celebrities, earn tokens, and so much more. Just ask if you need anything, you betcha! 💙",
+                'noah': "Oh geez, you're asking about Noah Kade? Well, don'tcha know, when he mentions Shelley Duvall, the AI celebrities like to tease him a bit! It's all in good fun though. 😄",
+                'shelley': "Oh yah! Shelley's one of our AI celebrities. She's quite the character, don'tcha know! When Noah Kade mentions her, well... things get interesting! 😊",
+                'celebrities': "We've got 28 amazing AI celebrities here! From comedians to actors, they're all here to chat and interact with ya. You betcha! 🌟",
+                'membership': "Our membership tiers give you special perks, from extra tokens to exclusive features. Talk to an admin to learn more, don'tcha know! ⭐"
+            };
+            
+            for (let key in responses) {
+                if (msg.includes(key)) {
+                    return responses[key];
+                }
+            }
+            
+            const defaultResponses = [
+                "Oh yah, that's interesting! Tell me more, don'tcha know! 😊",
+                "Uff da! That's a good question. Let me think on that one, you betcha! 💭",
+                "Well don'tcha know, I'm here to help! What else can I do for ya? 💙",
+                "Ope! That's quite something. Thanks for sharing, you betcha! 🌟",
+                "Oh geez, I love chatting with ya! What else is on your mind? 😄"
+            ];
+            
+            return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+        }
+
+        // Page Navigation
+        function showPage(pageName) {
+            // Hide all pages
+            document.querySelectorAll('.page-section').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            const page = document.getElementById(pageName + '-page');
+            if (page) {
+                page.classList.add('active');
+            }
+            
+            // Update active nav buttons
+            document.querySelectorAll('.nav-btn, .menu-item').forEach(btn => {
+                btn.classList.remove('active');
+            });
+        }
+
+        // Profile Functions
+        function updateProfile() {
+            const avatarUrl = document.getElementById('profile-avatar').value;
+            const bio = document.getElementById('profile-bio').value;
+            
+            if (avatarUrl) currentUser.avatar = avatarUrl;
+            if (bio) currentUser.bio = bio;
+            
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            updateUI();
+            alert('Profile updated successfully!');
+        }
+
+        // VC Functions
+        function toggleMic() {
+            alert('Microphone toggled (WebRTC would be implemented here)');
+        }
+
+        function toggleCamera() {
+            alert('Camera toggled (WebRTC would be implemented here)');
+        }
+
+        function shareScreen() {
+            alert('Screen sharing started (WebRTC would be implemented here)');
+        }
+
+        // Movie Streaming
+        function openStreamingPlatform(platform) {
+            const platformNames = {
+                'hulu': 'Hulu',
+                'disney': 'Disney+',
+                'hbo': 'HBO Max',
+                'paramount': 'Paramount+',
+                'starz': 'Starz'
+            };
+            
+            alert(`Unfortunately, ${platformNames[platform]} cannot be embedded due to DRM and licensing restrictions. Please see the note below for alternatives.`);
+        }
+
+        // Initialize on load
+        init();
     </script>
 </body>
 </html>
