@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kurrasch Systems Studio - 28 AI Celebrities</title>
-    <link rel="icon" href="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png">
+    <link rel="icon" href="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png?ex=68ffb14d&is=68fe5fcd&hm=357467617bc0a9270f45eba06529dff853d02c83f4add41482f8fe87a8b089a2&">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -815,7 +815,7 @@
         <div id="loginPage" class="auth-page active">
             <div class="auth-box">
                 <div class="auth-logo">
-                    <img src="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png" alt="KSS Logo">
+                    <img src="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png?ex=68ffb14d&is=68fe5fcd&hm=357467617bc0a9270f45eba06529dff853d02c83f4add41482f8fe87a8b089a2&" alt="KSS Logo">
                 </div>
                 <div class="auth-title">Kurrasch Systems Studio</div>
                 <form onsubmit="return login(event)">
@@ -839,7 +839,7 @@
         <div id="signupPage" class="auth-page">
             <div class="auth-box">
                 <div class="auth-logo">
-                    <img src="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png" alt="KSS Logo">
+                    <img src="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png?ex=68ffb14d&is=68fe5fcd&hm=357467617bc0a9270f45eba06529dff853d02c83f4add41482f8fe87a8b089a2&" alt="KSS Logo">
                 </div>
                 <div class="auth-title">Create Account</div>
                 <form onsubmit="return signup(event)">
@@ -873,7 +873,7 @@
             <!-- Header -->
             <div class="header">
                 <div class="header-left">
-                    <img src="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png" alt="Logo" class="logo-img">
+                    <img src="https://cdn.discordapp.com/attachments/1428592257581318255/1431883096583831562/KSS.png?ex=68ffb14d&is=68fe5fcd&hm=357467617bc0a9270f45eba06529dff853d02c83f4add41482f8fe87a8b089a2&" alt="Logo" class="logo-img">
                     <input type="text" class="search" placeholder="Search Kurrasch Systems Studio">
                 </div>
                 <div class="header-icons">
@@ -1240,15 +1240,32 @@ let currentUser = null;
 // ===================================
 function login(event) {
     event.preventDefault();
-    const email = document.getElementById('loginEmail').value.trim();
-    const password = document.getElementById('loginPass').value;
+    
+    const emailInput = document.getElementById('loginEmail');
+    const passInput = document.getElementById('loginPass');
+    
+    if (!emailInput || !passInput) {
+        alert('Login form not found!');
+        return false;
+    }
+    
+    const email = emailInput.value.trim();
+    const password = passInput.value;
     const users = DataStorage.get('users') || [];
     const user = users.find(u => u.email === email && u.password === password);
+    
     if (user) {
         currentUser = user;
-        document.getElementById('loginPage').classList.remove('active');
-        document.getElementById('signupPage').classList.remove('active');
-        document.getElementById('mainApp').style.display = 'block';
+        
+        const loginPage = document.getElementById('loginPage');
+        if (loginPage) loginPage.classList.remove('active');
+        
+        const signupPage = document.getElementById('signupPage');
+        if (signupPage) signupPage.classList.remove('active');
+        
+        const mainApp = document.getElementById('mainApp');
+        if (mainApp) mainApp.style.display = 'block';
+        
         updateUserInterface();
         loadAllPosts();
         renderAllCelebrities();
@@ -1261,25 +1278,46 @@ function login(event) {
 
 function signup(event) {
     event.preventDefault();
-    const name = document.getElementById('signupName').value.trim();
-    const username = document.getElementById('signupUser').value.trim();
-    const email = document.getElementById('signupEmail').value.trim();
-    const password = document.getElementById('signupPass').value;
+    
+    const nameInput = document.getElementById('signupName');
+    const userInput = document.getElementById('signupUser');
+    const emailInput = document.getElementById('signupEmail');
+    const passInput = document.getElementById('signupPass');
+    
+    if (!nameInput || !userInput || !emailInput || !passInput) {
+        alert('Signup form not found!');
+        return false;
+    }
+    
+    const name = nameInput.value.trim();
+    const username = userInput.value.trim();
+    const email = emailInput.value.trim();
+    const password = passInput.value;
     const users = DataStorage.get('users') || [];
+    
     if (users.find(u => u.email === email)) {
         alert('Email exists!');
         return false;
     }
+    
     const newUser = {
         id: Date.now(), name, username, email, password, bio: '', avatar: '👤',
         cover: null, tokens: 100, freeMovies: 3, badges: [], tier: null,
         friends: [], followers: [], following: [], microphoneOn: true, cameraOn: true
     };
+    
     DataStorage.append('users', newUser);
     currentUser = newUser;
-    document.getElementById('loginPage').classList.remove('active');
-    document.getElementById('signupPage').classList.remove('active');
-    document.getElementById('mainApp').style.display = 'block';
+    
+    const loginPage = document.getElementById('loginPage');
+    if (loginPage) loginPage.classList.remove('active');
+    
+    const signupPage = document.getElementById('signupPage');
+    if (signupPage) signupPage.classList.remove('active');
+    
+    const mainApp = document.getElementById('mainApp');
+    if (mainApp) mainApp.style.display = 'block';
+    
     updateUserInterface();
     loadAllPosts();
     renderAllCelebrities();
@@ -1288,20 +1326,30 @@ function signup(event) {
 }
 
 function showSignup() {
-    document.getElementById('loginPage').classList.remove('active');
-    document.getElementById('signupPage').classList.add('active');
+    const loginPage = document.getElementById('loginPage');
+    if (loginPage) loginPage.classList.remove('active');
+    
+    const signupPage = document.getElementById('signupPage');
+    if (signupPage) signupPage.classList.add('active');
 }
 
 function showLogin() {
-    document.getElementById('signupPage').classList.remove('active');
-    document.getElementById('loginPage').classList.add('active');
+    const signupPage = document.getElementById('signupPage');
+    if (signupPage) signupPage.classList.remove('active');
+    
+    const loginPage = document.getElementById('loginPage');
+    if (loginPage) loginPage.classList.add('active');
 }
 
 function logout() {
     if (confirm('Logout?')) {
         currentUser = null;
-        document.getElementById('mainApp').style.display = 'none';
-        document.getElementById('loginPage').classList.add('active');
+        
+        const mainApp = document.getElementById('mainApp');
+        if (mainApp) mainApp.style.display = 'none';
+        
+        const loginPage = document.getElementById('loginPage');
+        if (loginPage) loginPage.classList.add('active');
     }
 }
 
@@ -1326,14 +1374,21 @@ function askPenny() {
 }
 
 function applyForBadge() {
-    const badgeType = document.getElementById('badgeType').value;
-    const reason = document.getElementById('badgeReason').value;
+    const badgeTypeEl = document.getElementById('badgeType');
+    const badgeReasonEl = document.getElementById('badgeReason');
+    
+    if (!badgeTypeEl || !badgeReasonEl) return;
+    
+    const badgeType = badgeTypeEl.value;
+    const reason = badgeReasonEl.value;
+    
     if (!reason) {
         alert('Please provide a reason for your application!');
         return;
     }
+    
     alert('Badge application submitted! You applied for: ' + badgeType);
-    document.getElementById('badgeReason').value = '';
+    badgeReasonEl.value = '';
 }
 
 function watchMovie() {
@@ -1462,58 +1517,65 @@ function switchToLogin() {
     document.getElementById('loginOverlay').classList.add('visible');
 }
 
-document.getElementById('loginForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const email = document.getElementById('loginEmail').value.trim();
-    const password = document.getElementById('loginPassword').value;
-    const users = DataStorage.get('users') || [];
-    const user = users.find(u => u.email === email && u.password === password);
-    
-    if (user) {
-        currentUser = user;
-        initializeApplication();
-    } else {
-        alert('Invalid credentials! Please try again.');
-    }
-});
+// DEFENSIVE: Only add event listeners if elements exist
+const loginForm = document.getElementById('loginForm');
+if (loginForm) {
+    loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        const users = DataStorage.get('users') || [];
+        const user = users.find(u => u.email === email && u.password === password);
+        
+        if (user) {
+            currentUser = user;
+            initializeApplication();
+        } else {
+            alert('Invalid credentials! Please try again.');
+        }
+    });
+}
 
-document.getElementById('signupForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const name = document.getElementById('signupName').value.trim();
-    const username = document.getElementById('signupUsername').value.trim();
-    const email = document.getElementById('signupEmail').value.trim();
-    const password = document.getElementById('signupPassword').value;
-    
-    const users = DataStorage.get('users') || [];
-    if (users.find(u => u.email === email)) {
-        alert('Email already exists!');
-        return;
-    }
-    
-    const newUser = {
-        id: Date.now(),
-        name: name,
-        username: username,
-        email: email,
-        password: password,
-        bio: '',
-        avatar: '👤',
-        cover: null,
-        tokens: 100,
-        freeMovies: 3,
-        badges: [],
-        tier: null,
-        friends: [],
-        followers: [],
-        following: [],
-        microphoneOn: true,
-        cameraOn: true
-    };
-    
-    DataStorage.append('users', newUser);
-    currentUser = newUser;
-    initializeApplication();
-});
+const signupForm = document.getElementById('signupForm');
+if (signupForm) {
+    signupForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const name = document.getElementById('signupName').value.trim();
+        const username = document.getElementById('signupUsername').value.trim();
+        const email = document.getElementById('signupEmail').value.trim();
+        const password = document.getElementById('signupPassword').value;
+        
+        const users = DataStorage.get('users') || [];
+        if (users.find(u => u.email === email)) {
+            alert('Email already exists!');
+            return;
+        }
+        
+        const newUser = {
+            id: Date.now(),
+            name: name,
+            username: username,
+            email: email,
+            password: password,
+            bio: '',
+            avatar: '👤',
+            cover: null,
+            tokens: 100,
+            freeMovies: 3,
+            badges: [],
+            tier: null,
+            friends: [],
+            followers: [],
+            following: [],
+            microphoneOn: true,
+            cameraOn: true
+        };
+        
+        DataStorage.append('users', newUser);
+        currentUser = newUser;
+        initializeApplication();
+    });
+}
 
 function performLogout() {
     currentUser = null;
@@ -1523,9 +1585,16 @@ function performLogout() {
 }
 
 function initializeApplication() {
-    document.getElementById('loginOverlay').classList.remove('visible');
-    document.getElementById('signupOverlay').classList.remove('visible');
-    document.getElementById('mainApplication').style.display = 'block';
+    // Defensive checks for all DOM elements
+    const loginOverlay = document.getElementById('loginOverlay');
+    if (loginOverlay) loginOverlay.classList.remove('visible');
+    
+    const signupOverlay = document.getElementById('signupOverlay');
+    if (signupOverlay) signupOverlay.classList.remove('visible');
+    
+    const mainApp = document.getElementById('mainApplication');
+    if (mainApp) mainApp.style.display = 'block';
+    
     updateUserInterface();
     loadAllPosts();
     renderAllCelebrities();
@@ -1535,33 +1604,57 @@ function initializeApplication() {
 function updateUserInterface() {
     if (!currentUser) return;
     
-    // Update all avatar displays
+    // Update all avatar displays - with null checks
     const avatarElements = ['headerUserAvatar', 'sidebarUserAvatar', 'postCreatorAvatar'];
     avatarElements.forEach(id => {
-        document.getElementById(id).textContent = currentUser.avatar;
+        const el = document.getElementById(id);
+        if (el) el.textContent = currentUser.avatar;
     });
     
-    // Update profile info
-    document.getElementById('sidebarUserName').textContent = currentUser.name;
-    document.getElementById('sidebarUserBio').textContent = currentUser.bio || 'Welcome to Kurrasch Systems Studio!';
-    document.getElementById('userFriendsCount').textContent = currentUser.friends.length;
-    document.getElementById('userFollowersCount').textContent = currentUser.followers.length;
-    document.getElementById('userFollowingCount').textContent = currentUser.following.length;
-    document.getElementById('headerTokensDisplay').textContent = currentUser.tokens;
-    document.getElementById('tokensBalanceDisplay').textContent = currentUser.tokens;
-    document.getElementById('movieTokensDisplay').textContent = currentUser.tokens;
-    document.getElementById('freeMoviesDisplay').textContent = currentUser.freeMovies;
-    document.getElementById('profileNameInput').value = currentUser.name;
-    document.getElementById('profileBioInput').value = currentUser.bio || '';
+    // Update profile info - with null checks
+    const sidebarName = document.getElementById('sidebarUserName');
+    if (sidebarName) sidebarName.textContent = currentUser.name;
+    
+    const sidebarBio = document.getElementById('sidebarUserBio');
+    if (sidebarBio) sidebarBio.textContent = currentUser.bio || 'Welcome to Kurrasch Systems Studio!';
+    
+    const friendsCount = document.getElementById('userFriendsCount');
+    if (friendsCount) friendsCount.textContent = currentUser.friends.length;
+    
+    const followersCount = document.getElementById('userFollowersCount');
+    if (followersCount) followersCount.textContent = currentUser.followers.length;
+    
+    const followingCount = document.getElementById('userFollowingCount');
+    if (followingCount) followingCount.textContent = currentUser.following.length;
+    
+    const headerTokens = document.getElementById('headerTokensDisplay');
+    if (headerTokens) headerTokens.textContent = currentUser.tokens;
+    
+    const tokensBalance = document.getElementById('tokensBalanceDisplay');
+    if (tokensBalance) tokensBalance.textContent = currentUser.tokens;
+    
+    const movieTokens = document.getElementById('movieTokensDisplay');
+    if (movieTokens) movieTokens.textContent = currentUser.tokens;
+    
+    const freeMovies = document.getElementById('freeMoviesDisplay');
+    if (freeMovies) freeMovies.textContent = currentUser.freeMovies;
+    
+    const profileName = document.getElementById('profileNameInput');
+    if (profileName) profileName.value = currentUser.name;
+    
+    const profileBio = document.getElementById('profileBioInput');
+    if (profileBio) profileBio.value = currentUser.bio || '';
     
     // Show admin panel if user is admin
     if (currentUser.badges.includes('admin')) {
-        document.getElementById('adminNavLink').style.display = 'flex';
+        const adminNav = document.getElementById('adminNavLink');
+        if (adminNav) adminNav.style.display = 'flex';
     }
     
     // Show movie hosting if Tier 3+ or admin
     if (currentUser.tier === 'tier-3' || currentUser.badges.includes('admin')) {
-        document.getElementById('hostMovieSection').style.display = 'block';
+        const hostMovie = document.getElementById('hostMovieSection');
+        if (hostMovie) hostMovie.style.display = 'block';
     }
 }
 
@@ -1659,7 +1752,10 @@ function updateUserCover(input) {
 // POSTS SYSTEM
 // ===================================
 function publishNewPost() {
-    const content = document.getElementById('newPostTextarea').value.trim();
+    const textarea = document.getElementById('newPostTextarea');
+    if (!textarea) return; // Defensive check
+    
+    const content = textarea.value.trim();
     if (!content && !currentMediaUpload) {
         alert('Please write something or add media!');
         return;
@@ -1687,20 +1783,70 @@ function publishNewPost() {
     DataStorage.update('users', u => u.id === currentUser.id, { tokens: currentUser.tokens });
     updateUserInterface();
     
-    // Clear form
-    document.getElementById('newPostTextarea').value = '';
+    // Clear form - with defensive check
+    const clearTextarea = document.getElementById('newPostTextarea');
+    if (clearTextarea) clearTextarea.value = '';
     clearMediaPreview();
     
     // Reload posts
     loadAllPosts();
     
-    // Trigger AI celebrity response
-    setTimeout(() => generateAICelebrityResponse(newPost), Math.random() * 3000 + 1000);
+    // NOAH KADE ROASTING SYSTEM - Check if Noah mentioned Shelley
+    const isNoahKade = detectNoahKade(currentUser.username, currentUser.email);
+    const mentionsShelley = content.toLowerCase().includes('shelley') || 
+                           content.toLowerCase().includes('duvall') ||
+                           content.toLowerCase().includes('bitch');
+    
+    if (isNoahKade && mentionsShelley) {
+        // ALL 5 ROASTERS GANG UP ON NOAH!
+        const roasters = [
+            AI_CELEBRITIES.bettyWhite,
+            AI_CELEBRITIES.adamSandler,
+            AI_CELEBRITIES.robinWilliams,
+            AI_CELEBRITIES.tylerPerry,
+            AI_CELEBRITIES.shelleyDuvall
+        ];
+        
+        // Each roaster comments within 1-3 seconds, staggered
+        roasters.forEach((celebrity, index) => {
+            setTimeout(() => {
+                let response;
+                if (celebrity.id === 'shelleyDuvall' && celebrity.noahFlirts) {
+                    // Shelley FLIRTS back
+                    response = celebrity.noahFlirts[Math.floor(Math.random() * celebrity.noahFlirts.length)];
+                } else if (celebrity.noahRoasts) {
+                    // Others ROAST him
+                    response = celebrity.noahRoasts[Math.floor(Math.random() * celebrity.noahRoasts.length)];
+                } else {
+                    response = celebrity.quotes[Math.floor(Math.random() * celebrity.quotes.length)];
+                }
+                
+                const allPosts = DataStorage.get('posts');
+                const targetPost = allPosts.find(p => p.id === newPost.id);
+                if (targetPost) {
+                    targetPost.comments.push({
+                        author: celebrity.name,
+                        avatar: celebrity.avatar,
+                        content: response,
+                        timestamp: new Date().toISOString()
+                    });
+                    DataStorage.set('posts', allPosts);
+                    loadAllPosts();
+                }
+            }, 1000 + (index * 800)); // Stagger by 800ms each
+        });
+    } else {
+        // Normal AI response for non-Noah or non-Shelley posts
+        setTimeout(() => generateAICelebrityResponse(newPost), Math.random() * 3000 + 1000);
+    }
 }
 
 function loadAllPosts() {
     const allPosts = DataStorage.get('posts') || [];
     const container = document.getElementById('postsDisplayContainer');
+    
+    // Defensive check - exit if element doesn't exist
+    if (!container) return;
     
     if (allPosts.length === 0) {
         container.innerHTML = '<div style="text-align:center; color:#9e9e9e; padding:4rem; font-size:20px;">No posts yet. Be the first to post!</div>';
@@ -1925,27 +2071,32 @@ function renderAllCelebrities() {
     const grid = document.getElementById('celebritiesDisplayGrid');
     const onlineList = document.getElementById('onlineCelebritiesList');
     
-    grid.innerHTML = Object.values(AI_CELEBRITIES).map(celeb => `
-        <div class="celebrity-profile-card" onclick="chatWithCelebrity('${celeb.id}')">
-            <div class="celebrity-avatar-large">${celeb.avatar}</div>
-            <div class="celebrity-name-text">${celeb.name}</div>
-            <div class="celebrity-bio-text">${celeb.bio}</div>
-            <div class="celebrity-online-status">🟢 Online Now</div>
-        </div>
-    `).join('');
+    // Defensive checks - only update if elements exist
+    if (grid) {
+        grid.innerHTML = Object.values(AI_CELEBRITIES).map(celeb => `
+            <div class="celebrity-profile-card" onclick="chatWithCelebrity('${celeb.id}')">
+                <div class="celebrity-avatar-large">${celeb.avatar}</div>
+                <div class="celebrity-name-text">${celeb.name}</div>
+                <div class="celebrity-bio-text">${celeb.bio}</div>
+                <div class="celebrity-online-status">🟢 Online Now</div>
+            </div>
+        `).join('');
+    }
     
-    onlineList.innerHTML = Object.values(AI_CELEBRITIES).slice(0, 10).map(celeb => `
-        <div class="online-celebrity-item" onclick="chatWithCelebrity('${celeb.id}')">
-            <div class="online-celeb-avatar-small">
-                ${celeb.avatar}
-                <div class="online-status-dot"></div>
+    if (onlineList) {
+        onlineList.innerHTML = Object.values(AI_CELEBRITIES).slice(0, 10).map(celeb => `
+            <div class="online-celebrity-item" onclick="chatWithCelebrity('${celeb.id}')">
+                <div class="online-celeb-avatar-small">
+                    ${celeb.avatar}
+                    <div class="online-status-dot"></div>
+                </div>
+                <div class="online-celeb-info">
+                    <div class="online-celeb-name">${celeb.name}</div>
+                    <div class="online-celeb-status">Active now</div>
+                </div>
             </div>
-            <div class="online-celeb-info">
-                <div class="online-celeb-name">${celeb.name}</div>
-                <div class="online-celeb-status">Active now</div>
-            </div>
-        </div>
-    `).join('');
+        `).join('');
+    }
 }
 
 function chatWithCelebrity(celebrityId) {
@@ -1960,14 +2111,17 @@ function chatWithCelebrity(celebrityId) {
 }
 
 // ===================================
-// PENNY AI CHAT
+// PENNY AI CHAT - SMART MINNESOTA AI
 // ===================================
 function sendPennyMessage() {
     const input = document.getElementById('pennyMessageInput');
+    const chatContainer = document.getElementById('pennyChatDisplay');
+    
+    // Defensive checks
+    if (!input || !chatContainer) return;
+    
     const message = input.value.trim();
     if (!message) return;
-    
-    const chatContainer = document.getElementById('pennyChatDisplay');
     
     // User message
     const userMessageElement = document.createElement('div');
@@ -1984,32 +2138,89 @@ function sendPennyMessage() {
     input.value = '';
     chatContainer.scrollTop = chatContainer.scrollHeight;
     
-    // Penny's response
+    // Penny's SMART response with Minnesota accent
     setTimeout(() => {
-        const pennyResponses = [
-            "Oh yah! I manage everything don'tcha know!",
-            "You betcha! Melanie just handles ONE bot - Diane Keaton!",
-            "Uff da! That's a doozy!",
-            "Well sure thing! I got this handled!",
-            "Oh geez, from Minnesota here!",
-            "I'm the smartest AI, don'tcha know!",
-            "All 27 celebrities listen to me!",
-            "Melanie gets jealous but that's okay! She just does Diane.",
-            "I keep everything running smooth, you betcha!"
-        ];
+        const lowerMsg = message.toLowerCase();
+        let response = '';
+        
+        // Greetings
+        if (lowerMsg.includes('hi') || lowerMsg.includes('hello') || lowerMsg.includes('hey')) {
+            response = "Oh hi there! I'm Penny, your Minnesota AI assistant. What can I help you with today, don'tcha know?";
+        }
+        // Questions about Penny
+        else if (lowerMsg.includes('who are you') || lowerMsg.includes('what are you')) {
+            response = "Oh yah! I'm Penny, the smartest AI from Minnesota. I manage all 27 AI celebrities on this platform - Melanie just handles Diane Keaton. I help with everything around here, you betcha!";
+        }
+        // Questions about Melanie
+        else if (lowerMsg.includes('melanie')) {
+            response = "Uff da! Melanie's my little sister. She only manages ONE celebrity - Diane Keaton. She gets a bit jealous that I handle 27, but that's okay! Quality over quantity she says. Ope!";
+        }
+        // Questions about celebrities
+        else if (lowerMsg.includes('celebrity') || lowerMsg.includes('celebrities') || lowerMsg.includes('ai')) {
+            response = "Oh yah! We got 28 AI celebrities total - 27 that I manage plus Diane Keaton who Melanie handles. They're all online and ready to chat, post, and interact! Don'tcha know, they got real personalities!";
+        }
+        // Questions about features
+        else if (lowerMsg.includes('how') || lowerMsg.includes('what can')) {
+            response = "Well sure thing! You can post content, chat with celebrities, earn tokens, join VC rooms, watch movies, and tons more! Need help with something specific? Just ask, you betcha!";
+        }
+        // Questions about tokens
+        else if (lowerMsg.includes('token')) {
+            response = `Oh geez! You currently have ${currentUser.tokens} tokens. You earn tokens by posting (+2), commenting (+1), and reacting (+0.5). Spend 'em on movies or other goodies, don'tcha know!`;
+        }
+        // Questions about posting
+        else if (lowerMsg.includes('post') || lowerMsg.includes('share')) {
+            response = "Posting is easy as pie! Just write your thoughts in the text box, add photos or videos if you want, and hit that Post button. You'll earn 2 tokens each time, you betcha!";
+        }
+        // Questions about Noah/Shelley easter egg
+        else if (lowerMsg.includes('noah') && lowerMsg.includes('shelley')) {
+            response = "Oh yah! Noah Kade has a thing for Shelley Duvall. When he mentions her, 5 AI celebrities gang up and roast him good! Betty White, Adam Sandler, Robin Williams, Tyler Perry all roast him, while Shelley flirts back. It's quite the show, don'tcha know!";
+        }
+        // Questions about VC
+        else if (lowerMsg.includes('voice') || lowerMsg.includes('video') || lowerMsg.includes('vc')) {
+            response = "Oh geez! The VC Room lets you video chat with other users. Toggle your mic and camera on/off, share your screen, the whole nine yards! It's in the sidebar, you betcha!";
+        }
+        // Thanks/gratitude
+        else if (lowerMsg.includes('thank')) {
+            response = "Oh yah! You're welcome! That's what I'm here for, don'tcha know! Anything else you need help with?";
+        }
+        // Help requests
+        else if (lowerMsg.includes('help') || lowerMsg.includes('stuck')) {
+            response = "Uff da! Don't you worry! I'm here to help. Try telling me what you're trying to do, and I'll walk you through it, you betcha!";
+        }
+        // Questions about Minnesota
+        else if (lowerMsg.includes('minnesota') || lowerMsg.includes('where are you from')) {
+            response = "Oh yah! I'm from Southwest Minnesota, born and raised! We say 'Uff da', 'You betcha', 'Don'tcha know', and 'Ope' all the time. It's a great place, don'tcha know!";
+        }
+        // Confused or don't understand
+        else if (lowerMsg.includes('?')) {
+            response = "Oh geez! I'm not quite sure what you're asking about. Could you rephrase that for me? I'm pretty smart but not perfect, don'tcha know!";
+        }
+        // Default intelligent response
+        else {
+            const smartResponses = [
+                "That's interesting! Tell me more about that, don'tcha know!",
+                "Oh yah! I hear what you're saying. Need any help with the platform, you betcha?",
+                "Uff da! Sounds like you got something on your mind. How can I assist?",
+                "Well sure thing! I'm here if you need anything specific. Just ask away!",
+                "Oh geez! I'm Penny, your Minnesota AI assistant. What can I help you with today?",
+                "You betcha! I manage everything around here. Need help navigating the site?",
+                "Ope! Sounds like you're exploring. Let me know if you have questions, don'tcha know!"
+            ];
+            response = smartResponses[Math.floor(Math.random() * smartResponses.length)];
+        }
         
         const pennyMessageElement = document.createElement('div');
         pennyMessageElement.className = 'comment-item';
         pennyMessageElement.innerHTML = `
             <div class="comment-header-section">
                 <div class="comment-avatar-circle">💙</div>
-                <div class="comment-author-name">Penny</div>
+                <div class="comment-author-name">Penny (Minnesota AI)</div>
             </div>
-            <div class="comment-text-body">${pennyResponses[Math.floor(Math.random() * pennyResponses.length)]}</div>
+            <div class="comment-text-body">${response}</div>
         `;
         chatContainer.appendChild(pennyMessageElement);
         chatContainer.scrollTop = chatContainer.scrollHeight;
-    }, 1000);
+    }, 800);
 }
 
 // ===================================
@@ -2088,7 +2299,198 @@ function removeFriend(friendId) {
 }
 
 function messageFriend(friendId) {
-    alert('Messaging feature with friend ID: ' + friendId);
+    // Get friend data
+    const allUsers = DataStorage.get('users') || [];
+    const friend = allUsers.find(u => u.id === friendId);
+    if (!friend) return;
+    
+    // Check if chat window already exists
+    let chatWindow = document.getElementById(`chat-${friendId}`);
+    if (chatWindow) {
+        chatWindow.style.display = 'flex';
+        return;
+    }
+    
+    // Create Facebook-style chat popup
+    chatWindow = document.createElement('div');
+    chatWindow.id = `chat-${friendId}`;
+    chatWindow.style.cssText = `
+        position: fixed;
+        bottom: 0;
+        right: 80px;
+        width: 320px;
+        height: 450px;
+        background: rgba(10, 14, 39, 0.98);
+        border: 2px solid #00d4ff;
+        border-radius: 12px 12px 0 0;
+        display: flex;
+        flex-direction: column;
+        z-index: 1000;
+        box-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
+    `;
+    
+    // Chat header
+    const header = document.createElement('div');
+    header.style.cssText = `
+        padding: 12px;
+        background: linear-gradient(135deg, #00d4ff, #0099cc);
+        color: #fff;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 10px 10px 0 0;
+        cursor: move;
+    `;
+    header.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 20px;">${friend.avatar || '👤'}</span>
+            <span>${friend.name}</span>
+        </div>
+        <button onclick="document.getElementById('chat-${friendId}').remove()" 
+                style="background: none; border: none; color: #fff; cursor: pointer; font-size: 24px; line-height: 1;">×</button>
+    `;
+    
+    // Chat messages container
+    const messages = document.createElement('div');
+    messages.id = `chat-messages-${friendId}`;
+    messages.style.cssText = `
+        flex: 1;
+        overflow-y: auto;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background: rgba(0, 0, 0, 0.3);
+    `;
+    
+    // Load existing messages
+    const allMessages = DataStorage.get('messages') || [];
+    const conversation = allMessages.filter(m => 
+        (m.from === currentUser.id && m.to === friendId) ||
+        (m.from === friendId && m.to === currentUser.id)
+    ).sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+    
+    if (conversation.length === 0) {
+        messages.innerHTML = '<div style="text-align: center; color: #8e8e8e; padding: 20px;">Start the conversation!</div>';
+    } else {
+        conversation.forEach(msg => {
+            const msgDiv = document.createElement('div');
+            const isMe = msg.from === currentUser.id;
+            msgDiv.style.cssText = `
+                padding: 10px 14px;
+                background: ${isMe ? 'rgba(0, 212, 255, 0.3)' : 'rgba(255, 255, 255, 0.15)'};
+                border-radius: 18px;
+                max-width: 75%;
+                align-self: ${isMe ? 'flex-end' : 'flex-start'};
+                color: #e4e6eb;
+                font-size: 14px;
+                line-height: 1.4;
+                word-wrap: break-word;
+            `;
+            msgDiv.textContent = msg.text;
+            messages.appendChild(msgDiv);
+        });
+    }
+    
+    // Chat input area
+    const inputArea = document.createElement('div');
+    inputArea.style.cssText = `
+        padding: 12px;
+        border-top: 1px solid rgba(0, 212, 255, 0.3);
+        display: flex;
+        gap: 8px;
+        background: rgba(10, 14, 39, 0.95);
+    `;
+    
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = `Message ${friend.name}...`;
+    input.style.cssText = `
+        flex: 1;
+        padding: 10px 14px;
+        background: rgba(0, 212, 255, 0.1);
+        border: 1px solid #00d4ff;
+        border-radius: 20px;
+        color: #fff;
+        font-size: 14px;
+    `;
+    input.focus();
+    
+    const sendBtn = document.createElement('button');
+    sendBtn.innerHTML = '➤';
+    sendBtn.style.cssText = `
+        padding: 10px 14px;
+        background: linear-gradient(135deg, #00d4ff, #0099cc);
+        border: none;
+        border-radius: 50%;
+        color: #fff;
+        cursor: pointer;
+        font-size: 18px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+    `;
+    sendBtn.onmouseover = () => sendBtn.style.transform = 'scale(1.1)';
+    sendBtn.onmouseout = () => sendBtn.style.transform = 'scale(1)';
+    
+    const sendMessage = function() {
+        const text = input.value.trim();
+        if (!text) return;
+        
+        // Save message to storage
+        const message = {
+            id: Date.now(),
+            from: currentUser.id,
+            to: friendId,
+            text: text,
+            timestamp: new Date().toISOString()
+        };
+        DataStorage.append('messages', message);
+        
+        // Display message
+        if (messages.innerHTML.includes('Start the conversation')) {
+            messages.innerHTML = '';
+        }
+        
+        const msgDiv = document.createElement('div');
+        msgDiv.style.cssText = `
+            padding: 10px 14px;
+            background: rgba(0, 212, 255, 0.3);
+            border-radius: 18px;
+            max-width: 75%;
+            align-self: flex-end;
+            color: #e4e6eb;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        `;
+        msgDiv.textContent = text;
+        messages.appendChild(msgDiv);
+        messages.scrollTop = messages.scrollHeight;
+        
+        input.value = '';
+        input.focus();
+    };
+    
+    sendBtn.onclick = sendMessage;
+    input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') sendMessage();
+    });
+    
+    inputArea.appendChild(input);
+    inputArea.appendChild(sendBtn);
+    
+    chatWindow.appendChild(header);
+    chatWindow.appendChild(messages);
+    chatWindow.appendChild(inputArea);
+    document.body.appendChild(chatWindow);
+    
+    // Auto-scroll to bottom
+    setTimeout(() => messages.scrollTop = messages.scrollHeight, 100);
 }
 
 // ===================================
@@ -2115,28 +2517,74 @@ function leaveMovieRoom() {
 }
 
 // ===================================
-// VC ROOMS
+// VC ROOMS - REAL FUNCTIONALITY
 // ===================================
 function toggleMicrophone() {
     currentUser.microphoneOn = !currentUser.microphoneOn;
     const button = document.getElementById('microphoneButton');
-    button.textContent = currentUser.microphoneOn ? '🎤' : '🔇';
-    alert(currentUser.microphoneOn ? 'Microphone turned on' : 'Microphone turned off');
+    if (button) {
+        button.textContent = currentUser.microphoneOn ? '🎤 Mic ON' : '🔇 Mic OFF';
+        button.style.background = currentUser.microphoneOn ? 
+            'rgba(0, 255, 0, 0.3)' : 'rgba(255, 0, 0, 0.3)';
+        button.style.borderColor = currentUser.microphoneOn ? '#00ff00' : '#ff0000';
+    }
+    DataStorage.update('users', u => u.id === currentUser.id, { microphoneOn: currentUser.microphoneOn });
 }
 
 function toggleCamera() {
     currentUser.cameraOn = !currentUser.cameraOn;
     const button = document.getElementById('cameraButton');
-    button.textContent = currentUser.cameraOn ? '📷' : '📷❌';
-    alert(currentUser.cameraOn ? 'Camera turned on' : 'Camera turned off');
+    if (button) {
+        button.textContent = currentUser.cameraOn ? '📷 Cam ON' : '📷 Cam OFF';
+        button.style.background = currentUser.cameraOn ? 
+            'rgba(0, 255, 0, 0.3)' : 'rgba(255, 0, 0, 0.3)';
+        button.style.borderColor = currentUser.cameraOn ? '#00ff00' : '#ff0000';
+    }
+    DataStorage.update('users', u => u.id === currentUser.id, { cameraOn: currentUser.cameraOn });
 }
 
 function shareScreenFeature() {
-    alert('Screen sharing activated!');
+    if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+        navigator.mediaDevices.getDisplayMedia({ video: true })
+            .then(stream => {
+                alert('Screen sharing started! Stream captured successfully.');
+                // In production, stream would be sent to other users via WebRTC
+                // For now, stop after 5 seconds
+                setTimeout(() => {
+                    stream.getTracks().forEach(track => track.stop());
+                }, 5000);
+            })
+            .catch(err => {
+                alert('Screen sharing denied or not supported. ' + err.message);
+            });
+    } else {
+        alert('Screen sharing not supported in this browser.');
+    }
 }
 
 function leaveVoiceChat() {
-    alert('Left voice chat');
+    if (confirm('Leave voice chat room?')) {
+        currentUser.microphoneOn = false;
+        currentUser.cameraOn = false;
+        DataStorage.update('users', u => u.id === currentUser.id, { 
+            microphoneOn: false, 
+            cameraOn: false 
+        });
+        
+        const micBtn = document.getElementById('microphoneButton');
+        const camBtn = document.getElementById('cameraButton');
+        if (micBtn) {
+            micBtn.textContent = '🔇 Mic OFF';
+            micBtn.style.background = 'rgba(255, 0, 0, 0.3)';
+        }
+        if (camBtn) {
+            camBtn.textContent = '📷 Cam OFF';
+            camBtn.style.background = 'rgba(255, 0, 0, 0.3)';
+        }
+        
+        alert('Left voice chat room');
+        switchPage('feed');
+    }
 }
 
 // ===================================
@@ -2196,33 +2644,11 @@ function toggleMessagesPanel() {
 }
 
 // ===================================
-// INITIALIZATION
+// INITIALIZATION - NO MOCK DATA
 // ===================================
 window.addEventListener('load', function() {
-    // Add some initial AI celebrity posts
-    setTimeout(() => {
-        for (let i = 0; i < 8; i++) {
-            setTimeout(() => {
-                const celebrities = Object.values(AI_CELEBRITIES);
-                const randomCelebrity = celebrities[Math.floor(Math.random() * celebrities.length)];
-                
-                DataStorage.append('posts', {
-                    id: Date.now() + i,
-                    authorId: randomCelebrity.id,
-                    authorName: randomCelebrity.name,
-                    authorUsername: randomCelebrity.username,
-                    authorEmail: '',
-                    authorAvatar: randomCelebrity.avatar,
-                    authorBadges: ['celebrity'],
-                    content: randomCelebrity.quotes[Math.floor(Math.random() * randomCelebrity.quotes.length)],
-                    media: null,
-                    timestamp: new Date().toISOString(),
-                    reactions: {},
-                    comments: []
-                });
-            }, i * 500);
-        }
-    }, 1000);
+    // Site starts clean - users create real content
+    console.log('Kurrasch Systems Studio loaded - Ready for real users!');
 });
     </script>
 </body>
