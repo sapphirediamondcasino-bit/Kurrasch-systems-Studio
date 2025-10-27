@@ -1236,95 +1236,54 @@ if (!DataStorage.get('messages')) DataStorage.set('messages', []);
 let currentUser = null;
 
 // ===================================
-// AUTH FUNCTIONS - LOGIN & SIGNUP (WORKING!)
+// AUTH FUNCTIONS - ONLY THESE ARE ADDED
 // ===================================
 function login(event) {
     event.preventDefault();
-    
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPass').value;
-    
     const users = DataStorage.get('users') || [];
     const user = users.find(u => u.email === email && u.password === password);
-    
     if (user) {
         currentUser = user;
-        
-        // Hide auth pages, show main app
         document.getElementById('loginPage').classList.remove('active');
         document.getElementById('signupPage').classList.remove('active');
         document.getElementById('mainApp').style.display = 'block';
-        
-        // Initialize app with all features
         updateUserInterface();
         loadAllPosts();
         renderAllCelebrities();
         startAICelebrityActivity();
-        
-        alert('Welcome back, ' + user.name + '!');
     } else {
-        alert('Invalid email or password! Please try again.');
+        alert('Invalid credentials!');
     }
-    
     return false;
 }
 
 function signup(event) {
     event.preventDefault();
-    
     const name = document.getElementById('signupName').value.trim();
     const username = document.getElementById('signupUser').value.trim();
     const email = document.getElementById('signupEmail').value.trim();
     const password = document.getElementById('signupPass').value;
-    
     const users = DataStorage.get('users') || [];
-    
     if (users.find(u => u.email === email)) {
-        alert('Email already exists! Please use a different email.');
+        alert('Email exists!');
         return false;
     }
-    
-    if (users.find(u => u.username === username)) {
-        alert('Username already taken! Please choose a different username.');
-        return false;
-    }
-    
     const newUser = {
-        id: Date.now(),
-        name: name,
-        username: username,
-        email: email,
-        password: password,
-        bio: '',
-        avatar: '👤',
-        cover: null,
-        tokens: 100,
-        freeMovies: 3,
-        badges: [],
-        tier: null,
-        friends: [],
-        followers: [],
-        following: [],
-        microphoneOn: true,
-        cameraOn: true
+        id: Date.now(), name, username, email, password, bio: '', avatar: '👤',
+        cover: null, tokens: 100, freeMovies: 3, badges: [], tier: null,
+        friends: [], followers: [], following: [], microphoneOn: true, cameraOn: true
     };
-    
     DataStorage.append('users', newUser);
     currentUser = newUser;
-    
-    // Hide auth pages, show main app
     document.getElementById('loginPage').classList.remove('active');
     document.getElementById('signupPage').classList.remove('active');
     document.getElementById('mainApp').style.display = 'block';
-    
-    // Initialize app with all features
     updateUserInterface();
     loadAllPosts();
     renderAllCelebrities();
     startAICelebrityActivity();
-    
-    alert('Account created successfully! Welcome, ' + newUser.name + '!');
-    
     return false;
 }
 
@@ -1339,11 +1298,57 @@ function showLogin() {
 }
 
 function logout() {
-    if (confirm('Are you sure you want to logout?')) {
+    if (confirm('Logout?')) {
         currentUser = null;
         document.getElementById('mainApp').style.display = 'none';
         document.getElementById('loginPage').classList.add('active');
     }
+}
+
+
+// ===================================
+// MISSING FUNCTIONS - BRIDGING THE GAP
+// ===================================
+function switchPage(pageName) {
+    navigateToPage(pageName);
+}
+
+function createPost() {
+    publishNewPost();
+}
+
+function updateProfile() {
+    saveUserProfile();
+}
+
+function askPenny() {
+    sendPennyMessage();
+}
+
+function applyForBadge() {
+    const badgeType = document.getElementById('badgeType').value;
+    const reason = document.getElementById('badgeReason').value;
+    if (!reason) {
+        alert('Please provide a reason for your application!');
+        return;
+    }
+    alert('Badge application submitted! You applied for: ' + badgeType);
+    document.getElementById('badgeReason').value = '';
+}
+
+function watchMovie() {
+    if (currentUser.tokens >= 10) {
+        currentUser.tokens -= 10;
+        DataStorage.update('users', u => u.id === currentUser.id, { tokens: currentUser.tokens });
+        updateUserInterface();
+        alert('Enjoy your movie! 10 tokens deducted.');
+    } else {
+        alert('Not enough tokens! You need 10 tokens to watch a movie.');
+    }
+}
+
+function adminGrantAction() {
+    executeAdminAction();
 }
 
 let currentMediaUpload = null;
